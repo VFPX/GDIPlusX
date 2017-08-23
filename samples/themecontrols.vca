@@ -1,0 +1,714 @@
+SCCTEXT Version 4.0.0.2
+PLATFORM C(8,0),UNIQUEID C(10,0),TIMESTAMP N(10,0),CLASS M(4,0),CLASSLOC M(4,0),BASECLASS M(4,0),OBJNAME M(4,0),PARENT M(4,0),PROPERTIES M(4,0),PROTECTED M(4,0),METHODS M(4,0),OBJCODE M(4,0),OLE M(4,0),OLE2 M(4,0),RESERVED1 M(4,0),RESERVED2 M(4,0),RESERVED3 M(4,0),RESERVED4 M(4,0),RESERVED5 M(4,0),RESERVED6 M(4,0),RESERVED7 M(4,0),RESERVED8 M(4,0),USER M(4,0)
+1252
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] Class     
+[START RESERVED1]
+VERSION =   3.00[END RESERVED1]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1XX11GSFY
+[CLASS] control
+[BASECLASS] control
+[OBJNAME] ctlthemebase
+[START PROPERTIES]
+BackStyle = 0
+_memberdata =     1835<VFPData><memberdata name="onmousedown" type="property" display="OnMouseDown"/><memberdata name="onmouseenter" type="property" display="OnMouseEnter"/><memberdata name="onmouseleave" type="property" display="OnMouseLeave"/><memberdata name="onmouseup" type="property" display="OnMouseUp"/><memberdata name="onmousemove" type="property" display="OnMouseMove"/><memberdata name="onmousewheel" type="property" display="OnMouseWheel"/><memberdata name="onlostfocus" type="method" display="OnLostFocus"/><memberdata name="onmousedown" type="method" display="OnMouseDown"/><memberdata name="onmouseenter" type="method" display="OnMouseEnter"/><memberdata name="onmouseleave" type="method" display="OnMouseLeave"/><memberdata name="onmouseup" type="method" display="OnMouseUp"/><memberdata name="onmousemove" type="method" display="OnMouseMove"/><memberdata name="onmousewheel" type="method" display="OnMouseWheel"/><memberdata name="onenabled" type="method" display="OnEnabled"/><memberdata name="ongotfocus" type="method" display="OnGotFocus"/><memberdata name="changestate" type="method" display="ChangeState"/><memberdata name="ldisabled" type="property" display="lDisabled"/><memberdata name="lhot" type="property" display="lHot"/><memberdata name="lpressed" type="property" display="lPressed"/><memberdata name="lfocused" type="property" display="lFocused"/><memberdata name="drawdisabled" type="method" display="DrawDisabled"/><memberdata name="drawpressed" type="method" display="DrawPressed"/><memberdata name="drawhot" type="method" display="DrawHot"/><memberdata name="drawfocused" type="method" display="DrawFocused"/><memberdata name="drawnormal" type="method" display="DrawNormal"/><memberdata name="themeclass" type="property" display="ThemeClass"/><memberdata name="themepart" type="property" display="ThemePart"/></VFPData>
+
+ldisabled = .F.
+lhot = .F.
+lpressed = .F.
+lfocused = .F.
+themeclass = 
+themepart = 
+Name = "ctlthemebase"
+[END PROPERTIES]
+[START PROTECTED]
+ldisabled
+lhot
+lpressed
+lfocused
+themeclass
+themepart
+onlostfocus
+onmousedown
+onmouseenter
+onmouseleave
+onmouseup
+onmousemove
+onmousewheel
+onenabled
+ongotfocus
+changestate
+drawdisabled
+drawpressed
+drawhot
+drawfocused
+drawnormal
+[END PROTECTED]
+[START METHODS]
+PROCEDURE Init
+
+THIS.oThemeImage.WIDTH = THIS.WIDTH
+THIS.oThemeImage.HEIGHT = THIS.HEIGHT
+THIS.oThemeImage.ANCHOR = 15
+
+THIS.oThemeImage.ThemeClass = STRCONV(THIS.ThemeClass + 0h00, 5)
+
+THIS.oThemeImage.ThemePart = THIS.ThemePart
+
+BINDEVENT(THIS, "MouseDown", THIS, "OnMouseDown")
+BINDEVENT(THIS, "MouseUp", THIS, "OnMouseUp")
+BINDEVENT(THIS, "MouseEnter", THIS, "OnMouseEnter")
+BINDEVENT(THIS, "MouseLeave", THIS, "OnMouseLeave")
+BINDEVENT(THIS, "MouseMove", THIS, "OnMouseMove")
+BINDEVENT(THIS, "MouseWheel", THIS, "OnMouseWheel")
+BINDEVENT(THIS, "GotFocus", THIS, "OnGotFocus")
+BINDEVENT(THIS, "LostFocus", THIS, "OnLostFocus")
+BINDEVENT(THIS, "Enabled", THIS, "OnEnabled", 1)
+
+ENDPROC
+PROCEDURE changestate
+
+LPARAMETERS cEvent AS STRING
+
+DO CASE
+
+  CASE NOT THIS.Enabled
+
+    THIS.DrawDisabled(m.cEvent)
+
+  CASE THIS.lPressed
+
+    THIS.DrawPressed(m.cEvent)
+
+  CASE THIS.lHot
+
+    THIS.DrawHot(m.cEvent)
+
+  CASE THIS.lFocused
+
+    THIS.DrawFocused(m.cEvent)
+
+  OTHERWISE
+
+    THIS.DrawNormal(m.cEvent)
+
+ENDCASE
+
+ENDPROC
+PROCEDURE drawdisabled
+LPARAMETERS cEvent AS STRING
+
+THIS.oThemeImage.ThemeState = 4
+
+ENDPROC
+PROCEDURE drawfocused
+LPARAMETERS cEvent AS STRING
+
+THIS.oThemeImage.ThemeState = 2
+
+ENDPROC
+PROCEDURE drawhot
+LPARAMETERS cEvent AS STRING
+
+THIS.oThemeImage.ThemeState = 2
+
+ENDPROC
+PROCEDURE drawnormal
+LPARAMETERS cEvent AS STRING
+
+THIS.oThemeImage.ThemeState = 1
+
+ENDPROC
+PROCEDURE drawpressed
+LPARAMETERS cEvent AS STRING
+
+THIS.oThemeImage.ThemeState = 3
+
+ENDPROC
+PROCEDURE onenabled
+LPARAMETERS lEnabled
+
+THIS.ChangeState(IIF(THIS.Enabled, "Enable", "Disable"))
+
+ENDPROC
+PROCEDURE onlostfocus
+
+THIS.lFocused = .F.
+
+THIS.ChangeState("LostFocus")
+ENDPROC
+PROCEDURE onmousedown
+LPARAMETERS nButton, nShift, nXCoord, nYCoord
+
+THIS.lPressed = .T.
+
+THIS.ChangeState("MouseDown")
+ENDPROC
+PROCEDURE onmouseenter
+LPARAMETERS nButton, nShift, nXCoord, nYCoord
+
+THIS.lHot = .T.
+
+THIS.ChangeState("MouseEnter")
+ENDPROC
+PROCEDURE onmouseleave
+LPARAMETERS nButton, nShift, nXCoord, nYCoord
+
+THIS.lHot = .F.
+
+THIS.ChangeState("MouseLeave")
+ENDPROC
+PROCEDURE onmousemove
+LPARAMETERS nButton, nShift, nXCoord, nYCoord
+
+*THIS.ChangeState("MouseMove")
+ENDPROC
+PROCEDURE onmouseup
+LPARAMETERS nButton, nShift, nXCoord, nYCoord
+
+THIS.lPressed = .F.
+
+THIS.ChangeState("MouseUp")
+ENDPROC
+PROCEDURE onmousewheel
+LPARAMETERS nDirection, nShift, nXCoord, nYCoord
+
+*THIS.ChangeState("MouseWheel")
+ENDPROC
+[END METHODS]
+[START RESERVED1]
+Class[END RESERVED1]
+[START RESERVED2]
+2[END RESERVED2]
+[START RESERVED3]
+_memberdata XML Metadata for customizable properties
+ldisabled
+lhot
+lpressed
+lfocused
+themeclass
+themepart
+*onlostfocus 
+*onmousedown 
+*onmouseenter 
+*onmouseleave 
+*onmouseup 
+*onmousemove 
+*onmousewheel 
+*onenabled 
+*ongotfocus 
+*changestate 
+*drawdisabled 
+*drawpressed 
+*drawhot 
+*drawfocused 
+*drawnormal 
+[END RESERVED3]
+[START RESERVED6]
+Pixels[END RESERVED6]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1XX17LRME
+[CLASS] imgthemebase
+[CLASSLOC] gdiplusx.vcx
+[BASECLASS] image
+[OBJNAME] oThemeImage
+[PARENT] ctlthemebase
+[START PROPERTIES]
+BackStyle = 0
+Height = 75
+Left = 0
+Top = 0
+Width = 75
+Name = "oThemeImage"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE MouseDown
+LPARAMETERS nButton, nShift, nXCoord, nYCoord
+
+THIS.PARENT.MOUSEDOWN(nButton, nShift, nXCoord, nYCoord)
+
+ENDPROC
+PROCEDURE MouseEnter
+LPARAMETERS nButton, nShift, nXCoord, nYCoord
+
+THIS.PARENT.MOUSEENTER(nButton, nShift, nXCoord, nYCoord)
+
+ENDPROC
+PROCEDURE MouseLeave
+LPARAMETERS nButton, nShift, nXCoord, nYCoord
+
+THIS.PARENT.MOUSELEAVE(nButton, nShift, nXCoord, nYCoord)
+
+ENDPROC
+PROCEDURE MouseMove
+LPARAMETERS nButton, nShift, nXCoord, nYCoord
+
+THIS.PARENT.MOUSEMOVE(nButton, nShift, nXCoord, nYCoord)
+
+ENDPROC
+PROCEDURE MouseUp
+LPARAMETERS nButton, nShift, nXCoord, nYCoord
+
+THIS.PARENT.MOUSEUP(nButton, nShift, nXCoord, nYCoord)
+
+ENDPROC
+PROCEDURE MouseWheel
+LPARAMETERS nDirection, nShift, nXCoord, nYCoord
+
+THIS.PARENT.MOUSEWHEEL(nButton, nShift, nXCoord, nYCoord)
+
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] RESERVED  
+[OBJNAME] ctlthemebase
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1XX15WLPC
+[CLASS] ctlthemebase
+[CLASSLOC] themecontrols.vcx
+[BASECLASS] control
+[OBJNAME] pushbutton
+[START PROPERTIES]
+Width = 16
+Height = 16
+lpinned = .F.
+_memberdata =     1763<VFPData><memberdata name="onmousedown" type="property" display="OnMouseDown"/><memberdata name="onmouseenter" type="property" display="OnMouseEnter"/><memberdata name="onmouseleave" type="property" display="OnMouseLeave"/><memberdata name="onmouseup" type="property" display="OnMouseUp"/><memberdata name="onmousemove" type="property" display="OnMouseMove"/><memberdata name="onmousewheel" type="property" display="OnMouseWheel"/><memberdata name="onlostfocus" type="method" display="OnLostFocus"/><memberdata name="onmousedown" type="method" display="OnMouseDown"/><memberdata name="onmouseenter" type="method" display="OnMouseEnter"/><memberdata name="onmouseleave" type="method" display="OnMouseLeave"/><memberdata name="onmouseup" type="method" display="OnMouseUp"/><memberdata name="onmousemove" type="method" display="OnMouseMove"/><memberdata name="onmousewheel" type="method" display="OnMouseWheel"/><memberdata name="onenabled" type="method" display="OnEnabled"/><memberdata name="ongotfocus" type="method" display="OnGotFocus"/><memberdata name="changestate" type="method" display="ChangeState"/><memberdata name="ldisabled" type="property" display="lDisabled"/><memberdata name="lhot" type="property" display="lHot"/><memberdata name="lpressed" type="property" display="lPressed"/><memberdata name="lfocused" type="property" display="lFocused"/><memberdata name="drawdisabled" type="method" display="DrawDisabled"/><memberdata name="drawpressed" type="method" display="DrawPressed"/><memberdata name="drawhot" type="method" display="DrawHot"/><memberdata name="drawfocused" type="method" display="DrawFocused"/><memberdata name="drawnormal" type="method" display="DrawNormal"/><memberdata name="lpinned" type="property" display="lPinned"/></VFPData>
+
+themeclass = EXPLORERBAR
+themepart = 3
+Name = "pushbutton"
+oThemeImage.Name = "oThemeImage"
+[END PROPERTIES]
+[START PROTECTED]
+Enabled
+[END PROTECTED]
+[START METHODS]
+PROCEDURE drawfocused
+LPARAMETERS cEvent AS STRING
+
+IF THIS.lPinned
+
+  THIS.oThemeImage.Themestate = 5
+
+ELSE
+
+  THIS.oThemeImage.Themestate = 2
+
+ENDIF
+ENDPROC
+PROCEDURE drawhot
+LPARAMETERS cEvent AS STRING
+
+IF THIS.lPinned
+
+  THIS.oThemeImage.Themestate = 5
+
+ELSE
+
+  THIS.oThemeImage.Themestate = 2
+
+ENDIF
+ENDPROC
+PROCEDURE drawnormal
+LPARAMETERS cEvent AS STRING
+
+IF THIS.lPinned
+
+  THIS.oThemeImage.Themestate = 4
+
+ELSE
+
+  THIS.oThemeImage.Themestate = 1
+
+ENDIF
+ENDPROC
+PROCEDURE drawpressed
+LPARAMETERS cEvent AS STRING
+
+IF THIS.lPinned
+
+  THIS.oThemeImage.Themestate = 6
+
+ELSE
+
+  THIS.oThemeImage.Themestate = 3
+
+ENDIF
+ENDPROC
+PROCEDURE onmouseup
+LPARAMETERS nButton, nShift, nXCoord, nYCoord
+
+THIS.lPinned = not THIS.lPinned
+
+DODEFAULT(nButton, nShift, nXCoord, nYCoord)
+ENDPROC
+[END METHODS]
+[START RESERVED1]
+Class[END RESERVED1]
+[START RESERVED2]
+1[END RESERVED2]
+[START RESERVED3]
+lpinned
+[END RESERVED3]
+[START RESERVED6]
+Pixels[END RESERVED6]
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] RESERVED  
+[OBJNAME] pushbutton
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1XX19B579
+[CLASS] ctlthemebase
+[CLASSLOC] themecontrols.vcx
+[BASECLASS] control
+[OBJNAME] closebutton
+[START PROPERTIES]
+Width = 21
+Height = 21
+themeclass = WINDOW
+themepart = 18
+Name = "closebutton"
+oThemeImage.Name = "oThemeImage"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE drawdisabled
+LPARAMETERS cEvent AS STRING
+
+THIS.oThemeImage.ThemeState = 4
+
+ENDPROC
+PROCEDURE drawfocused
+LPARAMETERS cEvent AS STRING
+
+THIS.oThemeImage.ThemeState = 2
+
+ENDPROC
+PROCEDURE drawhot
+LPARAMETERS cEvent AS STRING
+
+THIS.oThemeImage.ThemeState = 2
+
+ENDPROC
+PROCEDURE drawnormal
+LPARAMETERS cEvent AS STRING
+
+THIS.oThemeImage.ThemeState = 1
+
+ENDPROC
+PROCEDURE drawpressed
+LPARAMETERS cEvent AS STRING
+
+THIS.oThemeImage.ThemeState = 3
+ENDPROC
+[END METHODS]
+[START RESERVED1]
+Class[END RESERVED1]
+[START RESERVED2]
+1[END RESERVED2]
+[START RESERVED6]
+Pixels[END RESERVED6]
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] RESERVED  
+[OBJNAME] closebutton
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1XX19ONU7
+[CLASS] imgthemebase
+[CLASSLOC] gdiplusx.vcx
+[BASECLASS] image
+[OBJNAME] pfbackground
+[START PROPERTIES]
+themeclass = ( STRCONV("TAB" + 0h00, 5))
+themepart = 10
+themestate = 1
+Name = "pfbackground"
+[END PROPERTIES]
+[START RESERVED1]
+Class[END RESERVED1]
+[START RESERVED2]
+1[END RESERVED2]
+[START RESERVED6]
+Pixels[END RESERVED6]
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] RESERVED  
+[OBJNAME] pfbackground
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1XX19RNDN
+[CLASS] ctlthemebase
+[CLASSLOC] themecontrols.vcx
+[BASECLASS] control
+[OBJNAME] helpbutton
+[START PROPERTIES]
+Width = 21
+Height = 21
+themeclass = WINDOW
+themepart = 23
+Name = "helpbutton"
+oThemeImage.Name = "oThemeImage"
+[END PROPERTIES]
+[START RESERVED1]
+Class[END RESERVED1]
+[START RESERVED2]
+1[END RESERVED2]
+[START RESERVED6]
+Pixels[END RESERVED6]
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] RESERVED  
+[OBJNAME] helpbutton
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1XX19UWG3
+[CLASS] ctlthemebase
+[CLASSLOC] themecontrols.vcx
+[BASECLASS] control
+[OBJNAME] rebar
+[START PROPERTIES]
+Width = 20
+Height = 23
+themeclass = REBAR
+themepart = 4
+Name = "rebar"
+oThemeImage.Name = "oThemeImage"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE drawdisabled
+LPARAMETERS cEvent AS STRING
+
+NODEFAULT
+ENDPROC
+[END METHODS]
+[START RESERVED1]
+Class[END RESERVED1]
+[START RESERVED2]
+1[END RESERVED2]
+[START RESERVED6]
+Pixels[END RESERVED6]
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] RESERVED  
+[OBJNAME] rebar
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1XX1A0BCN
+[CLASS] ctlthemebase
+[CLASSLOC] themecontrols.vcx
+[BASECLASS] control
+[OBJNAME] tbdropdownbutton
+[START PROPERTIES]
+Width = 11
+Height = 23
+themeclass = TOOLBAR
+themepart = 4
+lchecked = .F.
+_memberdata =     1899<VFPData><memberdata name="onmousedown" type="property" display="OnMouseDown"/><memberdata name="onmouseenter" type="property" display="OnMouseEnter"/><memberdata name="onmouseleave" type="property" display="OnMouseLeave"/><memberdata name="onmouseup" type="property" display="OnMouseUp"/><memberdata name="onmousemove" type="property" display="OnMouseMove"/><memberdata name="onmousewheel" type="property" display="OnMouseWheel"/><memberdata name="onlostfocus" type="method" display="OnLostFocus"/><memberdata name="onmousedown" type="method" display="OnMouseDown"/><memberdata name="onmouseenter" type="method" display="OnMouseEnter"/><memberdata name="onmouseleave" type="method" display="OnMouseLeave"/><memberdata name="onmouseup" type="method" display="OnMouseUp"/><memberdata name="onmousemove" type="method" display="OnMouseMove"/><memberdata name="onmousewheel" type="method" display="OnMouseWheel"/><memberdata name="onenabled" type="method" display="OnEnabled"/><memberdata name="ongotfocus" type="method" display="OnGotFocus"/><memberdata name="changestate" type="method" display="ChangeState"/><memberdata name="ldisabled" type="property" display="lDisabled"/><memberdata name="lhot" type="property" display="lHot"/><memberdata name="lpressed" type="property" display="lPressed"/><memberdata name="lfocused" type="property" display="lFocused"/><memberdata name="drawdisabled" type="method" display="DrawDisabled"/><memberdata name="drawpressed" type="method" display="DrawPressed"/><memberdata name="drawhot" type="method" display="DrawHot"/><memberdata name="drawfocused" type="method" display="DrawFocused"/><memberdata name="drawnormal" type="method" display="DrawNormal"/><memberdata name="themeclass" type="property" display="ThemeClass"/><memberdata name="themepart" type="property" display="ThemePart"/><memberdata name="lchecked" type="property" display="lChecked"/></VFPData>
+
+Name = "tbdropdownbutton"
+oThemeImage.Name = "oThemeImage"
+[END PROPERTIES]
+[START PROTECTED]
+lchecked
+[END PROTECTED]
+[START METHODS]
+PROCEDURE drawhot
+LPARAMETERS cEvent AS STRING
+
+IF THIS.lChecked
+
+  THIS.oThemeImage.ThemeState = 6
+
+ELSE
+
+  THIS.oThemeImage.ThemeState = 2
+
+ENDIF
+ENDPROC
+PROCEDURE drawnormal
+LPARAMETERS cEvent AS STRING
+
+IF THIS.lChecked
+
+  THIS.oThemeImage.ThemeState = 5
+
+ELSE
+
+  THIS.oThemeImage.ThemeState = 1
+
+ENDIF
+ENDPROC
+PROCEDURE onmouseup
+LPARAMETERS nButton, nShift, nXCoord, nYCoord
+
+THIS.lChecked = NOT THIS.lChecked
+
+DODEFAULT(nButton, nShift, nXCoord, nYCoord)
+
+ENDPROC
+[END METHODS]
+[START RESERVED1]
+Class[END RESERVED1]
+[START RESERVED2]
+1[END RESERVED2]
+[START RESERVED3]
+lchecked
+[END RESERVED3]
+[START RESERVED6]
+Pixels[END RESERVED6]
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] RESERVED  
+[OBJNAME] tbdropdownbutton
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1XX1AAFPS
+[CLASS] ctlthemebase
+[CLASSLOC] themecontrols.vcx
+[BASECLASS] control
+[OBJNAME] iemenubutton
+[START PROPERTIES]
+Width = 19
+Height = 19
+themeclass = EXPLORERBAR
+themepart = 4
+Name = "iemenubutton"
+oThemeImage.Name = "oThemeImage"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE drawdisabled
+LPARAMETERS cEvent AS STRING
+
+NODEFAULT
+ENDPROC
+[END METHODS]
+[START RESERVED1]
+Class[END RESERVED1]
+[START RESERVED2]
+1[END RESERVED2]
+[START RESERVED6]
+Pixels[END RESERVED6]
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] RESERVED  
+[OBJNAME] iemenubutton
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1XX1ADRKF
+[CLASS] ctlthemebase
+[CLASSLOC] themecontrols.vcx
+[BASECLASS] control
+[OBJNAME] groupexpandcollapsebutton
+[START PROPERTIES]
+Width = 19
+Height = 19
+lexpanded = .F.
+themeclass = EXPLORERBAR
+themepart = 7
+_memberdata =     1901<VFPData><memberdata name="onmousedown" type="property" display="OnMouseDown"/><memberdata name="onmouseenter" type="property" display="OnMouseEnter"/><memberdata name="onmouseleave" type="property" display="OnMouseLeave"/><memberdata name="onmouseup" type="property" display="OnMouseUp"/><memberdata name="onmousemove" type="property" display="OnMouseMove"/><memberdata name="onmousewheel" type="property" display="OnMouseWheel"/><memberdata name="onlostfocus" type="method" display="OnLostFocus"/><memberdata name="onmousedown" type="method" display="OnMouseDown"/><memberdata name="onmouseenter" type="method" display="OnMouseEnter"/><memberdata name="onmouseleave" type="method" display="OnMouseLeave"/><memberdata name="onmouseup" type="method" display="OnMouseUp"/><memberdata name="onmousemove" type="method" display="OnMouseMove"/><memberdata name="onmousewheel" type="method" display="OnMouseWheel"/><memberdata name="onenabled" type="method" display="OnEnabled"/><memberdata name="ongotfocus" type="method" display="OnGotFocus"/><memberdata name="changestate" type="method" display="ChangeState"/><memberdata name="ldisabled" type="property" display="lDisabled"/><memberdata name="lhot" type="property" display="lHot"/><memberdata name="lpressed" type="property" display="lPressed"/><memberdata name="lfocused" type="property" display="lFocused"/><memberdata name="drawdisabled" type="method" display="DrawDisabled"/><memberdata name="drawpressed" type="method" display="DrawPressed"/><memberdata name="drawhot" type="method" display="DrawHot"/><memberdata name="drawfocused" type="method" display="DrawFocused"/><memberdata name="drawnormal" type="method" display="DrawNormal"/><memberdata name="themeclass" type="property" display="ThemeClass"/><memberdata name="themepart" type="property" display="ThemePart"/><memberdata name="lexpanded" type="property" display="lExpanded"/></VFPData>
+
+Name = "groupexpandcollapsebutton"
+oThemeImage.Name = "oThemeImage"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE drawdisabled
+LPARAMETERS cEvent AS STRING
+
+NODEFAULT
+ENDPROC
+PROCEDURE lexpanded_assign
+LPARAMETERS lExpanded
+
+IF m.lExpanded
+
+  THIS.oThemeImage.ThemePart = 7
+
+ELSE
+
+  THIS.oThemeImage.ThemePart = 6
+
+ENDIF
+
+THIS.oTHemeImage.ThemeState = THIS.oTHemeImage.ThemeState
+
+THIS.lExpanded = m.lExpanded
+
+
+ENDPROC
+PROCEDURE onmouseup
+LPARAMETERS nButton, nShift, nXCoord, nYCoord
+
+THIS.lExpanded = NOT THIS.lExpanded
+
+ENDPROC
+[END METHODS]
+[START RESERVED1]
+Class[END RESERVED1]
+[START RESERVED2]
+1[END RESERVED2]
+[START RESERVED3]
+lexpanded
+*lexpanded_assign 
+[END RESERVED3]
+[START RESERVED6]
+Pixels[END RESERVED6]
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] RESERVED  
+[OBJNAME] groupexpandcollapsebutton
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1XX1AU0FI
+[CLASS] ctlthemebase
+[CLASSLOC] themecontrols.vcx
+[BASECLASS] control
+[OBJNAME] combobutton
+[START PROPERTIES]
+Width = 15
+Height = 16
+themeclass = COMBOBOX
+themepart = 1
+Name = "combobutton"
+oThemeImage.Name = "oThemeImage"
+[END PROPERTIES]
+[START RESERVED1]
+Class[END RESERVED1]
+[START RESERVED2]
+1[END RESERVED2]
+[START RESERVED6]
+Pixels[END RESERVED6]
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] RESERVED  
+[OBJNAME] combobutton
+[EOF]

@@ -1,0 +1,321 @@
+SCCTEXT Version 4.0.0.2
+PLATFORM C(8,0),UNIQUEID C(10,0),TIMESTAMP N(10,0),CLASS M(4,0),CLASSLOC M(4,0),BASECLASS M(4,0),OBJNAME M(4,0),PARENT M(4,0),PROPERTIES M(4,0),PROTECTED M(4,0),METHODS M(4,0),OBJCODE M(4,0),OLE M(4,0),OLE2 M(4,0),RESERVED1 M(4,0),RESERVED2 M(4,0),RESERVED3 M(4,0),RESERVED4 M(4,0),RESERVED5 M(4,0),RESERVED6 M(4,0),RESERVED7 M(4,0),RESERVED8 M(4,0),USER M(4,0)
+1252
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] Screen    
+[START RESERVED1]
+VERSION =   3.00[END RESERVED1]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1V00KAXPA
+[CLASS] dataenvironment
+[BASECLASS] dataenvironment
+[OBJNAME] Dataenvironment
+[START PROPERTIES]
+Top = 0
+Left = 0
+Width = 0
+Height = 0
+DataSource = .NULL.
+Name = "Dataenvironment"
+[END PROPERTIES]
+[START RESERVED2]
+1[END RESERVED2]
+[START RESERVED4]
+1[END RESERVED4]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1V00KAXPB
+[CLASS] form
+[BASECLASS] form
+[OBJNAME] Form1
+[START PROPERTIES]
+Height = 268
+Width = 279
+DoCreate = .T.
+AutoCenter = .T.
+Caption = "Animated GIF"
+cfilename = 
+oimage = 
+Name = "Form1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Init
+
+ThisForm.cFileName = HOME(4)+"gifs\morphfox.gif"
+ENDPROC
+PROCEDURE Load
+DO (LOCFILE("System.app"))
+
+loImgAnimator = _SCREEN.System.Drawing.ImageAnimator.New()
+ADDPROPERTY(This, "IA", loImgAnimator)
+
+
+ENDPROC
+[END METHODS]
+[START RESERVED3]
+cfilename
+oimage
+[END RESERVED3]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1V00KAXPC
+[CLASS] imgcanvas
+[CLASSLOC] ..\source\gdiplusx.vcx
+[BASECLASS] image
+[OBJNAME] Imgcanvas
+[PARENT] Form1
+[START PROPERTIES]
+Height = 132
+Left = 12
+Top = 12
+Width = 144
+Name = "Imgcanvas"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE draw
+LPARAMETERS toSource as xfcImage, toArgs
+
+IF VARTYPE(m.toSource) = "O"
+	This.Clear()
+	** Update the GIF frame
+	ThisForm.IA.UpdateFrames(m.toSource)
+	** Draw the image on the canvas
+	This.oGfx.DrawImage(m.toSource, 0,0)
+	
+	** Update our frame status
+	This.Parent.txtCurrentFrame.Value = toArgs.CurrentFrame
+	This.Parent.txtFrameCount.Value = toArgs.FrameCount
+	This.Parent.txtCurrentDelay.Value = toArgs.FrameDelays[toArgs.CurrentFrame+1]
+	This.Parent.txtCurrentLoop.Value = toArgs.CurrentLoop
+ENDIF
+
+DODEFAULT()
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1V00KAXPQ
+[CLASS] textbox
+[BASECLASS] textbox
+[OBJNAME] txtCurrentFrame
+[PARENT] Form1
+[START PROPERTIES]
+Height = 23
+Left = 108
+Top = 178
+Width = 48
+Name = "txtCurrentFrame"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1V00KAXPR
+[CLASS] label
+[BASECLASS] label
+[OBJNAME] Label1
+[PARENT] Form1
+[START PROPERTIES]
+AutoSize = .T.
+Caption = "Current Frame"
+Height = 17
+Left = 12
+Top = 180
+Width = 82
+Name = "Label1"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1V00KAXPS
+[CLASS] textbox
+[BASECLASS] textbox
+[OBJNAME] txtFrameCount
+[PARENT] Form1
+[START PROPERTIES]
+Height = 23
+Left = 108
+Top = 154
+Width = 48
+Name = "txtFrameCount"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1V00KAXPT
+[CLASS] label
+[BASECLASS] label
+[OBJNAME] Label2
+[PARENT] Form1
+[START PROPERTIES]
+AutoSize = .T.
+Caption = "Frame Count"
+Height = 17
+Left = 12
+Top = 156
+Width = 74
+Name = "Label2"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1V00KAXPU
+[CLASS] textbox
+[BASECLASS] textbox
+[OBJNAME] txtCurrentLoop
+[PARENT] Form1
+[START PROPERTIES]
+Height = 23
+Left = 108
+Top = 226
+Width = 48
+Name = "txtCurrentLoop"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1V00KAXPV
+[CLASS] label
+[BASECLASS] label
+[OBJNAME] Label3
+[PARENT] Form1
+[START PROPERTIES]
+AutoSize = .T.
+Caption = "Current Loop"
+Height = 17
+Left = 12
+Top = 229
+Width = 74
+Name = "Label3"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1V00KAXPW
+[CLASS] commandbutton
+[BASECLASS] commandbutton
+[OBJNAME] Command1
+[PARENT] Form1
+[START PROPERTIES]
+Top = 12
+Left = 180
+Height = 27
+Width = 84
+Caption = "Animate"
+Name = "Command1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Click
+LOCAL loImgAnimator AS xfcImageAnimator
+
+WITH _SCREEN.System
+	** Stop any existing animations
+	ThisForm.IA.StopAnimate(ThisForm.oImage)
+
+	** Load the image object
+	ThisForm.oImage = .Drawing.Image.FromFile(ThisForm.cFileName)
+	
+	** Create an EventHandler using the Draw method
+	loEventHandler = .EventHandler.New(ThisForm.imgCanvas, "Draw")
+
+	** Animate the image
+	ThisForm.IA.Animate(ThisForm.oImage, loEventHandler)
+ENDWITH
+
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1V00KAXPX
+[CLASS] commandbutton
+[BASECLASS] commandbutton
+[OBJNAME] Command2
+[PARENT] Form1
+[START PROPERTIES]
+Top = 48
+Left = 180
+Height = 27
+Width = 84
+Caption = "Stop"
+Name = "Command2"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Click
+** Stop the animation
+ThisForm.IA.StopAnimate(ThisForm.oImage)
+
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1V00KAXPY
+[CLASS] commandbutton
+[BASECLASS] commandbutton
+[OBJNAME] Command3
+[PARENT] Form1
+[START PROPERTIES]
+Top = 84
+Left = 180
+Height = 48
+Width = 84
+WordWrap = .T.
+Caption = "Use Picture Property"
+Name = "Command3"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Click
+** Stop any existing animations
+ThisForm.IA.StopAnimate(ThisForm.oImage)
+
+ThisForm.imgCanvas.Picture = ThisForm.cFileName
+
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1V00KAXPZ
+[CLASS] textbox
+[BASECLASS] textbox
+[OBJNAME] txtCurrentDelay
+[PARENT] Form1
+[START PROPERTIES]
+Height = 23
+Left = 108
+Top = 202
+Width = 48
+Name = "txtCurrentDelay"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1V00KAXQ0
+[CLASS] label
+[BASECLASS] label
+[OBJNAME] Label4
+[PARENT] Form1
+[START PROPERTIES]
+AutoSize = .T.
+Caption = "Current Delay"
+Height = 17
+Left = 12
+Top = 204
+Width = 77
+Name = "Label4"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] RESERVED  
+[START PROPERTIES]
+Arial, 0, 9, 5, 15, 12, 32, 3, 0
+[END PROPERTIES]
+[EOF]

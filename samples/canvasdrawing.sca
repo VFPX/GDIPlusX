@@ -1,0 +1,166 @@
+SCCTEXT Version 4.0.0.2
+PLATFORM C(8,0),UNIQUEID C(10,0),TIMESTAMP N(10,0),CLASS M(4,0),CLASSLOC M(4,0),BASECLASS M(4,0),OBJNAME M(4,0),PARENT M(4,0),PROPERTIES M(4,0),PROTECTED M(4,0),METHODS M(4,0),OBJCODE M(4,0),OLE M(4,0),OLE2 M(4,0),RESERVED1 M(4,0),RESERVED2 M(4,0),RESERVED3 M(4,0),RESERVED4 M(4,0),RESERVED5 M(4,0),RESERVED6 M(4,0),RESERVED7 M(4,0),RESERVED8 M(4,0),USER M(4,0)
+1252
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] Screen    
+[START RESERVED1]
+VERSION =   3.00[END RESERVED1]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _20Q0S5T6J
+[CLASS] dataenvironment
+[BASECLASS] dataenvironment
+[OBJNAME] Dataenvironment
+[START PROPERTIES]
+Top = 0
+Left = 0
+Width = 0
+Height = 0
+DataSource = .NULL.
+Name = "Dataenvironment"
+[END PROPERTIES]
+[START RESERVED2]
+1[END RESERVED2]
+[START RESERVED4]
+1[END RESERVED4]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _20Q0S5T6K
+[CLASS] form
+[BASECLASS] form
+[OBJNAME] Form1
+[START PROPERTIES]
+Top = 0
+Left = 0
+DoCreate = .T.
+Caption = "Form1"
+Name = "Form1"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _20Q0S5T6L
+[CLASS] imgcanvas
+[CLASSLOC] ..\source\gdiplusx.vcx
+[BASECLASS] image
+[OBJNAME] Imgcanvas1
+[PARENT] Form1
+[START PROPERTIES]
+Height = 228
+Left = 12
+Top = 12
+Width = 348
+Name = "Imgcanvas1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE afterdraw
+* Print the Image
+  IF MESSAGEBOX("Do you want to print the Image from the Canvas ?",32+1,"Print Sample") = 1
+    This.oBmp.ToPrinter()
+  ENDIF
+
+ENDPROC
+PROCEDURE beforedraw
+WITH _Screen.System.Drawing
+
+* To allow Intellisense for "This.oGfx"
+  Local loGfx As xfcGraphics
+  loGfx = This.oGfx
+
+
+* Create a Linear Gradient Brush
+  Local loGradBrsh As xfcLinearGraphicsBrush
+  loGradBrsh = .Drawing2D.LinearGradientBrush.New(;
+    This.Rectangle, .Color.LightBlue, .Color.DarkBlue, 1)
+
+* Draw a rectangle using the whole rectangle from the canvas and the Gradient Brush
+  loGfx.FillRectangle(loGradBrsh, This.Rectangle)
+
+
+* Draw a Triangle
+  Dimension laPoints(3)
+  laPoints(1) = .Point.New(20, 100)
+  laPoints(2) = .Point.New(90, 100)
+  laPoints(3) = .Point.New(55, 40)
+  loGfx.FillPolygon(.Brushes.Green, @laPoints)
+
+
+* Draw a Rectangle
+  loGfx.FillRectangle(.Brushes.Yellow, 20, 100, 70, 50)
+  loGfx.FillRectangle(.Brushes.Gray, 90, 100, 100, 50)
+
+
+* Draw a Trapeze
+  Dimension laPoints(4)
+  laPoints(1) = .Point.New(55, 40)
+  laPoints(2) = .Point.New(90, 100)
+  laPoints(3) = .Point.New(190, 100)
+  laPoints(4) = .Point.New(155, 40)
+  loGfx.FillPolygon(.SolidBrush.New(.Color.FromRGB(128,0,0)), @laPoints)
+
+
+* Create a path containing two curves
+  Local myPath As xfcGraphicsPath
+  myPath = .Drawing2D.GraphicsPath.New()
+
+  myPath.StartFigure()
+  Dimension points(4)
+  points(1) = .Point.New(45, 150)
+  points(2) = .Point.New(65, 170)
+  points(3) = .Point.New(45, 190)
+  points(4) = .Point.New(65, 210)
+  myPath.AddCurve(@points)
+  myPath.AddLine(.Point.New(65,210), .Point.New(85, 210))
+  points(1) = .Point.New(85, 210)
+  points(2) = .Point.New(65, 190)
+  points(3) = .Point.New(85, 170)
+  points(4) = .Point.New(65, 150)
+  myPath.AddCurve(@points)
+  myPath.AddLine(.Point.New(65,150), .Point.New(45, 150))
+
+* Draw the path
+  loGfx.FillPath(.Brushes.Orange, myPath)
+  loGfx.DrawPath(.Pen.New(.Color.Black, 1), myPath) && Black Border
+
+
+* Draw the Sun
+  Local loPath As xfcGraphicsPath
+  loPath = .Drawing2D.GraphicsPath.New()
+  loPath.AddEllipse(280, 20, 40, 40)
+
+  Local loPathGradBrush As xfcPathGradientBrush
+  loPathGradBrush = .Drawing2D.PathGradientBrush.New(loPath)
+  loPathGradBrush.CenterColor = .Color.Red
+
+  loPathGradBrush.SurroundColors[1] = .Color.Yellow
+  loGfx.FillEllipse(loPathGradBrush, 280, 20, 40, 40)
+
+
+* Draw a string
+  loGfx.DrawString("GdiPlusX is cool !!!", ;
+    .Font.New("Tahoma", 20), .Brushes.Red, 110, This.Height - 40)
+
+
+* Save the Image to Disk
+  LOCAL lcNewFile
+  lcNewFile = FULLPATH("Samples\Outputs\" + "CanvasDrawing.png")
+  This.oBmp.Save(lcNewFile, .Imaging.ImageFormat.Png)
+
+* Print the Image
+* Check the "AfterDraw Method"
+
+ENDWITH
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] RESERVED  
+[START PROPERTIES]
+Arial, 0, 9, 5, 15, 12, 32, 3, 0
+[END PROPERTIES]
+[EOF]

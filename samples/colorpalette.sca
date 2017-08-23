@@ -1,0 +1,308 @@
+SCCTEXT Version 4.0.0.2
+PLATFORM C(8,0),UNIQUEID C(10,0),TIMESTAMP N(10,0),CLASS M(4,0),CLASSLOC M(4,0),BASECLASS M(4,0),OBJNAME M(4,0),PARENT M(4,0),PROPERTIES M(4,0),PROTECTED M(4,0),METHODS M(4,0),OBJCODE M(4,0),OLE M(4,0),OLE2 M(4,0),RESERVED1 M(4,0),RESERVED2 M(4,0),RESERVED3 M(4,0),RESERVED4 M(4,0),RESERVED5 M(4,0),RESERVED6 M(4,0),RESERVED7 M(4,0),RESERVED8 M(4,0),USER M(4,0)
+1252
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] Screen    
+[START RESERVED1]
+VERSION =   3.00[END RESERVED1]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0L3VWK
+[CLASS] dataenvironment
+[BASECLASS] dataenvironment
+[OBJNAME] Dataenvironment
+[START PROPERTIES]
+Top = 220
+Left = 1
+Width = 520
+Height = 200
+DataSource = .NULL.
+Name = "Dataenvironment"
+[END PROPERTIES]
+[START RESERVED2]
+1[END RESERVED2]
+[START RESERVED4]
+1[END RESERVED4]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0L3VWL
+[CLASS] form
+[BASECLASS] form
+[OBJNAME] Form1
+[START PROPERTIES]
+Top = 10
+Left = 87
+Height = 411
+Width = 516
+DoCreate = .T.
+Caption = "Retrieve GIF properties and ColorPalettes"
+mode = 0
+Name = "Form1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Init
+
+LOCAL lcPicture
+lcPicture = LOCFILE("GotData.gif")
+Thisform.txtFile.Value = lcPicture
+Thisform.Image1.Picture = lcPicture
+Thisform.Imgcanvas1.Draw()
+
+ENDPROC
+[END METHODS]
+[START RESERVED3]
+mode
+[END RESERVED3]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TZ0QGKPH
+[CLASS] imgcanvas
+[CLASSLOC] ..\gdiplusx.vcx
+[BASECLASS] image
+[OBJNAME] Imgcanvas1
+[PARENT] Form1
+[START PROPERTIES]
+Anchor = 15
+Height = 180
+Left = 264
+Top = 12
+Width = 240
+smoothingmode = 0
+Name = "Imgcanvas1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE beforedraw
+This.Clear
+IF EMPTY(Thisform.txtFile.Value)
+	RETURN
+ENDIF
+
+LOCAL loBmpData AS xfcBitmapData
+LOCAL loImg AS xfcImage
+LOCAL loPalette AS xfcColorPalette
+LOCAL loColor AS xfcColor
+LOCAL loSBrush AS xfcSolidBrush
+
+LOCAL x1, y1, n
+WITH _SCREEN.System.Drawing
+	loImg = .Image.FromFile(Thisform.txtFile.Value)
+	IF ISNULL(loImg)
+		MESSAGEBOX("Could not load image file")
+		RETURN
+	ENDIF
+	loPalette = loImg.Palette
+	x1 = 0
+	y1 = 0
+	FOR n = 1 TO ALEN(loPalette.Entries)
+		loColor	= loPalette.Entries(n)
+		loSBrush = .SolidBrush.New(loColor)
+		This.oGfx.FillRectangle(loSBrush, x1, y1, 15, 15)
+		x1 = x1 + 15
+		IF x1 > This.Width
+			x1 = 0
+			y1 = y1 + 15
+		ENDIF
+	ENDFOR
+
+
+* Get PixelFormat name
+LOCAL lnPix, lcPixFormat
+lnPix = loImg.PixelFormat
+DO CASE
+CASE lnPix = .Imaging.PixelFormat.Format1bppIndexed
+	lcPixFormat = "1bppIndexed"
+CASE lnPix = .Imaging.PixelFormat.Format4bppIndexed
+	lcPixFormat = "4bppIndexed"
+CASE lnPix = .Imaging.PixelFormat.Format8bppIndexed
+	lcPixFormat = "8bppIndexed"
+CASE lnPix = .Imaging.PixelFormat.Format16bppGrayScale
+	lcPixFormat = "16bppGrayScale"
+CASE lnPix = .Imaging.PixelFormat.Format16bppRGB555
+	lcPixFormat = "16bppRGB555"
+CASE lnPix = .Imaging.PixelFormat.Format16bppRGB565
+	lcPixFormat = "16bppRGB565"
+CASE lnPix = .Imaging.PixelFormat.Format16bppARGB1555
+	lcPixFormat = "16bppARGB1555"
+CASE lnPix = .Imaging.PixelFormat.Format24bppRGB
+	lcPixFormat = "24bppRGB"
+CASE lnPix = .Imaging.PixelFormat.Format32bppRGB
+	lcPixFormat = "32bppRGB"
+CASE lnPix = .Imaging.PixelFormat.Format32bppARGB
+	lcPixFormat = "32bppARGB"
+CASE lnPix = .Imaging.PixelFormat.Format32bppPARGB
+	lcPixFormat = "32bppPARGB"
+CASE lnPix = .Imaging.PixelFormat.Format48bppRGB
+	lcPixFormat = "48bppRGB"
+CASE lnPix = .Imaging.PixelFormat.Format64bppPARGB
+	lcPixFormat = "64bppPARGB"
+OTHERWISE
+	lcPixFormat = "Unidentified"
+ENDCASE
+
+ENDWITH
+
+
+* Retrieve Metadata Tags from Image
+LOCAL lcProperties, lnProp, lcPropName, llAnimatedGIF
+LOCAL loProp AS xfcPropertyItem
+llAnimatedGIF = .F.
+lcProperties = "" + CHR(13)
+FOR EACH lnProp IN loImg.PropertyIdList
+	loProp = loImg.GetPropertyItem(lnProp)
+	DO CASE
+	CASE loProp.Id = 0x5100
+		lcProperties = lcProperties + "PropertyTagFrameDelay : " + loProp.ToString() + CHR(13)
+		IF ALLTRIM(loProp.ToString()) <> "0"
+			llAnimatedGIF = .T.
+		ENDIF
+	CASE loProp.Id = 0x5101
+		lcProperties = lcProperties + "PropertyTagLoopCount : " + loProp.ToString() + CHR(13)
+	ENDCASE
+ENDFOR
+
+Thisform.Edit1.Value = ;
+	"Width : " + TRANSFORM(loImg.Width) + SPACE(25) +;
+	"Height : " + TRANSFORM(loImg.Height) + CHR(13) +;
+	"Resolution - Vertical : " + TRANSFORM(loImg.VerticalResolution) + SPACE(6) +;
+	"Horizontal : " + TRANSFORM(loImg.HorizontalResolution) + CHR(13) +;
+	"PixelFormat : " + lcPixFormat + CHR(13) + ;
+	"Number of colors : " + TRANSFORM(ALEN(loPalette.Entries)) + CHR(13) +;
+	"Transparency enabled : " + IIF(loPalette.Flags = 2,"YES", "NO") + SPACE(10) +;
+	"Flags : " + TRANSFORM(loPalette.Flags) + CHR(13)+;
+	"Animated GIF : " + IIF(llAnimatedGIF,"YES", "NO") + lcProperties
+	
+Thisform.Edit1.Visible = .T.
+
+IF loImg.Width <= Thisform.Image2.Width AND loImg.Height <= Thisform.Image2.Height
+	Thisform.Image2.Picture = Thisform.TxtFile.Value
+	Thisform.Image2.Visible = .T.
+ELSE
+	Thisform.Image2.Visible = .F. 	
+ENDIF
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1U40L3TVG
+[CLASS] commandbutton
+[BASECLASS] commandbutton
+[OBJNAME] Command3
+[PARENT] Form1
+[START PROPERTIES]
+Top = 204
+Left = 12
+Height = 25
+Width = 96
+Anchor = 1
+Picture = (home() + "/graphics/bitmaps/outline/open.bmp")
+Caption = "Get Picture"
+TabIndex = 1
+PicturePosition = 1
+PictureMargin = 1
+Name = "Command3"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Click
+LOCAL lcFile
+lcFile = GETPICT("gif")
+IF EMPTY(lcFile)
+	RETURN
+ENDIF
+Thisform.txtFile.Value = lcFile
+Thisform.Image1.Picture = lcFile
+Thisform.Imgcanvas1.Draw()
+
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1U40L3TVH
+[CLASS] textbox
+[BASECLASS] textbox
+[OBJNAME] txtFile
+[PARENT] Form1
+[START PROPERTIES]
+FontSize = 8
+Anchor = 131
+Enabled = .F.
+Height = 25
+Left = 120
+TabIndex = 2
+Top = 204
+Width = 384
+DisabledBackColor = 255,255,255
+DisabledForeColor = 0,0,0
+Name = "txtFile"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0L3VWK
+[CLASS] image
+[BASECLASS] image
+[OBJNAME] Image1
+[PARENT] Form1
+[START PROPERTIES]
+Anchor = 3
+Stretch = 1
+Height = 180
+Left = 12
+Top = 12
+Width = 240
+Name = "Image1"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1U51FF4QU
+[CLASS] editbox
+[BASECLASS] editbox
+[OBJNAME] Edit1
+[PARENT] Form1
+[START PROPERTIES]
+Anchor = 15
+Enabled = .F.
+Height = 160
+Left = 257
+ScrollBars = 0
+TabIndex = 3
+Top = 240
+Visible = .F.
+Width = 248
+DisabledBackColor = 255,255,255
+DisabledForeColor = 0,0,0
+Name = "Edit1"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1U600T0UZ
+[CLASS] image
+[BASECLASS] image
+[OBJNAME] Image2
+[PARENT] Form1
+[START PROPERTIES]
+Anchor = 2
+Height = 156
+Left = 12
+Top = 240
+Visible = .F.
+Width = 236
+Name = "Image2"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] RESERVED  
+[START PROPERTIES]
+Arial, 0, 9, 5, 15, 12, 32, 3, 0
+Arial, 0, 8, 5, 14, 11, 29, 3, 0
+[END PROPERTIES]
+[EOF]

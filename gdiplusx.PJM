@@ -1,0 +1,110 @@
+Version=  1.20
+Author=
+Company=
+Address=
+City=
+State=
+Zip=
+Country=
+SaveCode=.T.
+Debug=.T.
+Encrypt=.F.
+NoLogo=.F.
+CommentStyle=1
+Comments=
+CompanyName=
+FileDescription=
+LegalCopyright=
+LegalTrademarks=
+ProductName=
+Major=
+Minor=
+Revision=
+AutoIncrement=.F.
+[OLEServers]
+[OLEServersEnd]
+[ProjectFiles]
+ 917152325,V,source\gdiplusx.vcx,.F.,.F.,0,,,
+ 917152334,V,source\system.vcx,.F.,.F.,0,,,
+ 917152360,T,source\drawing.h,.F.,.F.,1252,,,
+ 917152364,T,source\gdiplusconstants.h,.F.,.F.,1252,,,
+ 917152366,T,source\system.h,.F.,.F.,1252,,,
+ 917152369,T,source\xpthemes.h,.F.,.F.,1252,,,
+ 917152476,V,samples\splitter.vcx,.F.,.F.,0,,,
+ 917152484,V,samples\themecontrols.vcx,.F.,.F.,0,,,
+ 917152489,K,samples\animatedgif.scx,.F.,.F.,0,,,
+ 917152493,K,samples\animatedtransformations.scx,.F.,.F.,0,,,
+ 917152498,K,samples\bezier.scx,.F.,.F.,0,,,
+ 917152503,K,samples\brushes.scx,.F.,.F.,0,,,
+ 917152515,K,samples\canvasdrawing.scx,.F.,.F.,0,,,
+ 917152529,K,samples\capture.scx,.F.,.F.,0,,,
+ 917152535,K,samples\charts.scx,.F.,.F.,0,,,
+ 917152554,K,samples\chessboard.scx,.F.,.F.,0,,,
+ 917152564,K,samples\colorchannel.scx,.F.,.F.,0,,,
+ 917152585,K,samples\colorkey.scx,.F.,.F.,0,,,
+ 917152768,K,samples\colormatricesadvanced.scx,.F.,.F.,0,,,
+ 917153194,K,samples\colormatricesbasic.scx,.F.,.F.,0,,,
+ 917153198,K,samples\colorpalette.scx,.F.,.F.,0,,,
+ 917153202,K,samples\extracticons.scx,.F.,.F.,0,,,
+ 917153207,K,samples\fillshapes.scx,.F.,.F.,0,,,
+ 917153211,K,samples\fontfamilies.scx,.F.,.F.,0,,,
+ 917153218,K,samples\foxhead.scx,.F.,.F.,0,,,
+ 917153223,K,samples\fulljustified.scx,.F.,.F.,0,,,
+ 917153227,K,samples\gammathreshold.scx,.F.,.F.,0,,,
+ 917153231,K,samples\gradient2.scx,.F.,.F.,0,,,
+ 917153235,K,samples\gradient3.scx,.F.,.F.,0,,,
+ 917153239,K,samples\gradient4.scx,.F.,.F.,0,,,
+ 917153243,K,samples\gradients.scx,.F.,.F.,0,,,
+ 917153250,K,samples\imagecodecinfo.scx,.F.,.F.,0,,,
+ 917153255,K,samples\imageprops.scx,.F.,.F.,0,,,
+ 917153259,K,samples\imagerotate.scx,.F.,.F.,0,,,
+ 917153266,K,samples\imgview.scx,.F.,.F.,0,,,
+ 917153270,K,samples\lines.scx,.F.,.F.,0,,,
+ 917153284,K,samples\lockbits.scx,.F.,.F.,0,,,
+ 917153287,K,samples\pens.scx,.F.,.F.,0,,,
+ 917153292,K,samples\piechart.scx,.F.,.F.,0,,,
+ 917153296,K,samples\playwithlogos.scx,.F.,.F.,0,,,
+ 917153300,K,samples\randomfills.scx,.F.,.F.,0,,,
+ 917153304,K,samples\remapcolors.scx,.F.,.F.,0,,,
+ 917153308,K,samples\resourcecanvas.scx,.F.,.F.,0,,,
+ 917153313,K,samples\rotation.scx,.F.,.F.,0,,,
+ 917153317,K,samples\samples.scx,.F.,.F.,0,,,
+ 917153322,K,samples\samples_old.scx,.F.,.F.,0,,,
+ 917153327,K,samples\shapesandsmoothing.scx,.F.,.F.,0,,,
+ 917153337,K,samples\stringpath.scx,.F.,.F.,0,,,
+ 917153341,K,samples\systemdemo.scx,.F.,.F.,0,,,
+ 917153348,K,samples\text.scx,.F.,.F.,0,,,
+ 917153353,K,samples\textblockshadow.scx,.F.,.F.,0,,,
+ 917153358,K,samples\textembossedengraved.scx,.F.,.F.,0,,,
+ 917153362,K,samples\texthalo.scx,.F.,.F.,0,,,
+ 917153367,K,samples\textreflectedsheared.scx,.F.,.F.,0,,,
+ 917153371,K,samples\textscaledsheared.scx,.F.,.F.,0,,,
+ 917153377,K,samples\textwithborder.scx,.F.,.F.,0,,,
+ 917153381,K,samples\textwithbrushes.scx,.F.,.F.,0,,,
+ 917153387,K,samples\themecontrolsdemo.scx,.F.,.F.,0,,,
+ 917153392,K,samples\themesample.scx,.F.,.F.,0,,,
+ 917153395,K,samples\transformations.scx,.F.,.F.,0,,,
+ 917153399,K,samples\transpgifs.scx,.F.,.F.,0,,,
+ 917153404,K,samples\vfpthemeexplorer.scx,.F.,.F.,0,,,
+ 917153445,P,samples\report_fulljustify.prg,.F.,.F.,1252,,,
+ 917153453,P,samples\report_logowatermark_cool.prg,.F.,.F.,1252,,,
+ 917153457,P,samples\report_logowatermark_greyscale.prg,.F.,.F.,1252,,,
+ 917153463,P,samples\report_rotatedtext.prg,.F.,.F.,1252,,,
+ 917153466,R,samples\imgview.frx,.F.,.F.,0,,,
+ 917153473,R,samples\report_fulljustify.frx,.F.,.F.,0,,,
+ 917153504,x,samples\image\cebolinha.png,.F.,.F.,1252,,,
+ 917153509,x,samples\image\climber.jpg,.F.,.F.,1252,,,
+ 917153515,x,samples\image\desert.jpg,.F.,.F.,1252,,,
+ 917153518,x,samples\image\foxite.gif,.F.,.F.,1252,,,
+ 917153525,x,samples\image\foxprologo2.gif,.F.,.F.,1252,,,
+ 917153528,x,samples\image\foxprologo2.png,.F.,.F.,1252,,,
+ 917153533,x,samples\image\gotdata.gif,.F.,.F.,1252,,,
+ 917153539,x,samples\image\runner.jpg,.F.,.F.,1252,,,
+ 917153542,x,samples\image\transpvfpxlogosmall.gif,.F.,.F.,1252,,,
+ 917153551,x,samples\image\vfpxlogosmall.gif,.F.,.F.,1252,,,
+ 917153555,x,samples\image\vfpxlogosmall.png,.F.,.F.,1252,,,
+ 917153559,x,samples\image\vfpxpoweredby.gif,.F.,.F.,1252,,,
+ 917153565,x,samples\image\vfpxpoweredby_alternative.gif,.F.,.F.,1252,,,
+ 917153840,P,samples\demo.prg,.F.,.T.,1252,,,
+ 925697760,P,source\system.prg,.F.,.F.,1252,,,
+[EOF]

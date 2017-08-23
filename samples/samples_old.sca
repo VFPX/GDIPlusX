@@ -1,0 +1,240 @@
+SCCTEXT Version 4.0.0.2
+PLATFORM C(8,0),UNIQUEID C(10,0),TIMESTAMP N(10,0),CLASS M(4,0),CLASSLOC M(4,0),BASECLASS M(4,0),OBJNAME M(4,0),PARENT M(4,0),PROPERTIES M(4,0),PROTECTED M(4,0),METHODS M(4,0),OBJCODE M(4,0),OLE M(4,0),OLE2 M(4,0),RESERVED1 M(4,0),RESERVED2 M(4,0),RESERVED3 M(4,0),RESERVED4 M(4,0),RESERVED5 M(4,0),RESERVED6 M(4,0),RESERVED7 M(4,0),RESERVED8 M(4,0),USER M(4,0)
+1252
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] Screen    
+[START RESERVED1]
+VERSION =   3.00[END RESERVED1]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1UZ1A05HA
+[CLASS] dataenvironment
+[BASECLASS] dataenvironment
+[OBJNAME] Dataenvironment
+[START PROPERTIES]
+Top = 220
+Left = 1
+Width = 520
+Height = 200
+DataSource = .NULL.
+Name = "Dataenvironment"
+[END PROPERTIES]
+[START RESERVED2]
+2[END RESERVED2]
+[START RESERVED4]
+1[END RESERVED4]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1UZ1A05HB
+[CLASS] cursor
+[BASECLASS] cursor
+[OBJNAME] Cursor1
+[PARENT] Dataenvironment
+[START PROPERTIES]
+Top = 20
+Left = 10
+Height = 90
+Width = 126
+Alias = "gdiplusxsamples"
+CursorSource = gdiplusxsamples.dbf
+Name = "Cursor1"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1UZ1A05HC
+[CLASS] form
+[BASECLASS] form
+[OBJNAME] Form1
+[START PROPERTIES]
+Height = 412
+Width = 389
+DoCreate = .T.
+AutoCenter = .T.
+Caption = "GDIPlusX Samples"
+WindowType = 1
+_memberdata =      101<VFPData><memberdata name="runselectedsample" type="method" display="RunSelectedSample"/></VFPData>
+
+Name = "Form1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Init
+SET PATH TO "samples" ADDITIVE
+SET PATH TO "source" ADDITIVE
+
+This.MinWidth = This.Width
+This.MinHeight = This.Height
+ENDPROC
+PROCEDURE runselectedsample
+LOCAL lcCommand
+lcCommand = gdiplusxsamples.runcmd
+
+IF "DO FORM " $ UPPER (lcCommand)
+	lcCommand = lcCommand + " NAME oSample"
+ENDIF
+
+TRY
+	&lcCommand
+	* EXECSCRIPT(gdiplusxsamples.runcmd)
+
+	IF VARTYPE(oSample) = "O"
+		oSample.AddObject("ImgVFPXPowered", "Image")
+		WITH oSample.ImgVFPXPowered
+			.Picture = "\Image\vfpxpoweredby_alternative.gif"
+			.Left = oSample.Width - .Width
+			.Top = oSample.Height - .Height
+			.Anchor = 192
+			.ZOrder(0)
+			.Visible = .T.
+		ENDWITH
+	ENDIF
+
+CATCH
+
+ENDTRY
+ENDPROC
+[END METHODS]
+[START RESERVED3]
+_memberdata XML Metadata for customizable properties
+*runselectedsample 
+[END RESERVED3]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1UZ1A05HD
+[CLASS] listbox
+[BASECLASS] listbox
+[OBJNAME] List1
+[PARENT] Form1
+[START PROPERTIES]
+Anchor = 15
+RowSourceType = 2
+RowSource = "gdiplusxsamples"
+Height = 242
+Left = 12
+Top = 84
+Width = 252
+IntegralHeight = .T.
+Name = "List1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE DblClick
+Thisform.RunSelectedSample()
+ENDPROC
+PROCEDURE InteractiveChange
+This.Parent.Refresh()
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1UZ1A05HA
+[CLASS] commandbutton
+[BASECLASS] commandbutton
+[OBJNAME] Command1
+[PARENT] Form1
+[START PROPERTIES]
+Top = 84
+Left = 288
+Height = 27
+Width = 84
+Anchor = 9
+Caption = "Run..."
+Name = "Command1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Click
+Thisform.RunSelectedSample()
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1UZ1AA7D2
+[CLASS] commandbutton
+[BASECLASS] commandbutton
+[OBJNAME] Command2
+[PARENT] Form1
+[START PROPERTIES]
+Top = 120
+Left = 288
+Height = 27
+Width = 84
+Anchor = 9
+Caption = "Modify..."
+Name = "Command2"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Click
+LOCAL lcCommand
+IF NOT EMPTY(gdiplusxsamples.editcmd)
+	lcCommand = gdiplusxsamples.editcmd
+	&lcCommand
+**	EXECSCRIPT(gdiplusxsamples.editcmd)
+ENDIF
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1UZ1ACWWC
+[CLASS] editbox
+[BASECLASS] editbox
+[OBJNAME] Edit1
+[PARENT] Form1
+[START PROPERTIES]
+Anchor = 14
+Height = 62
+Left = 12
+Top = 339
+Width = 361
+ControlSource = "gdiplusxsamples.notes"
+Name = "Edit1"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1YY1F1Z5M
+[CLASS] image
+[BASECLASS] image
+[OBJNAME] Image2
+[PARENT] Form1
+[START PROPERTIES]
+Picture = image\transpvfpxlogosmall.gif
+Stretch = 1
+BackStyle = 0
+Height = 60
+Left = 12
+Top = 12
+Width = 156
+Name = "Image2"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1Z0029Q12
+[CLASS] image
+[BASECLASS] image
+[OBJNAME] Image1
+[PARENT] Form1
+[START PROPERTIES]
+Anchor = 9
+Picture = image\vfpxpoweredby_alternative.gif
+Height = 16
+Left = 288
+Top = 12
+Width = 85
+Name = "Image1"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] RESERVED  
+[START PROPERTIES]
+Arial, 0, 9, 5, 15, 12, 32, 3, 0
+[END PROPERTIES]
+[EOF]

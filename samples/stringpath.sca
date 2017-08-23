@@ -1,0 +1,116 @@
+SCCTEXT Version 4.0.0.2
+PLATFORM C(8,0),UNIQUEID C(10,0),TIMESTAMP N(10,0),CLASS M(4,0),CLASSLOC M(4,0),BASECLASS M(4,0),OBJNAME M(4,0),PARENT M(4,0),PROPERTIES M(4,0),PROTECTED M(4,0),METHODS M(4,0),OBJCODE M(4,0),OLE M(4,0),OLE2 M(4,0),RESERVED1 M(4,0),RESERVED2 M(4,0),RESERVED3 M(4,0),RESERVED4 M(4,0),RESERVED5 M(4,0),RESERVED6 M(4,0),RESERVED7 M(4,0),RESERVED8 M(4,0),USER M(4,0)
+1252
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] Screen    
+[START RESERVED1]
+VERSION =   3.00[END RESERVED1]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1V00KWTK5
+[CLASS] dataenvironment
+[BASECLASS] dataenvironment
+[OBJNAME] Dataenvironment
+[START PROPERTIES]
+Top = 0
+Left = 0
+Width = 0
+Height = 0
+DataSource = .NULL.
+Name = "Dataenvironment"
+[END PROPERTIES]
+[START RESERVED2]
+1[END RESERVED2]
+[START RESERVED4]
+1[END RESERVED4]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1V00KWTK6
+[CLASS] form
+[BASECLASS] form
+[OBJNAME] Form1
+[START PROPERTIES]
+Top = 0
+Left = 0
+Height = 306
+Width = 457
+DoCreate = .T.
+Caption = "Text to Graphics Path drawn using texture image"
+_memberdata =      528<?xml version="1.0"     encoding="Windows-1252" standalone="yes" ?>     
+
+<VFPData>
+
+<memberdata name="foomethod" type="method"     display="fooMethod"     favorites="True"/>
+
+<memberdata name="Form1" type="property" display="Form1" favorites="True"/>
+
+<memberdata name="_memberdata" type="property" display="_MemberData" favorites="True"/>
+
+<memberdata name="baseclass" type="property" display="BaseClasS" favorites="True"/>
+
+<memberdata name="error" type="method" display="eRRor" favorites="True"/>
+
+</VFPData>
+
+Name = "Form1"
+[END PROPERTIES]
+[START RESERVED3]
+_memberdata XML Metadata for customizable properties
+[END RESERVED3]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1V00KWTK7
+[CLASS] imgcanvas
+[CLASSLOC] ..\gdiplusx.vcx
+[BASECLASS] image
+[OBJNAME] Imgcanvas1
+[PARENT] Form1
+[START PROPERTIES]
+Anchor = 15
+Height = 276
+Left = 12
+Top = 12
+Width = 432
+Name = "Imgcanvas1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE beforedraw
+LOCAL oGfx AS xfcGraphics
+LOCAL oPth AS xfcGraphicsPath
+LOCAL oBrsh AS xfcTextureBrush
+LOCAL oImg AS xfcImage
+LOCAL oFam AS xfcFontFamily
+
+WITH _SCREEN.System.Drawing
+
+	cString = "Using VFP and SednaX to render text with a Texture brush"
+
+	oGfx = This.oGfx
+	oGfx.SmoothingMode = 4
+
+	oRect = .Rectangle.New(0,0,This.Width,This.Height)
+	oImg = .Image.FromFile(HOME(4)+[Gifs\morphfox.gif])
+	oFam = .FontFamily.New("Arial",32)
+	oBrsh = .TextureBrush.New(oImg)
+
+	oPth = .Drawing2D.GraphicsPath.New()
+	oPth.AddString(cString, oFam, 1, 40, oRect)
+
+	oGfx.FillPath(oBrsh, oPth)
+	
+ENDWITH
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] RESERVED  
+[START PROPERTIES]
+Arial, 0, 9, 5, 15, 12, 32, 3, 0
+[END PROPERTIES]
+[EOF]

@@ -1,0 +1,647 @@
+SCCTEXT Version 4.0.0.2
+PLATFORM C(8,0),UNIQUEID C(10,0),TIMESTAMP N(10,0),CLASS M(4,0),CLASSLOC M(4,0),BASECLASS M(4,0),OBJNAME M(4,0),PARENT M(4,0),PROPERTIES M(4,0),PROTECTED M(4,0),METHODS M(4,0),OBJCODE M(4,0),OLE M(4,0),OLE2 M(4,0),RESERVED1 M(4,0),RESERVED2 M(4,0),RESERVED3 M(4,0),RESERVED4 M(4,0),RESERVED5 M(4,0),RESERVED6 M(4,0),RESERVED7 M(4,0),RESERVED8 M(4,0),USER M(4,0)
+1252
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] Screen    
+[START RESERVED1]
+VERSION =   3.00[END RESERVED1]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0L3VWK
+[CLASS] dataenvironment
+[BASECLASS] dataenvironment
+[OBJNAME] Dataenvironment
+[START PROPERTIES]
+Top = 0
+Left = 0
+Width = 0
+Height = 0
+DataSource = .NULL.
+Name = "Dataenvironment"
+[END PROPERTIES]
+[START RESERVED2]
+1[END RESERVED2]
+[START RESERVED4]
+1[END RESERVED4]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0L3VWL
+[CLASS] form
+[BASECLASS] form
+[OBJNAME] Form1
+[START PROPERTIES]
+Top = 20
+Left = 14
+Height = 375
+Width = 425
+DoCreate = .T.
+Caption = "Gradient BackGround Test"
+MinHeight = 150
+MinWidth = 300
+Name = "Form1"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TZ0QGKPH
+[CLASS] imgcanvas
+[CLASSLOC] ..\source\gdiplusx.vcx
+[BASECLASS] image
+[OBJNAME] Imgcanvas1
+[PARENT] Form1
+[START PROPERTIES]
+Anchor = 15
+Height = 84
+Left = 0
+Top = 0
+Width = 108
+Name = "Imgcanvas1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE beforedraw
+LOCAL loBrush AS xfcLinearGradientBrush
+LOCAL loBlend AS xfcBlend
+
+WITH _Screen.System.Drawing
+  loBrush = .Drawing2D.LinearGradientBrush.New(This.Rectangle,;
+     .Color.FromRGB(Thisform.Text1.DisabledBackColor), ;
+     .Color.FromRGB(Thisform.Text2.DisabledBackColor),;
+     Thisform.Spinner1.Value)
+
+	loColorBlend = .Drawing2D.ColorBlend.New(Thisform.spnColors.Value)
+	loColorBlend.Colors = .Color.NewArray( ;
+		.Color.FromRGB(Thisform.Text1.DisabledBackColor), ;
+		.Color.FromRGB(Thisform.Text2.DisabledBackColor), ;
+		.Color.FromRGB(Thisform.Cnt3.Text3.DisabledBackColor), ;
+		.Color.FromRGB(Thisform.Cnt4.Text4.DisabledBackColor))
+
+	loColorBlend.Positions = _SCREEN.System.Single.NewArray( ;
+			Thisform.spnPos1.Value, ;
+			Thisform.spnPos2.Value, ;
+			Thisform.Cnt3.spnPos3.Value, ;
+			Thisform.Cnt4.spnPos4.Value)
+
+	loBrush.InterpolationColors = loColorBlend
+
+  This.oGfx.FillRectangle(loBrush, This.Rectangle)
+ENDWITH
+
+RETURN
+ENDPROC
+PROCEDURE draw
+DODEFAULT()
+Thisform.Image1.PictureVal = This.PictureVal
+ENDPROC
+PROCEDURE setup
+This.Width = Thisform.Width
+This.Height = Thisform.Height
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1U00XBZIA
+[CLASS] image
+[BASECLASS] image
+[OBJNAME] Image1
+[PARENT] Form1
+[START PROPERTIES]
+Anchor = 12
+Stretch = 2
+Height = 144
+Left = 101
+Top = 220
+Width = 313
+Name = "Image1"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0L3VWK
+[CLASS] container
+[BASECLASS] container
+[OBJNAME] Cnt4
+[PARENT] Form1
+[START PROPERTIES]
+Anchor = 12
+Top = 330
+Left = 221
+Width = 184
+Height = 25
+BackStyle = 0
+BorderWidth = 0
+TabIndex = 6
+Name = "Cnt4"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1U002S8C6
+[CLASS] commandbutton
+[BASECLASS] commandbutton
+[OBJNAME] cmdColor4
+[PARENT] Form1.Cnt4
+[START PROPERTIES]
+Top = 0
+Left = 13
+Height = 25
+Width = 85
+Anchor = 12
+Caption = "Color 4"
+TabIndex = 1
+Name = "cmdColor4"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Click
+WITH Thisform
+	lnColor = GETCOLOR(.cnt4.Text4.DisabledBackColor)
+	.cnt4.Text4.DisabledBackColor = lnColor
+	.imgcanvas1.Draw()
+ENDWITH
+
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1U002S8C7
+[CLASS] textbox
+[BASECLASS] textbox
+[OBJNAME] Text4
+[PARENT] Form1.Cnt4
+[START PROPERTIES]
+Anchor = 12
+Enabled = .F.
+Height = 25
+Left = 106
+TabIndex = 2
+Top = 0
+Width = 25
+DisabledBackColor = 0,0,255
+Name = "Text4"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1U002S8C9
+[CLASS] spinner
+[BASECLASS] spinner
+[OBJNAME] spnPos4
+[PARENT] Form1.Cnt4
+[START PROPERTIES]
+Anchor = 12
+Enabled = .F.
+Height = 25
+Increment =   0.10
+InputMask = "9.9"
+KeyboardHighValue = 1
+KeyboardLowValue = 0
+Left = 139
+SpinnerHighValue =   1.00
+SpinnerLowValue =   0.00
+TabIndex = 3
+Top = 0
+Width = 45
+DisabledBackColor = 245,245,245
+DisabledForeColor = 0,0,0
+Value = 1.0
+Name = "spnPos4"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE InteractiveChange
+Thisform.imgcanvas1.Draw()
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0MMFWF
+[CLASS] label
+[BASECLASS] label
+[OBJNAME] Label1
+[PARENT] Form1
+[START PROPERTIES]
+FontBold = .T.
+FontSize = 22
+Anchor = 240
+Alignment = 2
+BackStyle = 0
+Caption = "GDI+ is cool !"
+Height = 36
+Left = 105
+Top = 72
+Width = 190
+TabIndex = 9
+ForeColor = 255,255,255
+Name = "Label1"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TZ053EID
+[CLASS] commandbutton
+[BASECLASS] commandbutton
+[OBJNAME] cmdColor1
+[PARENT] Form1
+[START PROPERTIES]
+Top = 246
+Left = 234
+Height = 25
+Width = 85
+Anchor = 12
+Caption = "Color 1"
+TabIndex = 1
+Name = "cmdColor1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Click
+WITH Thisform
+	.Text1.DisabledBackColor = GETCOLOR(.Text1.DisabledBackColor)
+	.imgcanvas1.Draw()
+ENDWITH
+
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0L3VWK
+[CLASS] commandbutton
+[BASECLASS] commandbutton
+[OBJNAME] cmdColor2
+[PARENT] Form1
+[START PROPERTIES]
+Top = 274
+Left = 234
+Height = 25
+Width = 85
+Anchor = 12
+Caption = "Color 2"
+TabIndex = 3
+Name = "cmdColor2"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Click
+WITH Thisform
+	.Text2.DisabledBackColor = GETCOLOR(.Text2.DisabledBackColor)
+	.imgcanvas1.Draw()
+ENDWITH
+
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0L3VWK
+[CLASS] textbox
+[BASECLASS] textbox
+[OBJNAME] Text1
+[PARENT] Form1
+[START PROPERTIES]
+Anchor = 12
+Enabled = .F.
+Height = 25
+Left = 327
+TabIndex = 10
+Top = 246
+Width = 25
+DisabledBackColor = 255,0,0
+Name = "Text1"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0L3VWL
+[CLASS] textbox
+[BASECLASS] textbox
+[OBJNAME] Text2
+[PARENT] Form1
+[START PROPERTIES]
+Anchor = 12
+Enabled = .F.
+Height = 25
+Left = 327
+TabIndex = 11
+Top = 274
+Width = 25
+DisabledBackColor = 255,255,0
+Name = "Text2"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TZ17Q0AA
+[CLASS] spinner
+[BASECLASS] spinner
+[OBJNAME] spnPos1
+[PARENT] Form1
+[START PROPERTIES]
+Anchor = 12
+Enabled = .F.
+Height = 25
+Increment =   0.10
+InputMask = "9.9"
+KeyboardHighValue = 1
+KeyboardLowValue = 0
+Left = 360
+SpinnerHighValue =   1.00
+SpinnerLowValue =   0.00
+TabIndex = 2
+Top = 246
+Width = 45
+DisabledBackColor = 245,245,245
+DisabledForeColor = 0,0,0
+Value = 0
+Name = "spnPos1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE InteractiveChange
+Thisform.imgcanvas1.Draw()
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TZ17Q0AB
+[CLASS] spinner
+[BASECLASS] spinner
+[OBJNAME] spnPos2
+[PARENT] Form1
+[START PROPERTIES]
+Anchor = 12
+Height = 25
+Increment =   0.10
+InputMask = "9.9"
+KeyboardHighValue = 1
+KeyboardLowValue = 0
+Left = 360
+SpinnerHighValue =   1.00
+SpinnerLowValue =   0.00
+TabIndex = 4
+Top = 274
+Width = 45
+DisabledBackColor = 245,245,245
+DisabledForeColor = 0,0,0
+Value = 0.3
+Name = "spnPos2"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE InteractiveChange
+Thisform.imgcanvas1.Draw()
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TZ17Q0AE
+[CLASS] spinner
+[BASECLASS] spinner
+[OBJNAME] spnColors
+[PARENT] Form1
+[START PROPERTIES]
+Anchor = 12
+Height = 25
+KeyboardHighValue = 4
+KeyboardLowValue = 2
+Left = 185
+SpinnerHighValue =   4.00
+SpinnerLowValue =   2.00
+TabIndex = 7
+Top = 246
+Width = 36
+Value = 4
+Name = "spnColors"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE InteractiveChange
+DO CASE
+	CASE This.Value = 4
+		Thisform.SpnPos2.Value = .33
+		Thisform.SpnPos2.Enabled = .T.
+		
+		Thisform.Cnt3.SpnPos3.Value = .67
+		Thisform.Cnt3.Visible = .T.
+		Thisform.Cnt3.SpnPos3.Enabled = .T.
+		
+		Thisform.Cnt4.Visible = .T.
+
+	
+	CASE This.Value = 3
+		Thisform.SpnPos2.Value = .5
+		Thisform.SpnPos2.Enabled = .T.
+
+		Thisform.Cnt3.Visible = .T.
+		Thisform.Cnt3.SpnPos3.Value = 1		
+		Thisform.Cnt3.SpnPos3.Enabled = .F.
+
+		Thisform.Cnt4.Visible = .F.
+
+	CASE This.Value = 2
+		Thisform.SpnPos2.Value = 1
+		Thisform.SpnPos2.Enabled = .F.
+
+		Thisform.Cnt3.Visible = .F.
+
+		Thisform.Cnt4.Visible = .F.
+
+		
+ENDCASE 	
+Thisform.imgcanvas1.Draw()
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0L3VWK
+[CLASS] label
+[BASECLASS] label
+[OBJNAME] Label4
+[PARENT] Form1
+[START PROPERTIES]
+AutoSize = .T.
+Anchor = 12
+BackStyle = 0
+Caption = "Colors (2-4)"
+Height = 17
+Left = 113
+Top = 246
+Width = 68
+TabIndex = 12
+Name = "Label4"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TZ17Q0AF
+[CLASS] label
+[BASECLASS] label
+[OBJNAME] Label5
+[PARENT] Form1
+[START PROPERTIES]
+AutoSize = .T.
+Anchor = 12
+BackStyle = 0
+Caption = "Position"
+Height = 17
+Left = 360
+Top = 226
+Width = 47
+TabIndex = 13
+Name = "Label5"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1U002S8CB
+[CLASS] spinner
+[BASECLASS] spinner
+[OBJNAME] Spinner1
+[PARENT] Form1
+[START PROPERTIES]
+Anchor = 12
+Height = 25
+KeyboardHighValue = 3
+KeyboardLowValue = 0
+Left = 185
+SpinnerHighValue =   3.00
+SpinnerLowValue =   0.00
+TabIndex = 8
+Top = 302
+Width = 36
+Value = 0
+Name = "Spinner1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE InteractiveChange
+Thisform.imgcanvas1.Draw()
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1U002S8CC
+[CLASS] label
+[BASECLASS] label
+[OBJNAME] Label2
+[PARENT] Form1
+[START PROPERTIES]
+AutoSize = .F.
+Anchor = 12
+WordWrap = .T.
+BackStyle = 0
+Caption = "Gradient Mode"
+Height = 36
+Left = 132
+Top = 302
+Width = 53
+TabIndex = 14
+Name = "Label2"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1U002S8CD
+[CLASS] container
+[BASECLASS] container
+[OBJNAME] cnt3
+[PARENT] Form1
+[START PROPERTIES]
+Anchor = 12
+Top = 302
+Left = 221
+Width = 184
+Height = 25
+BackStyle = 0
+BorderWidth = 0
+TabIndex = 5
+Name = "cnt3"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1U002S8CE
+[CLASS] commandbutton
+[BASECLASS] commandbutton
+[OBJNAME] cmdColor3
+[PARENT] Form1.cnt3
+[START PROPERTIES]
+Top = 0
+Left = 13
+Height = 25
+Width = 85
+Anchor = 12
+Caption = "Color 3"
+TabIndex = 1
+Name = "cmdColor3"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Click
+WITH Thisform
+	.Cnt3.Text3.DisabledBackColor = GETCOLOR(.cnt3.Text3.DisabledBackColor)
+	.imgcanvas1.Draw()
+ENDWITH
+
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1U002S8CF
+[CLASS] textbox
+[BASECLASS] textbox
+[OBJNAME] Text3
+[PARENT] Form1.cnt3
+[START PROPERTIES]
+Anchor = 12
+Enabled = .F.
+Height = 25
+Left = 106
+TabIndex = 2
+Top = 0
+Width = 25
+DisabledBackColor = 0,255,0
+Name = "Text3"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1U002S8CH
+[CLASS] spinner
+[BASECLASS] spinner
+[OBJNAME] spnPos3
+[PARENT] Form1.cnt3
+[START PROPERTIES]
+Anchor = 12
+Height = 25
+Increment =   0.10
+InputMask = "9.9"
+KeyboardHighValue = 1
+KeyboardLowValue = 0
+Left = 139
+SpinnerHighValue =   1.00
+SpinnerLowValue =   0.00
+TabIndex = 3
+Top = 0
+Width = 45
+DisabledBackColor = 245,245,245
+DisabledForeColor = 0,0,0
+Value = 0.7
+Name = "spnPos3"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE InteractiveChange
+Thisform.imgcanvas1.Draw()
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] RESERVED  
+[START PROPERTIES]
+Arial, 0, 9, 5, 15, 12, 32, 3, 0
+[END PROPERTIES]
+[EOF]

@@ -1,0 +1,377 @@
+SCCTEXT Version 4.0.0.2
+PLATFORM C(8,0),UNIQUEID C(10,0),TIMESTAMP N(10,0),CLASS M(4,0),CLASSLOC M(4,0),BASECLASS M(4,0),OBJNAME M(4,0),PARENT M(4,0),PROPERTIES M(4,0),PROTECTED M(4,0),METHODS M(4,0),OBJCODE M(4,0),OLE M(4,0),OLE2 M(4,0),RESERVED1 M(4,0),RESERVED2 M(4,0),RESERVED3 M(4,0),RESERVED4 M(4,0),RESERVED5 M(4,0),RESERVED6 M(4,0),RESERVED7 M(4,0),RESERVED8 M(4,0),USER M(4,0)
+1252
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] Screen    
+[START RESERVED1]
+VERSION =   3.00[END RESERVED1]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0L3VWK
+[CLASS] dataenvironment
+[BASECLASS] dataenvironment
+[OBJNAME] Dataenvironment
+[START PROPERTIES]
+Top = 220
+Left = 1
+Width = 520
+Height = 200
+DataSource = .NULL.
+Name = "Dataenvironment"
+[END PROPERTIES]
+[START RESERVED2]
+1[END RESERVED2]
+[START RESERVED4]
+1[END RESERVED4]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0L3VWL
+[CLASS] form
+[BASECLASS] form
+[OBJNAME] Form1
+[START PROPERTIES]
+Top = 28
+Left = 1
+Height = 407
+Width = 662
+DoCreate = .T.
+Caption = "Full Justified Text"
+mode = 0
+_memberdata =      653<?xml version="1.0" standalone="yes"?>
+<VFPData>
+	<memberdata name="foomethod" type="method" display="fooMethod" favorites="True"/>
+	<memberdata name="Form1" type="property" display="Form1" favorites="True"/>
+	<memberdata name="_memberdata" type="property" display="_MemberData" favorites="True"/>
+	<memberdata name="baseclass" type="property" display="BaseClasS" favorites="True"/>
+	<memberdata name="error" type="method" display="eRRor" favorites="True"/>
+	<memberdata name="drawfulljustifiedstring" type="method" display="DrawFullJustifiedString" favorites="True"/><memberdata name="declaredll" type="method" display="DeclareDll"/></VFPData>
+
+Name = "Form1"
+[END PROPERTIES]
+[START RESERVED3]
+mode
+_memberdata XML Metadata for customizable properties
+[END RESERVED3]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0L3VWK
+[CLASS] textbox
+[BASECLASS] textbox
+[OBJNAME] TxtFontName
+[PARENT] Form1
+[START PROPERTIES]
+Value = Verdana
+Height = 25
+Left = 12
+TabIndex = 4
+Top = 48
+Width = 108
+Name = "TxtFontName"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Valid
+This.Value = PROPER(ALLTRIM(This.Value))
+Thisform.Imgcanvas1.Draw()
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0L3VWK
+[CLASS] commandbutton
+[BASECLASS] commandbutton
+[OBJNAME] cmdGetFont
+[PARENT] Form1
+[START PROPERTIES]
+Top = 12
+Left = 12
+Height = 25
+Width = 108
+Caption = "Choose Font"
+TabIndex = 3
+Name = "cmdGetFont"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Click
+lcFont = GETFONT()
+IF EMPTY(lcFont)
+	RETURN
+ENDIF
+
+Thisform.TxtFontName.Value = GETWORDNUM(lcFont,1,',')
+Thisform.TxtFontSize.Value = VAL(GETWORDNUM(lcFont,2,','))
+Thisform.TxtFontStyle.Value = GETWORDNUM(lcFont,3,',')
+Thisform.Imgcanvas1.Draw()
+
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1YI1FCYP0
+[CLASS] textbox
+[BASECLASS] textbox
+[OBJNAME] TxtFontSize
+[PARENT] Form1
+[START PROPERTIES]
+Alignment = 3
+Value = 9
+Height = 25
+Left = 132
+TabIndex = 5
+Top = 48
+Width = 30
+Name = "TxtFontSize"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Valid
+Thisform.Imgcanvas1.Draw()
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1YI1FCYP1
+[CLASS] textbox
+[BASECLASS] textbox
+[OBJNAME] TxtFontStyle
+[PARENT] Form1
+[START PROPERTIES]
+Value = 
+Height = 25
+Left = 168
+TabIndex = 6
+Top = 48
+Width = 24
+Name = "TxtFontStyle"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Valid
+Thisform.Imgcanvas1.Draw()
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0L3VWK
+[CLASS] label
+[BASECLASS] label
+[OBJNAME] Label2
+[PARENT] Form1
+[START PROPERTIES]
+AutoSize = .T.
+FontSize = 11
+Caption = "Resize this window and see how fast the full text justifying works !"
+Height = 19
+Left = 204
+Top = 12
+Width = 428
+TabIndex = 5
+Name = "Label2"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0L3VWK
+[CLASS] imgcanvas
+[CLASSLOC] ..\source\gdiplusx.vcx
+[BASECLASS] image
+[OBJNAME] Imgcanvas1
+[PARENT] Form1
+[START PROPERTIES]
+Anchor = 15
+Height = 360
+Left = 204
+Top = 36
+Width = 444
+smoothingmode = 0
+Name = "Imgcanvas1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE beforedraw
+LOCAL lcText as Character
+TEXT TO lcText NOSHOW
+GDIPlusX is a set of VFP 9.0 class libraries that wrap the 603 GDI+ Flat API functions of GDIPlus.dll.
+The library currently consist of 83 VFP classes and 1,146 methods. The project is still under development so not all classes have been completed and several of the classes/methods are still being tested. The Readme.htm file, included with the download, shows the current coding status of each class. As of August 31, 2006, the overall status of the library is about 97% coded and 60% tested.
+The object model of these classes closely emulates the classes contained in the System.Drawing namespace of Visual Studio .NET. This not only makes the library easier to use, but also allows VFP developers to tap into thousands of GDI+ code samples, written in .NET, that can be easily translated to VFP code.
+The Help folder contained in the GDIPlusX download has several sample programs that were converted from the System.Drawing documentation in .NET.
+
+Get the latest release:
+http://www.codeplex.com/VFPX/Wiki/View.aspx?title=GDIPlusX
+
+If you would like to be involved in the project, please send an email to gdiplusx@moxiedata.com
+To report any issues with the library, please use the Issue Tracker in CodePlex.
+ENDTEXT
+
+WITH _Screen.System.Drawing
+
+	*!* Fill Image with Background color
+	This.oGfx.Clear(.Color.White)
+
+	LOCAL loTextBrush AS xfcSolidBrush
+	loTextBrush = .SolidBrush.New(.Color.Black)
+
+
+	LOCAL lcStyle
+	lcStyle = Thisform.TxtFontStyle.Value
+
+*	LOCAL loStyle as xfcFontStyle
+	DO CASE
+	CASE lcStyle == "B"
+		loStyle = .FontStyle.Bold
+	CASE lcStyle == "I"
+		loStyle = .FontStyle.Italic
+	CASE lcStyle == "BI"
+		loStyle = .FontStyle.BoldItalic
+	OTHERWISE
+		loStyle = .FontStyle.Regular
+	ENDCASE
+	
+	* Create Font Object
+	LOCAL loFont AS xfcFont
+	loFont = .Font.New(Thisform.TxtFontName.Value, Thisform.TxtFontSize.Value, loStyle)
+
+
+	LOCAL lnOption
+	lnOption = Thisform.OptionAlign.Value
+	
+	LOCAL loStringFormat as xfcStringFormat
+	loStringFormat = _Screen.System.Drawing.StringFormat.New()
+	
+	DO CASE
+	CASE lnOption = 1 && Left Align
+		loStringFormat.Alignment = _Screen.System.Drawing.StringAlignment.Near
+		This.oGfx.DrawString(lcText, loFont, loTextBrush, ;
+			This.Rectangle, loStringFormat)
+	CASE lnOption = 2 && Centered
+		loStringFormat.Alignment = _Screen.System.Drawing.StringAlignment.Center
+		This.oGfx.DrawString(lcText, loFont, loTextBrush, ;
+			This.Rectangle, loStringFormat)
+
+	CASE lnOption = 3 && Right Align
+		loStringFormat.Alignment = _Screen.System.Drawing.StringAlignment.Far
+		This.oGfx.DrawString(lcText, loFont, loTextBrush, ;
+			This.Rectangle, loStringFormat)
+
+	CASE lnOption = 4 && Full Justify
+		* Draw the Full-Justified text
+		LOCAL lnSecs
+		lnSecs = SECONDS()
+		This.oGfx.DrawStringJustified(lcText, loFont, loTextBrush, This.Rectangle)
+		WAIT WINDOW ("Elapsed " + TRANSFORM(SECONDS() - lnSecs) + " Seconds.") NOWAIT
+	ENDCASE
+
+	* Draw Border if required
+	IF Thisform.OptionBorder.Value = 2 && Red Border
+		This.oGfx.DrawRectangle(.Pen.New(.Color.Red,1), 0, 0, This.Width - 1, This.Height - 1)
+	ENDIF
+	
+ENDWITH
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0L3VWK
+[CLASS] optiongroup
+[BASECLASS] optiongroup
+[OBJNAME] OptionAlign
+[PARENT] Form1
+[START PROPERTIES]
+ButtonCount = 4
+Value = 4
+Height = 84
+Left = 12
+Top = 144
+Width = 132
+Name = "OptionAlign"
+Option1.Caption = "Left Aligned"
+Option1.Value = 0
+Option1.Height = 17
+Option1.Left = 5
+Option1.Top = 5
+Option1.Width = 82
+Option1.AutoSize = .T.
+Option1.Name = "Option1"
+Option2.Caption = "Centered"
+Option2.Height = 17
+Option2.Left = 5
+Option2.Top = 24
+Option2.Width = 69
+Option2.AutoSize = .T.
+Option2.Name = "Option2"
+Option3.Caption = "Right Aligned"
+Option3.Height = 17
+Option3.Left = 5
+Option3.Top = 43
+Option3.Width = 91
+Option3.AutoSize = .T.
+Option3.Name = "Option3"
+Option4.FontBold = .T.
+Option4.Caption = "Full Justified Text"
+Option4.Value = 1
+Option4.Height = 17
+Option4.Left = 5
+Option4.Top = 62
+Option4.Width = 117
+Option4.AutoSize = .T.
+Option4.ForeColor = 0,0,255
+Option4.Name = "Option4"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE InteractiveChange
+Thisform.Imgcanvas1.Draw()
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1ZS0MZBAC
+[CLASS] optiongroup
+[BASECLASS] optiongroup
+[OBJNAME] OptionBorder
+[PARENT] Form1
+[START PROPERTIES]
+ButtonCount = 2
+Value = 2
+Height = 48
+Left = 12
+Top = 264
+Width = 132
+Name = "OptionBorder"
+Option1.Caption = "No Border"
+Option1.Value = 0
+Option1.Height = 17
+Option1.Left = 5
+Option1.Top = 5
+Option1.Width = 74
+Option1.AutoSize = .T.
+Option1.Name = "Option1"
+Option2.Caption = "Red Border"
+Option2.Value = 1
+Option2.Height = 17
+Option2.Left = 5
+Option2.Top = 24
+Option2.Width = 81
+Option2.AutoSize = .T.
+Option2.Name = "Option2"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE InteractiveChange
+Thisform.Imgcanvas1.Draw()
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] RESERVED  
+[START PROPERTIES]
+Arial, 0, 9, 5, 15, 12, 32, 3, 0
+Arial, 1, 9, 6, 15, 12, 32, 3, 0
+[END PROPERTIES]
+[EOF]

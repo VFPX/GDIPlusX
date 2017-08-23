@@ -1,0 +1,671 @@
+SCCTEXT Version 4.0.0.2
+PLATFORM C(8,0),UNIQUEID C(10,0),TIMESTAMP N(10,0),CLASS M(4,0),CLASSLOC M(4,0),BASECLASS M(4,0),OBJNAME M(4,0),PARENT M(4,0),PROPERTIES M(4,0),PROTECTED M(4,0),METHODS M(4,0),OBJCODE M(4,0),OLE M(4,0),OLE2 M(4,0),RESERVED1 M(4,0),RESERVED2 M(4,0),RESERVED3 M(4,0),RESERVED4 M(4,0),RESERVED5 M(4,0),RESERVED6 M(4,0),RESERVED7 M(4,0),RESERVED8 M(4,0),USER M(4,0)
+1252
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] Screen    
+[START RESERVED1]
+VERSION =   3.00[END RESERVED1]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0L3VWK
+[CLASS] dataenvironment
+[BASECLASS] dataenvironment
+[OBJNAME] Dataenvironment
+[START PROPERTIES]
+Top = 220
+Left = 1
+Width = 520
+Height = 200
+DataSource = .NULL.
+Name = "Dataenvironment"
+[END PROPERTIES]
+[START RESERVED2]
+1[END RESERVED2]
+[START RESERVED4]
+1[END RESERVED4]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0L3VWL
+[CLASS] form
+[BASECLASS] form
+[OBJNAME] Form1
+[START PROPERTIES]
+Top = 10
+Left = 2
+Height = 419
+Width = 674
+DoCreate = .T.
+Caption = "Text with Different Brushes"
+mode = 0
+_memberdata =      528<?xml version="1.0"     encoding="Windows-1252" standalone="yes" ?>     
+
+<VFPData>
+
+<memberdata name="foomethod" type="method"     display="fooMethod"     favorites="True"/>
+
+<memberdata name="Form1" type="property" display="Form1" favorites="True"/>
+
+<memberdata name="_memberdata" type="property" display="_MemberData" favorites="True"/>
+
+<memberdata name="baseclass" type="property" display="BaseClasS" favorites="True"/>
+
+<memberdata name="error" type="method" display="eRRor" favorites="True"/>
+
+</VFPData>
+
+Name = "Form1"
+[END PROPERTIES]
+[START RESERVED3]
+mode
+_memberdata XML Metadata for customizable properties
+[END RESERVED3]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0L3VWK
+[CLASS] imgcanvas
+[CLASSLOC] ..\gdiplusx.vcx
+[BASECLASS] image
+[OBJNAME] Imgcanvas1
+[PARENT] Form1
+[START PROPERTIES]
+Anchor = 15
+Height = 60
+Left = 240
+Top = 108
+Width = 420
+smoothingmode = 0
+Name = "Imgcanvas1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE beforedraw
+*!*	Based on Tom Archer's article at CodeGuru.com
+*!*	http://www.codeguru.com/columns/dotnettips/article.php/c8441/
+
+LOCAL loFont AS xfcFont
+LOCAL loBrush AS xfcLinearGradientBrush
+LOCAL loRectangleF As xfcRectangleF
+LOCAL loSizeF AS xfcSizeF
+
+WITH _SCREEN.SYSTEM.Drawing
+	This.Clear()
+
+	LOCAL lcStyle
+	lcStyle = Thisform.TxtFontStyle.Value
+	DO CASE
+	CASE lcStyle == "B"
+		loStyle = .FontStyle.Bold
+	CASE lcStyle == "I"
+		loStyle = .FontStyle.Italic
+	CASE lcStyle == "BI"
+		loStyle = .FontStyle.BoldItalic
+	OTHERWISE
+		loStyle = .FontStyle.Regular
+	ENDCASE
+	
+	loFont = .Font.New(Thisform.TxtFontName.Value, Thisform.TxtFontSize.Value, loStyle)
+
+	loSizeF = This.oGfx.MeasureString(Thisform.TxtText.Value, loFont)
+	loRectangleF = _screen.system.Drawing.RectangleF.New(0,0,loSizeF.Width, loSizeF.Height)
+	
+	loBrush = .Drawing2D.LinearGradientBrush.New(loRectangleF,;
+		.Color.FromRGB(Thisform.Shape1.BackColor), ;
+		.Color.FromRGB(Thisform.Shape2.BackColor),;
+		Thisform.SpnGradMode.Value)
+
+	This.oGfx.DrawString(Thisform.TxtText.Value, loFont, ;
+		loBrush, loRectangleF)
+
+ENDWITH
+RETURN
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1U40L3TVH
+[CLASS] textbox
+[BASECLASS] textbox
+[OBJNAME] txtText
+[PARENT] Form1
+[START PROPERTIES]
+Anchor = 131
+Value = GdiPlus-X is Cool !
+Height = 25
+Left = 240
+TabIndex = 1
+Top = 36
+Width = 420
+Name = "txtText"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE InteractiveChange
+LPARAMETERS nKeyCode, nShiftAltCtrl
+DODEFAULT()
+Thisform.Imgcanvas1.Draw()
+Thisform.Imgcanvas2.Draw()
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0L3VWK
+[CLASS] commandbutton
+[BASECLASS] commandbutton
+[OBJNAME] Command1
+[PARENT] Form1
+[START PROPERTIES]
+Top = 108
+Left = 12
+Height = 25
+Width = 108
+Anchor = 1
+Caption = "Main Color"
+TabIndex = 4
+Name = "Command1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Click
+Thisform.Shape1.BackColor = GETCOLOR(Thisform.Shape1.BackColor)
+Thisform.Imgcanvas1.Draw()
+Thisform.Imgcanvas2.Draw()
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1YI061BSA
+[CLASS] commandbutton
+[BASECLASS] commandbutton
+[OBJNAME] Command2
+[PARENT] Form1
+[START PROPERTIES]
+Top = 132
+Left = 12
+Height = 25
+Width = 108
+Anchor = 1
+Caption = "Secondary Color"
+TabIndex = 3
+Name = "Command2"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Click
+Thisform.Shape2.BackColor = GETCOLOR(Thisform.Shape2.BackColor)
+Thisform.Imgcanvas1.Draw()
+Thisform.Imgcanvas2.Draw()
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0L3VWK
+[CLASS] shape
+[BASECLASS] shape
+[OBJNAME] Shape1
+[PARENT] Form1
+[START PROPERTIES]
+Top = 108
+Left = 132
+Height = 25
+Width = 25
+BackColor = 0,0,128
+Name = "Shape1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Click
+This.Parent.Command1.Click
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1YI061BSB
+[CLASS] shape
+[BASECLASS] shape
+[OBJNAME] Shape2
+[PARENT] Form1
+[START PROPERTIES]
+Top = 132
+Left = 132
+Height = 25
+Width = 25
+BackColor = 255,128,64
+Name = "Shape2"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Click
+This.Parent.Command2.Click
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0L3VWK
+[CLASS] label
+[BASECLASS] label
+[OBJNAME] Label1
+[PARENT] Form1
+[START PROPERTIES]
+AutoSize = .T.
+Caption = "Enter text below"
+Height = 17
+Left = 240
+Top = 12
+Width = 88
+TabIndex = 5
+Name = "Label1"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0L3VWK
+[CLASS] textbox
+[BASECLASS] textbox
+[OBJNAME] TxtFontName
+[PARENT] Form1
+[START PROPERTIES]
+Value = Arial
+Height = 25
+Left = 12
+TabIndex = 4
+Top = 48
+Width = 108
+Name = "TxtFontName"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Valid
+Thisform.Imgcanvas1.Draw()
+Thisform.Imgcanvas2.Draw()
+
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1YI1FCYOZ
+[CLASS] commandbutton
+[BASECLASS] commandbutton
+[OBJNAME] cmdGetFont
+[PARENT] Form1
+[START PROPERTIES]
+Top = 12
+Left = 12
+Height = 25
+Width = 108
+Caption = "Choose Font"
+TabIndex = 3
+Name = "cmdGetFont"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Click
+lcFont = GETFONT()
+Thisform.TxtFontName.Value = GETWORDNUM(lcFont,1,',')
+Thisform.TxtFontSize.Value = VAL(GETWORDNUM(lcFont,2,','))
+Thisform.TxtFontStyle.Value = GETWORDNUM(lcFont,3,',')
+Thisform.Imgcanvas1.Draw()
+Thisform.Imgcanvas2.Draw()
+Thisform.Imgcanvas3.Draw()
+
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1YI1FCYP0
+[CLASS] textbox
+[BASECLASS] textbox
+[OBJNAME] TxtFontSize
+[PARENT] Form1
+[START PROPERTIES]
+Alignment = 3
+Value = 24
+Height = 25
+Left = 132
+TabIndex = 5
+Top = 48
+Width = 30
+Name = "TxtFontSize"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Valid
+Thisform.Imgcanvas1.Draw()
+Thisform.Imgcanvas2.Draw()
+
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1YI1FCYP1
+[CLASS] textbox
+[BASECLASS] textbox
+[OBJNAME] TxtFontStyle
+[PARENT] Form1
+[START PROPERTIES]
+Value = B
+Height = 25
+Left = 168
+TabIndex = 6
+Top = 48
+Width = 24
+Name = "TxtFontStyle"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Valid
+Thisform.Imgcanvas1.Draw()
+Thisform.Imgcanvas2.Draw()
+
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0L3VWK
+[CLASS] label
+[BASECLASS] label
+[OBJNAME] Label2
+[PARENT] Form1
+[START PROPERTIES]
+AutoSize = .T.
+Caption = "Linear Gradient Brush"
+Height = 17
+Left = 240
+Top = 84
+Width = 123
+TabIndex = 5
+Name = "Label2"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0L3VWK
+[CLASS] label
+[BASECLASS] label
+[OBJNAME] Label3
+[PARENT] Form1
+[START PROPERTIES]
+AutoSize = .T.
+Caption = "Hatch Brush"
+Height = 17
+Left = 240
+Top = 204
+Width = 70
+TabIndex = 5
+Name = "Label3"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0L3VWK
+[CLASS] spinner
+[BASECLASS] spinner
+[OBJNAME] SpnHatch
+[PARENT] Form1
+[START PROPERTIES]
+Height = 24
+Increment =   1.00
+KeyboardHighValue = 52
+KeyboardLowValue = 0
+Left = 132
+SpinnerHighValue =  52.00
+SpinnerLowValue =   0.00
+Top = 228
+Width = 48
+Value = 21
+Name = "SpnHatch"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE InteractiveChange
+Thisform.Imgcanvas2.Draw()
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1YK10VTE2
+[CLASS] label
+[BASECLASS] label
+[OBJNAME] Label4
+[PARENT] Form1
+[START PROPERTIES]
+AutoSize = .T.
+Caption = "Hatch Brush"
+Height = 17
+Left = 48
+Top = 228
+Width = 70
+TabIndex = 5
+Name = "Label4"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1YK112IBN
+[CLASS] spinner
+[BASECLASS] spinner
+[OBJNAME] SpnGradMode
+[PARENT] Form1
+[START PROPERTIES]
+Anchor = 3
+Height = 25
+KeyboardHighValue = 3
+KeyboardLowValue = 0
+Left = 132
+SpinnerHighValue =   3.00
+SpinnerLowValue =   0.00
+Top = 168
+Width = 36
+Value = 0
+Name = "SpnGradMode"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE InteractiveChange
+Thisform.imgcanvas1.Draw()
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1YK112IBO
+[CLASS] label
+[BASECLASS] label
+[OBJNAME] Label5
+[PARENT] Form1
+[START PROPERTIES]
+AutoSize = .T.
+Anchor = 3
+BackStyle = 0
+Caption = "Gradient Mode"
+Height = 17
+Left = 36
+Top = 168
+Width = 82
+Name = "Label5"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0L3VWK
+[CLASS] imgcanvas
+[CLASSLOC] ..\gdiplusx.vcx
+[BASECLASS] image
+[OBJNAME] Imgcanvas2
+[PARENT] Form1
+[START PROPERTIES]
+Anchor = 15
+Height = 60
+Left = 240
+Top = 228
+Width = 420
+smoothingmode = 0
+Name = "Imgcanvas2"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE beforedraw
+*!*	Based on Tom Archer's article at CodeGuru.com
+*!*	http://www.codeguru.com/columns/dotnettips/article.php/c8441/
+
+LOCAL loFont AS xfcFont
+LOCAL loBrush AS xfcHatchBrush
+
+WITH _SCREEN.SYSTEM.Drawing
+	This.Clear()
+
+	LOCAL lcStyle
+	lcStyle = Thisform.TxtFontStyle.Value
+	DO CASE
+	CASE lcStyle == "B"
+		loStyle = .FontStyle.Bold
+	CASE lcStyle == "I"
+		loStyle = .FontStyle.Italic
+	CASE lcStyle == "BI"
+		loStyle = .FontStyle.BoldItalic
+	OTHERWISE
+		loStyle = .FontStyle.Regular
+	ENDCASE
+	
+	loFont = .Font.New(Thisform.TxtFontName.Value, Thisform.TxtFontSize.Value, loStyle)
+	lnStyle = Thisform.SpnHatch.Value
+	loBrush = .Drawing2D.HatchBrush.New(lnStyle, ;
+		.Color.FromRGB(Thisform.Shape2.BackColor), ;
+		.Color.FromRGB(Thisform.Shape1.BackColor))
+
+	This.oGfx.DrawString(Thisform.TxtText.Value, loFont, ;
+		loBrush, This.Rectangle)
+
+ENDWITH
+RETURN
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1YK12IPBA
+[CLASS] label
+[BASECLASS] label
+[OBJNAME] Label6
+[PARENT] Form1
+[START PROPERTIES]
+AutoSize = .T.
+Caption = "Texture Brush"
+Height = 17
+Left = 240
+Top = 324
+Width = 78
+TabIndex = 5
+Name = "Label6"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1YK134XUZ
+[CLASS] commandbutton
+[BASECLASS] commandbutton
+[OBJNAME] Command3
+[PARENT] Form1
+[START PROPERTIES]
+Top = 348
+Left = 12
+Height = 25
+Width = 108
+Anchor = 1
+Caption = "Get Picture"
+TabIndex = 4
+Name = "Command3"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Click
+Thisform.Image1.Picture = GETPICT()
+Thisform.Imgcanvas3.Draw()
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1YK134XV0
+[CLASS] image
+[BASECLASS] image
+[OBJNAME] Image1
+[PARENT] Form1
+[START PROPERTIES]
+Picture = image\foxprologo2.png
+Stretch = 1
+Height = 60
+Left = 132
+Top = 348
+Width = 72
+Name = "Image1"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1YK134XV1
+[CLASS] imgcanvas
+[CLASSLOC] ..\gdiplusx.vcx
+[BASECLASS] image
+[OBJNAME] Imgcanvas3
+[PARENT] Form1
+[START PROPERTIES]
+Anchor = 15
+Height = 60
+Left = 240
+Top = 348
+Width = 420
+smoothingmode = 0
+Name = "Imgcanvas3"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE beforedraw
+*!*	Based on Tom Archer's article at CodeGuru.com
+*!*	http://www.codeguru.com/columns/dotnettips/article.php/c8441/
+
+LOCAL lcPicture
+lcPicture = This.Parent.Image1.Picture
+IF EMPTY(lcPicture) OR NOT FILE(lcPicture)
+	WAIT WINDOW "No picture was selected !"
+	RETURN
+ENDIF
+
+LOCAL loFont AS xfcFont
+LOCAL loBrush AS xfcTextureBrush
+
+WITH _SCREEN.SYSTEM.Drawing
+	This.Clear()
+
+	LOCAL lcStyle
+	lcStyle = Thisform.TxtFontStyle.Value
+	DO CASE
+	CASE lcStyle == "B"
+		loStyle = .FontStyle.Bold
+	CASE lcStyle == "I"
+		loStyle = .FontStyle.Italic
+	CASE lcStyle == "BI"
+		loStyle = .FontStyle.BoldItalic
+	OTHERWISE
+		loStyle = .FontStyle.Regular
+	ENDCASE
+	
+	loFont = .Font.New(Thisform.TxtFontName.Value, Thisform.TxtFontSize.Value, loStyle)
+	lnStyle = Thisform.SpnHatch.Value
+	loBrush = .TextureBrush.New(.Image.FromFile(lcPicture))
+
+	This.oGfx.DrawString(Thisform.TxtText.Value, loFont, ;
+		loBrush, This.Rectangle)
+
+ENDWITH
+RETURN
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] RESERVED  
+[START PROPERTIES]
+Arial, 0, 9, 5, 15, 12, 32, 3, 0
+[END PROPERTIES]
+[EOF]

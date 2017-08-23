@@ -1,0 +1,717 @@
+SCCTEXT Version 4.0.0.2
+PLATFORM C(8,0),UNIQUEID C(10,0),TIMESTAMP N(10,0),CLASS M(4,0),CLASSLOC M(4,0),BASECLASS M(4,0),OBJNAME M(4,0),PARENT M(4,0),PROPERTIES M(4,0),PROTECTED M(4,0),METHODS M(4,0),OBJCODE M(4,0),OLE M(4,0),OLE2 M(4,0),RESERVED1 M(4,0),RESERVED2 M(4,0),RESERVED3 M(4,0),RESERVED4 M(4,0),RESERVED5 M(4,0),RESERVED6 M(4,0),RESERVED7 M(4,0),RESERVED8 M(4,0),USER M(4,0)
+1252
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] Screen    
+[START RESERVED1]
+VERSION =   3.00[END RESERVED1]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0L3VWK
+[CLASS] dataenvironment
+[BASECLASS] dataenvironment
+[OBJNAME] Dataenvironment
+[START PROPERTIES]
+Top = 220
+Left = 1
+Width = 520
+Height = 200
+DataSource = .NULL.
+Name = "Dataenvironment"
+[END PROPERTIES]
+[START RESERVED2]
+1[END RESERVED2]
+[START RESERVED4]
+1[END RESERVED4]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0L3VWL
+[CLASS] form
+[BASECLASS] form
+[OBJNAME] Form1
+[START PROPERTIES]
+Height = 615
+Width = 882
+ShowWindow = 2
+DoCreate = .T.
+AutoCenter = .T.
+Caption = "Stream Testing"
+WindowState = 0
+_memberdata =      682<?xml version="1.0" standalone="yes"?>
+<VFPData>
+	<memberdata name="foomethod" type="method" display="fooMethod" favorites="True"/>
+	<memberdata name="Form1" type="property" display="Form1" favorites="True"/>
+	<memberdata name="_memberdata" type="property" display="_MemberData" favorites="True"/>
+	<memberdata name="baseclass" type="property" display="BaseClasS" favorites="True"/>
+	<memberdata name="error" type="method" display="eRRor" favorites="True"/>
+	<memberdata name="processimage" type="method" display="ProcessImage"/><memberdata name="showmemory" type="method" display="ShowMemory"/><memberdata name="hideobjects" type="method" display="HideObjects"/></VFPData>
+
+Name = "Form1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Init
+DO (LOCFILE("System.prg"))
+
+
+LOCAL lcFile
+lcFile = LOCFILE("Cebolinha.png")
+Thisform.TxtFile.Value = lcFile
+Thisform.Image1.Picture = lcFile
+Thisform.HideObjects()
+
+WITH Thisform.Combo1 as ComboBox
+	.AddItem("ImageFormat.Bmp")
+	.AddItem("\ImageFormat.Png")
+	.AddItem("ImageFormat.Jpeg")
+	.AddItem("ImageFormat.Gif")
+	.AddItem("ImageFormat.Tiff")
+	.Value = "ImageFormat.Bmp"
+ENDWITH
+
+ENDPROC
+PROCEDURE hideobjects
+WITH Thisform as Form
+	.Label2.Visible = .F.	
+	.Label3.Visible = .F.
+	.Label4.Visible = .F.
+	.Label5.Visible = .F.
+	.Label6.Visible = .F.
+
+	.Image2.Visible = .F.	
+	.Image3.Visible = .F.
+	.Image4.Visible = .F.
+	.Image5.Visible = .F.
+	.Image6.Visible = .F.
+ENDWITH
+ENDPROC
+PROCEDURE processimage
+LOCAL lcFile, llProgress, lnTimes, n, lcBuffer, lnSecs
+lcFile = Thisform.txtFile.Value
+IF EMPTY(lcFile)
+	RETURN
+ENDIF
+
+Thisform.HideObjects()
+llProgress = Thisform.ChkProgress.Value
+lnTimes = Thisform.SpnTests.Value
+
+LOCAL loBmp AS xfcBitmap
+LOCAL loBmp2 AS xfcBitmap
+LOCAL loImgFormat AS xfcImageFormat
+loImgFormat = EVALUATE("_Screen.System.Drawing.Imaging." + Thisform.Combo1.Value)
+
+
+WITH _SCREEN.System.Drawing
+
+* Sample 1 - Using GetPictureVal new function
+lnSecs = SECONDS()
+Thisform.Image1.Visible = .T.
+FOR n = 1 TO lnTimes
+	loBmp = .Bitmap.FromFile(lcFile)
+	lcBuffer = loBmp.GetPictureVal(loImgFormat)
+	Thisform.Image1.PictureVal = lcBuffer
+
+	IF llProgress
+		WAIT WINDOW ("Test 1 - Using GetPictureVal Function - " + TRANSFORM((n/lnTimes)*100, "999.9") + "%") NOWAIT
+	ENDIF
+ENDFOR
+loBmp.Dispose()
+lcBuffer = NULL
+Thisform.Label1.Caption = "Test 1 - Using GetPictureVal new function" + ;
+	CHR(13) + TRANSFORM(SECONDS() - lnSecs) + " seconds"
+Thisform.Label1.Visible = .T.
+
+
+* Sample 2 - Saving directly to the image object
+lnSecs = SECONDS()
+Thisform.Image2.Visible = .T.
+FOR n = 1 TO lnTimes
+	loBmp = .Bitmap.FromFile(lcFile)
+	loBmp.Save(Thisform.Image2, loImgFormat) && Save directly to the image object
+	IF llProgress
+		WAIT WINDOW ("Test 2 - SAVE TO IMAGE FILE - " + TRANSFORM((n/lnTimes)*100, "999.9") + "%") NOWAIT
+	ENDIF
+ENDFOR
+loBmp.Dispose()
+Thisform.Label2.Caption = "Test 2 - Saving directly to the image object" + ;
+	CHR(13) + TRANSFORM(SECONDS() - lnSecs) + " seconds"
+Thisform.Label2.Visible = .T.
+
+
+* Sample 3 - Saving to a stream and retrieving to PictureVal
+lnSecs = SECONDS()
+Thisform.Image3.Visible = .T.
+FOR n = 1 TO lnTimes
+	LOCAL loStream as xfcMemoryStream
+	loStream = _Screen.System.IO.MemoryStream.New()
+	loBmp = .Bitmap.FromFile(lcFile)
+	loBmp.Save(loStream, loImgFormat) && Save directly to the Stream object
+	Thisform.Image3.PictureVal = loStream.GetBuffer()
+	IF llProgress
+		WAIT WINDOW ("Test 3 - SAVE TO IMAGE FILE - " + TRANSFORM((n/lnTimes)*100, "999.9") + "%") NOWAIT
+	ENDIF
+	
+ENDFOR
+loStream = NULL
+loBmp.Dispose()
+Thisform.Label3.Caption = "Test 3 - Saving to a stream and retrieving to PictureVal" + ;
+	CHR(13) + TRANSFORM(SECONDS() - lnSecs) + " seconds"
+Thisform.Label3.Visible = .T.
+
+
+* Sample 4 - Saving to a stream, loading from stream and use GetPictureVal
+lnSecs = SECONDS()
+Thisform.Image4.Visible = .T.
+FOR n = 1 TO lnTimes
+	LOCAL loStream as xfcMemoryStream
+	loStream = _Screen.System.IO.MemoryStream.New()
+	loBmp = .Bitmap.FromFile(lcFile)
+	loBmp.Save(loStream, loImgFormat) && Save directly to the Stream object
+
+	LOCAL loBmp2 as xfcBitmap
+	loBmp2 = _Screen.System.Drawing.Bitmap.FromStream(loStream)	
+	Thisform.Image4.PictureVal = loBmp2.GetPictureVal(loImgFormat)
+
+	IF llProgress
+		WAIT WINDOW ("Test 4 - Saving to a stream, loading from stream and use GetPictureVal - " + TRANSFORM((n/lnTimes)*100, "999.9") + "%") NOWAIT
+	ENDIF
+ENDFOR
+loBmp.Dispose()
+loBmp2.Dispose()
+loStream = NULL
+Thisform.Label4.Caption = "Test 4 - Saving to a stream, loading from stream and use GetPictureVal" + ;
+	CHR(13) + TRANSFORM(SECONDS() - lnSecs) + " seconds"
+Thisform.Label4.Visible = .T.
+
+
+* Sample 5 - Using GetPictureValfromHBitmap new function
+lnSecs = SECONDS()
+Thisform.Image5.Visible = .T.
+FOR n = 1 TO lnTimes
+	loBmp = .Bitmap.FromFile(lcFile)
+	lcBuffer = loBmp.GetPictureValfromHBitmap()
+	Thisform.Image5.PictureVal = lcBuffer
+	IF llProgress
+		WAIT WINDOW ("Test 5 - Using GetPictureValfromHBitmap Function - " + TRANSFORM((n/lnTimes)*100, "999.9") + "%") NOWAIT
+	ENDIF
+ENDFOR
+loBmp.Dispose()
+lcBuffer = NULL
+Thisform.Label5.Caption = "Test 5 - GetPictureValfromHBitmap new function" + ;
+	CHR(13) + TRANSFORM(SECONDS() - lnSecs) + " seconds"
+Thisform.Label5.Visible = .T.
+
+
+* Sample 6 - Using Calvin Hsia Active-X wrapper
+* See this article: "Use an IStream object to avoid disk access"
+* http://blogs.msdn.com/calvin_hsia/archive/2006/02/17/534529.aspx
+* The COM server is a light weight 39K dll, that wraps the ISTREAM class
+* This test will be able to compare the performance between all different aproaches
+
+* To Unregister this Active-X, run the code below:
+* RUN /N REGSVR32 /u vfpStream.dll
+
+LOCAL llRunTest
+llRunTest = Thisform.chkIStream.Value
+
+DO WHILE llRunTest
+
+	LOCAL loStream as "VFPStream.Cstream"
+
+	TRY
+		loStream = CREATEOBJECT("VFPStream.Cstream")
+	CATCH
+		IF MESSAGEBOX("Calvin Hsia's VFPStream class is not installed or registered" + CHR(13) + ;
+				"The COM server is a light weight 39K dll, that wraps the ISTREAM class" + CHR(13) + ;
+				"Do you want to install this Active-X now ?", 32 + 4, "Install VFP Stream Active-X ?") = 6
+			LOCAL lcStreamFile, lcCommand
+			lcStreamFile = LOCFILE("..\Samples\vfpStream.dll")
+			lcCommand = "RUN /N REGSVR32 /S " + lcStreamFile
+			&lcCommand
+	
+			TRY
+				loStream = CREATEOBJECT("VFPStream.Cstream")
+			CATCH
+				MESSAGEBOX("Could not install the IStream class", 16, "Error")
+				llRunTest = .F.
+			ENDTRY
+		ELSE
+			llRunTest = .F.
+		ENDIF
+	ENDTRY
+	IF llRunTest = .F.
+		EXIT
+	ENDIF
+
+	lnSecs = SECONDS()
+	Thisform.Image6.Visible = .T.
+
+	FOR n = 1 TO lnTimes
+		loBmp = .Bitmap.FromFile(lcFile)
+
+		* Create a Stream Object
+		* Write to a stream: avoid the file I/O
+		loStream = CREATEOBJECT("VFPStream.Cstream")
+		m.lhStream = loStream.CreateStream(1)  && Create a Stream
+
+		loBmp.Save(m.lhStream, loImgFormat) && Pass the stream handle to Save method
+	
+		lcBuffer = ""
+		loStream.ReadStream(m.lhStream,"lcBuffer",0)    && Read stream into blob field directly
+		loStream.ReleaseStream(m.lhStream)
+
+		* Now pass the variable that contains the Image to the PictureVal property of
+		* a picture Image, which was never written to disk
+		Thisform.Image6.PictureVal = lcBuffer
+		IF llProgress
+			WAIT WINDOW ("Test 6 - USING CALVIN'S ACTIVE-X WRAPPER - " + TRANSFORM((n/lnTimes)*100, "999.9") + "%") NOWAIT
+		ENDIF
+	ENDFOR
+	loBmp.Dispose()
+	loStream = NULL
+	lcBuffer = NULL
+	Thisform.Label6.Caption = "Test 6 - Using Calvin Hsia Active-X wrapper" + ;
+		CHR(13) + TRANSFORM(SECONDS() - lnSecs) + " seconds"
+	Thisform.Label6.Visible = .T.
+
+	EXIT
+ENDDO
+
+WAIT CLEAR
+
+ENDWITH
+
+RETURN
+ENDPROC
+[END METHODS]
+[START RESERVED3]
+_memberdata XML Metadata for customizable properties
+*processimage 
+*hideobjects 
+[END RESERVED3]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0L3VWK
+[CLASS] image
+[BASECLASS] image
+[OBJNAME] Image1
+[PARENT] Form1
+[START PROPERTIES]
+Stretch = 1
+Height = 252
+Left = 12
+Top = 84
+Width = 276
+Name = "Image1"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0L3VWK
+[CLASS] commandbutton
+[BASECLASS] commandbutton
+[OBJNAME] Command3
+[PARENT] Form1
+[START PROPERTIES]
+Top = 48
+Left = 12
+Height = 25
+Width = 84
+Anchor = 12
+Picture = (home() + "/graphics/bitmaps/outline/open.bmp")
+Caption = "Get Picture"
+TabIndex = 1
+PicturePosition = 1
+PictureMargin = 1
+Name = "Command3"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Click
+lcFile = GETPICT()
+IF EMPTY(lcFile)
+	RETURN
+ENDIF
+
+Thisform.HideObjects()
+
+Thisform.TxtFile.Value = lcFile
+Thisform.Image1.PictureVal = ""
+Thisform.Image1.Picture = lcFile
+
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _2140ISJXN
+[CLASS] textbox
+[BASECLASS] textbox
+[OBJNAME] txtFile
+[PARENT] Form1
+[START PROPERTIES]
+FontSize = 8
+Anchor = 12
+Height = 25
+Left = 108
+TabIndex = 2
+Top = 48
+Width = 468
+Name = "txtFile"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0L3VWK
+[CLASS] image
+[BASECLASS] image
+[OBJNAME] Image2
+[PARENT] Form1
+[START PROPERTIES]
+Stretch = 1
+Height = 252
+Left = 300
+Top = 84
+Width = 276
+Name = "Image2"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0L3VWK
+[CLASS] image
+[BASECLASS] image
+[OBJNAME] Image3
+[PARENT] Form1
+[START PROPERTIES]
+Stretch = 1
+Height = 252
+Left = 588
+Top = 84
+Width = 276
+Name = "Image3"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _22B00X25T
+[CLASS] image
+[BASECLASS] image
+[OBJNAME] Image4
+[PARENT] Form1
+[START PROPERTIES]
+Stretch = 1
+Height = 252
+Left = 12
+Top = 348
+Width = 276
+Name = "Image4"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _22B04JZC8
+[CLASS] image
+[BASECLASS] image
+[OBJNAME] Image5
+[PARENT] Form1
+[START PROPERTIES]
+Stretch = 1
+Height = 252
+Left = 300
+Top = 348
+Width = 276
+Name = "Image5"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _22B07J6QE
+[CLASS] image
+[BASECLASS] image
+[OBJNAME] Image6
+[PARENT] Form1
+[START PROPERTIES]
+Stretch = 1
+Height = 252
+Left = 588
+Top = 348
+Width = 276
+Name = "Image6"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _22D0MQ1VH
+[CLASS] spinner
+[BASECLASS] spinner
+[OBJNAME] SpnTests
+[PARENT] Form1
+[START PROPERTIES]
+Height = 24
+Increment =   5.00
+KeyboardHighValue = 10000
+KeyboardLowValue = 1
+Left = 684
+SpinnerHighValue = 10000.00
+SpinnerLowValue =   1.00
+Top = 12
+Width = 60
+Value = 200
+Name = "SpnTests"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0L3VWK
+[CLASS] label
+[BASECLASS] label
+[OBJNAME] lblTests
+[PARENT] Form1
+[START PROPERTIES]
+BackStyle = 0
+Caption = "Nr of Tests"
+Height = 17
+Left = 600
+Top = 12
+Width = 72
+Name = "lblTests"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0L3VWK
+[CLASS] label
+[BASECLASS] label
+[OBJNAME] Label1
+[PARENT] Form1
+[START PROPERTIES]
+AutoSize = .F.
+FontBold = .T.
+WordWrap = .T.
+Caption = "Test Result"
+Height = 36
+Left = 12
+Top = 84
+Width = 276
+ForeColor = 255,0,0
+BackColor = 255,255,255
+Name = "Label1"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _22D0N4H65
+[CLASS] label
+[BASECLASS] label
+[OBJNAME] Label2
+[PARENT] Form1
+[START PROPERTIES]
+AutoSize = .F.
+FontBold = .T.
+WordWrap = .T.
+Caption = "Test Result"
+Height = 36
+Left = 300
+Top = 84
+Width = 276
+ForeColor = 255,0,0
+BackColor = 255,255,255
+Name = "Label2"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _22D0N4H66
+[CLASS] label
+[BASECLASS] label
+[OBJNAME] Label3
+[PARENT] Form1
+[START PROPERTIES]
+AutoSize = .F.
+FontBold = .T.
+WordWrap = .T.
+Caption = "Test Result"
+Height = 48
+Left = 588
+Top = 84
+Width = 276
+ForeColor = 255,0,0
+BackColor = 255,255,255
+Name = "Label3"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _22D0N4H67
+[CLASS] label
+[BASECLASS] label
+[OBJNAME] Label4
+[PARENT] Form1
+[START PROPERTIES]
+AutoSize = .F.
+FontBold = .T.
+WordWrap = .T.
+Caption = "Test Result"
+Height = 48
+Left = 12
+Top = 348
+Width = 276
+ForeColor = 255,0,0
+BackColor = 255,255,255
+Name = "Label4"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _22D0N4H68
+[CLASS] label
+[BASECLASS] label
+[OBJNAME] Label5
+[PARENT] Form1
+[START PROPERTIES]
+AutoSize = .F.
+FontBold = .T.
+WordWrap = .T.
+Caption = "Test Result"
+Height = 36
+Left = 300
+Top = 348
+Width = 276
+ForeColor = 255,0,0
+BackColor = 255,255,255
+Name = "Label5"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _22D0N4H69
+[CLASS] label
+[BASECLASS] label
+[OBJNAME] Label6
+[PARENT] Form1
+[START PROPERTIES]
+AutoSize = .F.
+FontBold = .T.
+WordWrap = .T.
+Caption = "Test Result"
+Height = 36
+Left = 588
+Top = 348
+Width = 276
+ForeColor = 255,0,0
+BackColor = 255,255,255
+Name = "Label6"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _22D0N4H6A
+[CLASS] commandbutton
+[BASECLASS] commandbutton
+[OBJNAME] Command1
+[PARENT] Form1
+[START PROPERTIES]
+Top = 48
+Left = 792
+Height = 25
+Width = 72
+Anchor = 12
+Picture = ..\gdiplusx_20070831\new samples\
+Caption = "Go !"
+TabIndex = 1
+PicturePosition = 1
+PictureMargin = 1
+Name = "Command1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Click
+Thisform.ProcessImage()
+
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _22D0O4W9P
+[CLASS] label
+[BASECLASS] label
+[OBJNAME] Label7
+[PARENT] Form1
+[START PROPERTIES]
+AutoSize = .T.
+FontSize = 11
+WordWrap = .T.
+Caption = "Select a picture, enter the number of tests in the spinner, and click 'GO' to perform test using different techniques to obtain PictureVal without accessing the disk."
+Height = 36
+Left = 12
+Top = 4
+Width = 562
+ForeColor = 0,0,160
+Name = "Label7"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _22D0UWIYS
+[CLASS] combobox
+[BASECLASS] combobox
+[OBJNAME] Combo1
+[PARENT] Form1
+[START PROPERTIES]
+Height = 24
+Left = 600
+Style = 2
+Top = 48
+Width = 144
+Name = "Combo1"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0L3VWK
+[CLASS] checkbox
+[BASECLASS] checkbox
+[OBJNAME] chkProgress
+[PARENT] Form1
+[START PROPERTIES]
+Top = 10
+Left = 760
+Height = 17
+Width = 108
+Alignment = 0
+Caption = "Show Progress"
+Value = .T.
+Name = "chkProgress"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _22E0MPZMK
+[CLASS] checkbox
+[BASECLASS] checkbox
+[OBJNAME] chkIStream
+[PARENT] Form1
+[START PROPERTIES]
+Top = 29
+Left = 760
+Height = 17
+Width = 106
+Alignment = 0
+Caption = "IStream ActiveX"
+Value = .F.
+Name = "chkIStream"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] RESERVED  
+[START PROPERTIES]
+Arial, 0, 9, 5, 15, 12, 32, 3, 0
+Arial, 0, 8, 5, 14, 11, 29, 3, 0
+[END PROPERTIES]
+[EOF]

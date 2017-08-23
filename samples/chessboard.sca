@@ -1,0 +1,97 @@
+SCCTEXT Version 4.0.0.2
+PLATFORM C(8,0),UNIQUEID C(10,0),TIMESTAMP N(10,0),CLASS M(4,0),CLASSLOC M(4,0),BASECLASS M(4,0),OBJNAME M(4,0),PARENT M(4,0),PROPERTIES M(4,0),PROTECTED M(4,0),METHODS M(4,0),OBJCODE M(4,0),OLE M(4,0),OLE2 M(4,0),RESERVED1 M(4,0),RESERVED2 M(4,0),RESERVED3 M(4,0),RESERVED4 M(4,0),RESERVED5 M(4,0),RESERVED6 M(4,0),RESERVED7 M(4,0),RESERVED8 M(4,0),USER M(4,0)
+1252
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] Screen    
+[START RESERVED1]
+VERSION =   3.00[END RESERVED1]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TN196D45
+[CLASS] dataenvironment
+[BASECLASS] dataenvironment
+[OBJNAME] Dataenvironment
+[START PROPERTIES]
+Top = 0
+Left = 0
+Width = 0
+Height = 0
+DataSource = .NULL.
+Name = "Dataenvironment"
+[END PROPERTIES]
+[START RESERVED2]
+1[END RESERVED2]
+[START RESERVED4]
+1[END RESERVED4]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TN196D46
+[CLASS] form
+[BASECLASS] form
+[OBJNAME] Form1
+[START PROPERTIES]
+Top = 0
+Left = 0
+Height = 326
+Width = 325
+DoCreate = .T.
+Caption = "Chess Board"
+Name = "Form1"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TN196D47
+[CLASS] imgcanvas
+[CLASSLOC] ..\source\gdiplusx.vcx
+[BASECLASS] image
+[OBJNAME] Imgcanvas1
+[PARENT] Form1
+[START PROPERTIES]
+Anchor = 15
+Height = 328
+Left = -1
+Top = -1
+Width = 327
+Name = "Imgcanvas1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE beforedraw
+WITH _SCREEN.SYSTEM
+	smallSquareSize = .Drawing.SizeF.New(0.125 * THIS.WIDTH, 0.125 * THIS.HEIGHT)
+	sb = .Drawing.SolidBrush.New(.Drawing.COLOR.White)
+	toggle = .F.
+	FOR Y = 0 TO 7
+		FOR x = 0 TO 7
+			IF toggle
+				sb.COLOR = .Drawing.COLOR.Black
+			ELSE
+				sb.COLOR = .Drawing.COLOR.White
+			ENDIF
+			rc = .Drawing.RectangleF.New(x * smallSquareSize.WIDTH,;
+				Y * smallSquareSize.HEIGHT,;
+				smallSquareSize.WIDTH,;
+				smallSquareSize.HEIGHT)
+			THIS.oGfx.FillRectangle(sb, rc)
+			toggle = !toggle
+		ENDFOR
+		toggle = !toggle
+	ENDFOR
+	sb.Dispose()
+ENDWITH
+
+
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] RESERVED  
+[START PROPERTIES]
+Arial, 0, 9, 5, 15, 12, 32, 3, 0
+[END PROPERTIES]
+[EOF]

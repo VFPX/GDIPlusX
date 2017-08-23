@@ -1,0 +1,180 @@
+SCCTEXT Version 4.0.0.2
+PLATFORM C(8,0),UNIQUEID C(10,0),TIMESTAMP N(10,0),CLASS M(4,0),CLASSLOC M(4,0),BASECLASS M(4,0),OBJNAME M(4,0),PARENT M(4,0),PROPERTIES M(4,0),PROTECTED M(4,0),METHODS M(4,0),OBJCODE M(4,0),OLE M(4,0),OLE2 M(4,0),RESERVED1 M(4,0),RESERVED2 M(4,0),RESERVED3 M(4,0),RESERVED4 M(4,0),RESERVED5 M(4,0),RESERVED6 M(4,0),RESERVED7 M(4,0),RESERVED8 M(4,0),USER M(4,0)
+1252
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] Screen    
+[START RESERVED1]
+VERSION =   3.00[END RESERVED1]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TN1AHCZ8
+[CLASS] dataenvironment
+[BASECLASS] dataenvironment
+[OBJNAME] Dataenvironment
+[START PROPERTIES]
+Top = 0
+Left = 0
+Width = 0
+Height = 0
+DataSource = .NULL.
+Name = "Dataenvironment"
+[END PROPERTIES]
+[START RESERVED2]
+1[END RESERVED2]
+[START RESERVED4]
+1[END RESERVED4]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TN1AHCZH
+[CLASS] form
+[BASECLASS] form
+[OBJNAME] Form1
+[START PROPERTIES]
+Top = -1
+Left = 0
+DoCreate = .T.
+Caption = "Gradients"
+Name = "Form1"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TO03RZRT
+[CLASS] imgcanvas
+[CLASSLOC] ..\source\gdiplusx.vcx
+[BASECLASS] image
+[OBJNAME] Imgcanvas1
+[PARENT] Form1
+[START PROPERTIES]
+Anchor = 15
+Height = 252
+Left = -1
+Top = -1
+Width = 377
+usememory = .F.
+Name = "Imgcanvas1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE beforedraw
+WITH _SCREEN.SYSTEM.drawing
+	DO CASE
+		CASE THISFORM.optiongroup1.VALUE = 1
+			br = .drawing2d.LinearGradientBrush.New(This.Rectangle,.COLOR.White,.COLOR.FromRGB(RGB(0,0,0)),45.0,.T.)
+			THIS.oGfx.FillRectangle(br, This.Rectangle)
+			br.RotateTransform(108, 1) && 1 = MatrixOrder.Append
+			p= .PEN.New(br,15)
+			THIS.oGfx.DrawLine(p,0,0,THIS.WIDTH,THIS.HEIGHT)
+			p.Dispose()
+			br.Dispose()
+
+		CASE THISFORM.optiongroup1.VALUE = 2
+			br = .drawing2d.LinearGradientBrush.New(This.Rectangle, .COLOR.White, .COLOR.Blue, 0, .F.)
+			br.SetBlendTriangularShape(0.5, 1.0)
+			This.oGfx.FillRectangle(br, This.Rectangle)
+			br.Dispose()
+
+		CASE THISFORM.optiongroup1.VALUE = 3
+			br = .drawing2d.LinearGradientBrush.New(This.Rectangle,.COLOR.Yellow,.COLOR.Blue,0,.F.)
+			br.SetSigmaBellShape(0.5,1.0)
+			This.oGfx.FillRectangle(br,This.Rectangle)
+			br.Dispose()
+
+		CASE THISFORM.optiongroup1.VALUE = 4
+			br = .drawing2d.LinearGradientBrush.New(This.Rectangle,.COLOR.Black,.COLOR.White,0,.F.)
+			bl=.Drawing2d.Blend.New()
+			bl.Factors = _Screen.System.Single.NewArray(0,0.1,0.5,0.7,1.0,0,1.0,0.5,0.3,0.2,0)
+			bl.Positions = _Screen.System.Single.NewArray(0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0)
+			br.Blend=bl
+			This.oGfx.FillRectangle(br,This.Rectangle)
+			br.Dispose()
+
+		CASE THISFORM.optiongroup1.VALUE = 5
+			br = .drawing2d.LinearGradientBrush.New(This.Rectangle,.COLOR.Black,.COLOR.Black,0,.F.)
+			cb = .Drawing2d.ColorBlend.New(7)
+			FOR F = 1 TO  7
+				cb.Positions[F] = (F - 1)/6
+				cb.Colors = .Color.NewArray(.Color.Red, .Color.Orange, .Color.Yellow, ;
+						.Color.Green, .Color.Blue, .Color.Indigo, .Color.Violet)
+				br.InterpolationColors = cb
+				This.oGfx.FillRectangle(br,This.Rectangle)
+			ENDFOR
+	ENDCASE
+ENDWITH
+
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TO033EQ8
+[CLASS] optiongroup
+[BASECLASS] optiongroup
+[OBJNAME] Optiongroup1
+[PARENT] Form1
+[START PROPERTIES]
+ButtonCount = 5
+Value = 1
+Height = 103
+Left = 28
+Top = 28
+Width = 86
+Themes = .T.
+Name = "Optiongroup1"
+Option1.Caption = "Example 1"
+Option1.Value = 1
+Option1.Height = 17
+Option1.Left = 5
+Option1.Top = 5
+Option1.Width = 76
+Option1.Themes = .T.
+Option1.Name = "Option1"
+Option2.Caption = "Example 2"
+Option2.Height = 17
+Option2.Left = 5
+Option2.Top = 24
+Option2.Width = 76
+Option2.AutoSize = .F.
+Option2.Themes = .T.
+Option2.Name = "Option2"
+Option3.Caption = "Example 3"
+Option3.Height = 17
+Option3.Left = 5
+Option3.Top = 43
+Option3.Width = 76
+Option3.AutoSize = .F.
+Option3.Themes = .T.
+Option3.Name = "Option3"
+Option4.Caption = "Example 4"
+Option4.Height = 17
+Option4.Left = 5
+Option4.Top = 62
+Option4.Width = 76
+Option4.AutoSize = .F.
+Option4.Themes = .T.
+Option4.Name = "Option4"
+Option5.Caption = "Example 5"
+Option5.Height = 17
+Option5.Left = 5
+Option5.Top = 81
+Option5.Width = 76
+Option5.AutoSize = .F.
+Option5.Themes = .T.
+Option5.Name = "Option5"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE InteractiveChange
+Thisform.imgcanvas1.Draw()
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] RESERVED  
+[START PROPERTIES]
+Arial, 0, 9, 5, 15, 12, 32, 3, 0
+[END PROPERTIES]
+[EOF]

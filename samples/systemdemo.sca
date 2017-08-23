@@ -1,0 +1,158 @@
+SCCTEXT Version 4.0.0.2
+PLATFORM C(8,0),UNIQUEID C(10,0),TIMESTAMP N(10,0),CLASS M(4,0),CLASSLOC M(4,0),BASECLASS M(4,0),OBJNAME M(4,0),PARENT M(4,0),PROPERTIES M(4,0),PROTECTED M(4,0),METHODS M(4,0),OBJCODE M(4,0),OLE M(4,0),OLE2 M(4,0),RESERVED1 M(4,0),RESERVED2 M(4,0),RESERVED3 M(4,0),RESERVED4 M(4,0),RESERVED5 M(4,0),RESERVED6 M(4,0),RESERVED7 M(4,0),RESERVED8 M(4,0),USER M(4,0)
+1252
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] Screen    
+[START RESERVED1]
+VERSION =   3.00[END RESERVED1]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1V00KZBQ8
+[CLASS] dataenvironment
+[BASECLASS] dataenvironment
+[OBJNAME] Dataenvironment
+[START PROPERTIES]
+Top = 0
+Left = 0
+Width = 0
+Height = 0
+DataSource = .NULL.
+Name = "Dataenvironment"
+[END PROPERTIES]
+[START RESERVED2]
+1[END RESERVED2]
+[START RESERVED4]
+1[END RESERVED4]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1V00KZBQ9
+[CLASS] form
+[BASECLASS] form
+[OBJNAME] Form1
+[START PROPERTIES]
+Height = 302
+Width = 458
+DoCreate = .T.
+AutoCenter = .T.
+Caption = "System Demo"
+Name = "Form1"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1V00KZBQA
+[CLASS] imgcanvas
+[CLASSLOC] ..\source\gdiplusx.vcx
+[BASECLASS] image
+[OBJNAME] imgCanvas1
+[PARENT] Form1
+[START PROPERTIES]
+Height = 276
+Left = 12
+Top = 12
+Width = 432
+Name = "imgCanvas1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE beforedraw
+
+
+WITH _SCREEN.System.Drawing
+	This.Clear()
+	
+	This.oGfx.SmoothingMode = 4
+	
+	This.oGfx.DrawIcon(.SystemIcons.Warning,      20, 5)
+	This.oGfx.DrawIcon(.SystemIcons.Hand,         60, 5)
+	This.oGfx.DrawIcon(.SystemIcons.Information, 100, 5)
+	This.oGfx.DrawIcon(.SystemIcons.Question,    140, 5)
+
+	oFont = .Font.New("Arial",12)
+	
+	x = 10
+	y = 60
+	This.oGfx.FillRectangle(.SystemBrushes.ActiveCaption,     x, y, 24, 24)
+	This.oGfx.DrawString("ActiveCaption", oFont, .SystemBrushes.ControlText, x+25,y)
+	
+	y = y + 24
+	This.oGfx.FillRectangle(.SystemBrushes.ActiveCaptionText, x, y, 24, 24)
+	This.oGfx.DrawString("ActiveCaptionText", oFont, .SystemBrushes.ControlText, x+25,y)
+	
+	y = y + 24
+	This.oGfx.FillRectangle(.SystemBrushes.AppWorkspace,      x, y, 24, 24)
+	This.oGfx.DrawString("AppWorkspace", oFont, .SystemBrushes.ControlText, x+25,y)
+	
+	y = y + 24
+	This.oGfx.FillRectangle(.SystemBrushes.ControlLightLight, x, y, 24, 24)
+	This.oGfx.DrawString("ControlLightLight", oFont, .SystemBrushes.ControlText, x+25,y)
+	
+	y = y + 24
+	This.oGfx.FillRectangle(.SystemBrushes.ControlLight,      x, y, 24, 24)
+	This.oGfx.DrawString("ControlLight", oFont, .SystemBrushes.ControlText, x+25,y)
+	
+	y = y + 24
+	This.oGfx.FillRectangle(.SystemBrushes.Control,           x, y, 24, 24)
+	This.oGfx.DrawString("Control", oFont, .SystemBrushes.ControlText, x+25,y)
+	
+	y = y + 24
+	This.oGfx.FillRectangle(.SystemBrushes.ControlText,       x, y, 24, 24)
+	This.oGfx.DrawString("ControlText", oFont, .SystemBrushes.ControlText, x+25,y)
+	
+	y = y + 24
+	This.oGfx.FillRectangle(.SystemBrushes.ControlDark,       x, y, 24, 24)
+	This.oGfx.DrawString("ControlDark", oFont, .SystemBrushes.ControlText, x+25,y)
+	
+	y = y + 24
+	This.oGfx.FillRectangle(.SystemBrushes.ControlDarkDark,   x, y, 24, 24)
+	This.oGfx.DrawString("ControlDarkDark", oFont, .SystemBrushes.ControlText, x+25,y)
+	
+	x = x + 200
+	y = 60
+	This.oGfx.FillRectangle(.SystemBrushes.Desktop,           x, y, 24, 24)
+	This.oGfx.DrawString("Desktop", oFont, .SystemBrushes.ControlText, x+25,y)
+	
+	y = y + 24
+	This.oGfx.FillRectangle(.SystemBrushes.Highlight,         x, y, 24, 24)
+	This.oGfx.DrawString("Highlight", oFont, .SystemBrushes.ControlText, x+25,y)
+	
+	y = y + 24
+	This.oGfx.FillRectangle(.SystemBrushes.HighlightText,     x, y, 24, 24)
+	This.oGfx.DrawString("HighlightText", oFont, .SystemBrushes.ControlText, x+25,y)
+	
+	y = y + 24
+	This.oGfx.FillRectangle(.SystemBrushes.HotTrack,          x, y, 24, 24)
+	This.oGfx.DrawString("HotTrack", oFont, .SystemBrushes.ControlText, x+25,y)
+	
+	y = y + 24
+	This.oGfx.FillRectangle(.SystemBrushes.InactiveBorder,    x, y, 24, 24)
+	This.oGfx.DrawString("InactiveBorder", oFont, .SystemBrushes.ControlText, x+25,y)
+	
+	y = y + 24
+	This.oGfx.FillRectangle(.SystemBrushes.InactiveCaption,   x, y, 24, 24)
+	This.oGfx.DrawString("InactiveCaption", oFont, .SystemBrushes.ControlText, x+25,y)
+	y = y + 24
+	This.oGfx.FillRectangle(.SystemBrushes.Menu,              x, y, 24, 24)
+	This.oGfx.DrawString("Menu", oFont, .SystemBrushes.ControlText, x+25,y)
+	y = y + 24
+	This.oGfx.FillRectangle(.SystemBrushes.ScrollBar,         x, y, 24, 24)
+	This.oGfx.DrawString("ScrollBar", oFont, .SystemBrushes.ControlText, x+25,y)
+	y = y + 24
+	This.oGfx.FillRectangle(.SystemBrushes.WindowText,        x, y, 24, 24)
+	This.oGfx.DrawString("WindowText", oFont, .SystemBrushes.ControlText, x+25,y)
+	
+ENDWITH
+
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] RESERVED  
+[START PROPERTIES]
+Arial, 0, 9, 5, 15, 12, 32, 3, 0
+[END PROPERTIES]
+[EOF]

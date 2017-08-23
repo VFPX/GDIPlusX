@@ -1,0 +1,1308 @@
+SCCTEXT Version 4.0.0.2
+PLATFORM C(8,0),UNIQUEID C(10,0),TIMESTAMP N(10,0),CLASS M(4,0),CLASSLOC M(4,0),BASECLASS M(4,0),OBJNAME M(4,0),PARENT M(4,0),PROPERTIES M(4,0),PROTECTED M(4,0),METHODS M(4,0),OBJCODE M(4,0),OLE M(4,0),OLE2 M(4,0),RESERVED1 M(4,0),RESERVED2 M(4,0),RESERVED3 M(4,0),RESERVED4 M(4,0),RESERVED5 M(4,0),RESERVED6 M(4,0),RESERVED7 M(4,0),RESERVED8 M(4,0),USER M(4,0)
+1250
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] Class     
+[START RESERVED1]
+VERSION =   3.00[END RESERVED1]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1890LRE8T
+[CLASS] shape
+[BASECLASS] shape
+[OBJNAME] splitter2
+[START PROPERTIES]
+Height = 4
+Width = 100
+MousePointer = 7
+SpecialEffect = 0
+rangemin = 0.2
+rangemax = 0.8
+_memberdata = 
+Name = "splitter2"
+[END PROPERTIES]
+[START PROTECTED]
+readme^
+hidecontrols^
+showcontrols^
+hiddencontrols^
+Init
+MouseDown
+[END PROTECTED]
+[START METHODS]
+PROCEDURE Destroy
+
+* decrement instance counter, if 0 release object (this.release Dlls)
+*-------------------------------------------------------------------------------
+IF TYPE("_screen.___SplitterApi")="O" AND !ISNULL(_SCREEN.___SplitterApi)
+
+  _SCREEN.___SplitterApi.nInstances = _SCREEN.___SplitterApi.nInstances - 1
+
+  IF _SCREEN.___SplitterApi.nInstances <= 0
+
+    _SCREEN.___SplitterApi.nInstances = NULL
+
+    _SCREEN.REMOVEOBJECT("___SplitterApi")
+
+  ENDIF
+
+ENDIF
+
+
+ENDPROC
+PROCEDURE Init
+
+* API FUNCTIONS - declare only one for all splitter with this class
+*--------------------------------------------------------------------------------------------
+IF !VARTYPE(_SCREEN.___SplitterApi) = "O"
+
+  *!*	  IF AT(UPPER((THIS.CLASSLIBRARY)),UPPER(SET("Classlib")))=0
+
+  *!*	    SET CLASSLIB TO (THIS.CLASSLIBRARY) ADDITIVE
+
+  *!*	  ENDIF
+
+  *!*	  _SCREEN.ADDOBJECT("___SplitterApi","SplitterAPI")
+
+  _SCREEN.NEWOBJECT("___SplitterApi","SplitterAPI", THIS.CLASSLIBRARY)
+
+ELSE
+
+  _SCREEN.___SplitterApi.nInstances = _SCREEN.___SplitterApi.nInstances + 1
+
+ENDIF
+
+RETURN VARTYPE(_SCREEN.___SplitterApi)="O"
+
+ENDPROC
+PROCEDURE MouseDown
+
+LPARAMETERS nButton, nShift, nXCoord, nYCoord
+LOCAL lcWindowName,lnScaleMode,lnMinRow,lnMaxRow,lnMRow1,lnMRow2
+LOCAL lnRows,lnTop,lnOldTop,lnMin,oldMRow2
+LOCAL llLockScreen,lnMousePointer
+LOCAL lhDC,lhMemDC,lhMemBmp,lHWnd,lnBmpHeight,nLeftOffset,nTopOffset,oContainer,xHeight
+LOCAL lcOldFormName,lhMemSplit
+
+IF nButton # 1
+
+  RETURN
+
+ENDIF
+
+lcOldFormName = THISFORM.NAME
+
+THISFORM.NAME = SYS(2015)
+
+lcWindowName = THISFORM.NAME
+
+lnScaleMode = THISFORM.SCALEMODE
+
+THISFORM.SCALEMODE = 3  && pixels
+
+oContainer = THIS.PARENT
+
+nLeftOffset = OBJTOCLIENT(THIS,2) - THIS.LEFT
+
+nTopOffset = OBJTOCLIENT(THIS,1) - THIS.TOP
+
+lnMRow1 = MROW(lcWindowName,3)
+
+IF TYPE("lnMRow1") # "N" OR lnMRow1 <= 0
+
+  THISFORM.SCALEMODE = lnScaleMode
+
+  THISFORM.NAME = lcOldFormName
+
+  RETURN
+
+ENDIF
+
+lnMRow1 = lnMRow1 - nTopOffset
+
+IF lnMRow1 <> THIS.TOP + 1
+
+  lnMRow1 = THIS.TOP + 1
+
+  MOUSE AT lnMRow1 + nTopOffset, MCOL(lcWindowName,3) PIXELS WINDOW (lcWindowName)
+
+ENDIF
+
+* set some vars
+*--------------------------------------------------------------------------------------------
+llLockScreen = THISFORM.LOCKSCREEN
+
+lnMousePointer = THISFORM.MOUSEPOINTER
+
+THISFORM.MOUSEPOINTER = 7
+
+lnTop = THIS.TOP
+
+* check two parent level for Height- suppose that parent form always present
+*--------------------------------------------------------------------------------------------
+IF PEMSTATUS(oContainer,"Height",5)
+
+  xHeight	=	oContainer.HEIGHT
+
+ELSE
+
+  IF PEMSTATUS(oContainer.PARENT,"PageHeight",5)
+
+    xHeight	=	oContainer.PARENT.PAGEHEIGHT
+
+  ELSE
+
+    * if error that oContainer.Height and oContainer.parent.width not exist, something wrong
+    *--------------------------------------------------------------------------------------------
+    xHeight	=	oContainer.PARENT.HEIGHT
+
+  ENDIF
+
+ENDIF
+
+* RangeMin (RangeMax) < 1
+* 		RangeMin (RangeMax) are used as coeficient (%/100)
+* RangeMin (RangeMax) > 1
+*		RangeMin (RangeMax) are used as absolute offset in pixels
+* RangeMin (RangeMax) =0
+*		RangeMin (RangeMax) are ignored - no restriction
+
+DO CASE
+
+  CASE THIS.RangeMin <= 0
+
+    lnMinRow = THIS.HEIGHT * 2
+
+  CASE THIS.RangeMin > 1
+
+    lnMinRow = MAX(THIS.HEIGHT * 2, INT(THIS.RangeMin))
+
+  CASE THIS.RangeMin < 1
+
+    lnMinRow = MAX(THIS.HEIGHT * 2, INT(THIS.RangeMin * xHeight))
+
+ENDCASE
+
+DO CASE
+
+  CASE THIS.RangeMax <= 0
+
+    lnMaxRow = xHeight - (THIS.HEIGHT * 3)
+
+  CASE THIS.RangeMax > 1
+
+    lnMaxRow = MIN(xHeight - (THIS.HEIGHT * 3), THIS.RangeMax)
+
+  CASE THIS.RangeMax < 1
+
+    lnMaxRow = MIN(xHeight - (THIS.HEIGHT * 3), THIS.RangeMax * xHeight)
+
+ENDCASE
+
+IF lnMinRow > lnMaxRow
+
+  * nothing to move!!!
+  *-------------------------------
+  THISFORM.SCALEMODE = lnScaleMode
+  THISFORM.NAME = lcOldFormName
+
+  RETURN
+
+ENDIF
+
+lnMRow2 = lnMRow1
+oldMRow2 = lnMRow2
+
+#DEFINE SRCCOPY		13369376
+
+* API CALLS
+*---------------------------
+IF THISFORM.SHOWWINDOW = 2
+
+  * workaround, when showwindow=2 the handle is not the right one...
+  * worst if you have a toolbar!
+  *------------------------------------------------------------------
+  *#define GW_HWNDFIRST        0
+  #DEFINE GW_HWNDLAST         1
+  *#define GW_HWNDNEXT         2
+  *#define GW_HWNDPREV         3
+  *#define GW_OWNER            4
+  #DEFINE GW_CHILD            5
+
+  lHWnd = THISFORM.HWND
+  lHWnd = GS_SplitGetWindow(lHWnd,GW_CHILD)
+  lHWnd = GS_SplitGetWindow(lHWnd,GW_HWNDLAST)
+
+ELSE
+
+  lHWnd = THISFORM.HWND
+
+ENDIF
+
+lhDC = GS_SplitGetDC(lHWnd)
+
+lhMemDC = GS_SplitCreateCompatibleDC(lhDC)
+
+* Take a copy of the portion of the form that can be dragged over
+*------------------------------------------------------------------
+lnBmpHeight = THIS.HEIGHT
+
+lhMemBmp = GS_SplitCreateCompatibleBitmap(lhDC, THIS.WIDTH, lnBmpHeight)
+
+lhMemSplit = GS_SplitCreateCompatibleBitmap(lhDC, THIS.WIDTH, lnBmpHeight)
+
+= GS_SplitSelectObject(lhMemDC, lhMemBmp)
+
+= GS_SplitBitBlt(lhMemDC, 0, 0,  THIS.WIDTH, lnBmpHeight, ;
+  lhDC, THIS.LEFT + nLeftOffset, lnMRow1 - 1 + nTopOffset, SRCCOPY)
+
+= GS_SplitSelectObject(lhMemDC , lhMemSplit)
+
+= GS_SplitBitBlt(lhMemDC, 0, 0,  THIS.WIDTH, lnBmpHeight, ;
+  lhDC, THIS.LEFT + nLeftOffset, lnMRow1 - 1 + nTopOffset, SRCCOPY)
+
+* Stop fox drawing in the screen
+*---------------------------------
+THISFORM.LOCKSCREEN = .T.
+THIS.hidecontrols(oContainer)
+
+* update the display while dragging
+*------------------------------------
+DO WHILE MDOWN()
+
+  DOEVENTS
+
+  lnMRow2 = MROW(lcWindowName,3) - nTopOffset
+
+  IF TYPE("lnMRow2") # "N" OR lnMRow2 = 0
+
+    LOOP
+
+  ENDIF
+
+  IF lnMRow2 <= lnMinRow
+
+    *force the mouse to stay at this position
+    *------------------------------------------
+    MOUSE AT lnMinRow + nTopOffset, MCOL(lcWindowName,3) PIXELS WINDOW (lcWindowName)
+
+    lnMRow2 = lnMinRow + 1
+
+  ENDIF
+
+  IF lnMRow2 >= (lnMaxRow - THIS.HEIGHT)
+
+    *force the mouse to stay at this position
+    *--------------------------------------------------------------------------------------------
+    MOUSE AT lnMaxRow - THIS.HEIGHT + nTopOffset, MCOL(lcWindowName,3) PIXELS WINDOW (lcWindowName)
+
+    lnMRow2 = lnMaxRow - THIS.HEIGHT
+
+  ENDIF
+
+  lnMRow2 = MIN(MAX(lnMRow2, lnMinRow), lnMaxRow)
+
+  IF oldMRow2 = lnMRow2
+
+    LOOP
+
+  ELSE
+
+    * on mouse move, redraw a part of the screen from the memory copy
+    * and draw "this" image at the mouse position
+    * bitblt (dest...source...)
+    *-------------------------------------------------------------------
+    WITH THIS
+
+      .TOP = lnTop + (lnMRow2 - lnMRow1)
+
+      *restore
+      *--------------
+      = GS_SplitSelectObject(lhMemDC, lhMemBmp)
+
+      = GS_SplitBitBlt(lhDC, .LEFT+nLeftOffset, oldMRow2 - 1 + nTopOffset, .WIDTH, .HEIGHT+3,;
+        lhMemDC, 0, 0,  SRCCOPY)
+
+      *take a new copy
+      *-----------------
+      = GS_SplitBitBlt(lhMemDC, 0, 0,  THIS.WIDTH, lnBmpHeight, ;
+        lhDC, THIS.LEFT+nLeftOffset, lnMRow2 - 1 + nTopOffset, SRCCOPY)
+
+      *draw
+      *--------
+      = GS_SplitSelectObject(lhMemDC , lhMemSplit)
+
+      = GS_SplitBitBlt(lhDC, .LEFT+nLeftOffset, .TOP+nTopOffset, .WIDTH, .HEIGHT + 1,;
+        lhMemDC, 0, 0,  SRCCOPY)
+
+    ENDWITH
+
+    oldMRow2 = lnMRow2
+
+  ENDIF
+
+ENDDO
+
+THIS.showcontrols()
+
+THISFORM.NAME = lcOldFormName
+
+IF lnMRow2 < 0
+
+  lnMRow2 = lnMRow1
+
+ENDIF
+
+lnRows = lnMRow2 - lnMRow1
+
+THIS.TOP = lnTop + lnRows
+
+THISFORM.SCALEMODE = lnScaleMode
+
+THISFORM.MOUSEPOINTER = lnMousePointer
+
+THIS.SPLIT()
+
+THISFORM.LOCKSCREEN = llLockScreen
+
+* free the memory
+*----------------------------------
+= GS_SplitReleaseDC(lHWnd, lhDC)
+= GS_SplitDeleteObject(lhMemBmp)
+= GS_SplitDeleteObject(lhMemSplit)
+= GS_SplitDeleteDC(lhMemDC)
+
+ENDPROC
+PROCEDURE hidecontrols
+
+* hide all controls include ActiveX with property visible inside container tObject
+* without this splitter and form
+*--------------------------------------------------------------------------------------------
+LPARAMETERS tObject,nIndex
+
+*	tObject is root object, if not passed, thisform is used
+*--------------------------------------------------------------------------------------------
+IF EMPTY(nIndex)
+
+  nIndex = 2
+
+ENDIF
+
+LOCAL lcObjectBaseClass, lObject, lTempObject
+
+* build collection hidden object for reverse setting in showcontrols
+* set valid object
+*--------------------------------------------------------------------------------------------
+IF VARTYPE(tObject) = "O"
+
+  lObject = tObject
+
+ELSE
+
+  lObject = THISFORM
+
+ENDIF
+
+* ignore this splitter
+*--------------------------------------------------------------------------------------------
+IF lObject = THIS
+
+  RETURN nIndex
+
+ENDIF
+
+* unify
+*--------------------------------------------------------------------------------------------
+lcObjectBaseClass = LOWER(lObject.BASECLASS) + " " && " " for unique (page # pageframe)
+
+* do not hide form window
+*--------------------------------------------------------------------------------------------
+IF lcObjectBaseClass # "form " AND PEMSTATUS(lObject,"visible",5)
+
+  IF lObject.VISIBLE
+
+    DIMENSION THIS.HiddenControls[nIndex]
+
+    THIS.hiddencontrols[nIndex] = lObject
+
+    lObject.VISIBLE = .F.
+
+    nIndex = nIndex + 1
+
+  ENDIF
+
+ENDIF
+
+* recurse for all children
+*--------------------------------------------------------------------------------------------
+DO CASE
+
+  CASE INLIST(lcObjectBaseClass,"pageframe ")
+
+    FOR EACH lTempObject IN lObject.PAGES
+
+      nIndex=THIS.hidecontrols(lTempObject,nIndex)
+
+    ENDFOR
+
+  CASE INLIST(lcObjectBaseClass,"form ","container ","page ")
+
+    FOR EACH lTempObject IN lObject.CONTROLS
+
+      nIndex=THIS.hidecontrols(lTempObject,nIndex)
+
+    ENDFOR
+
+  CASE INLIST(lcObjectBaseClass,"commandgroup ","optiongroup ")
+
+    FOR EACH lTempObject IN lObject.BUTTONS
+
+      nIndex=THIS.hidecontrols(lTempObject,nIndex)
+
+    ENDFOR
+
+ENDCASE
+
+RETURN nIndex + 1
+
+ENDPROC
+PROCEDURE readme
+*!*	Splitter class
+*!*	May 2004
+
+*!*	Active-X controls always drive me nuts because they use there own windows handle.
+*!*	You cannot put a fox native control over them to resize the control visually.
+*!*	You have to use some tricks like changing the control to
+*!*	another one for this operation and rechange it back after.
+*!*	( See the class browser code )
+
+*!*	What I want is a splitter that can handle this in a visual way
+*!*	while keeping the form (look) unchanged until the end of the split.
+
+*!*	After many try and fail, I have finally found a way to do it
+*!*	by the use of API calls. IT WORK!!!
+*!* Days of work to end with only a couple of code lines :)
+
+*!*	I am not an API guru, so if you find a way to improve this class
+*!*	feel free to let me know how :)
+
+*!*	Tested with VFP 8-7 on Windows 2000
+*!*	(no animal other than the usual fox was used in the tests)
+*!*	Disclaimer: (...) <- put the usual disclaimer here!
+
+*!*	Gérald Santerre
+*!*	gerald.santerre@siteintranet.qc.ca
+
+
+*!*		USAGE:
+
+*!*		Drop this class on a form or a container between the objects that share the container.
+
+*!*	New release, complete redesing.
+*!*	If you already use a previous version of the class, read this carefully.
+*!*	I have removed a couple of properties and change the way the classes work.
+*!*	For this reason I have also renamed the classlib to avoid conflicts
+*!*	with previous version of the class. The new design is cleaner and the control
+*!*	don't touch anything in the form (except hiding controls during split).
+
+*!*	A large part of the new design is from suggestions received
+*!*	from "Jaromír Stacha" from Czech Republic.
+*!*		Thank you Jaromir :).
+
+*!*	The new splitter classes don't move or resize controls anymore.
+*!*	The splitter.split() method is always called after a split operation
+*!*	and you have to resize/reposition your controls from this (fake)event.
+*!*	If you don't put code in the split() method, the form.resize() event
+*!*	of the form will be called. See the resize() and splitter1.split()
+*!*	method of the demo form for a working sample.
+
+*!*	You have only 2 properties to set in the class,
+*!*	RangeMin and RangeMax.
+*!*	If you set the value of this properties between 0 and 1,
+*!*	the value is handled as a % of the splitter's parent container width ot height.
+*!*	For example, if you enter 0.2 as value for RangeMin,
+*!*	you will be able to move the splitter down to 20% of the width/height
+*!*	of the splitter's parent container.
+*!*	Values greater than 1 will be handle as absolute values.
+*!*	Don't forget to reset absolute values when the splitter's parent container is resized.
+
+*!*	The splitter API is now self contained and you dont have
+*!*	to worry about releasing the references to API functions.
+*!*	The splitter now also handle correctly multiple instances
+*!*	of the same form (or forms with the same name).
+*!*	The splitter automatically hide every controls that are in
+*!*	the same parent container (recursive) to avoid side effects
+*!*	(like mouse cursor beam over text boxes).
+
+*!*	Contact: gerald.santerre@siteintranet.qc.ca
+
+ENDPROC
+PROCEDURE showcontrols
+
+* show temporary hidden objects and clear list (collection)
+*------------------------------------------------------------
+LPARAMETERS toRoot
+
+IF ALEN(THIS.hiddencontrols, 1) < 2
+
+  RETURN
+
+ENDIF
+
+FOR i = 2 TO ALEN(THIS.hiddencontrols, 1)
+
+  IF TYPE("THIS.hiddencontrols[i]") = "O"
+
+    THIS.hiddencontrols[i].VISIBLE = .T.
+
+  ENDIF
+
+ENDFOR
+
+DIMENSION THIS.hiddencontrols[1]
+
+ENDPROC
+PROCEDURE split
+
+* default behaviour
+*--------------------
+THISFORM.RESIZE()
+ENDPROC
+[END METHODS]
+[START RESERVED1]
+Class[END RESERVED1]
+[START RESERVED2]
+1[END RESERVED2]
+[START RESERVED3]
+rangemin The splitter can be dragged to the top down to this value. Value < 1 is percent of parent height.
+rangemax The splitter can be dragged to the bottom up to this value. Pixels from the top of the parent. Value < 1 is percent of parent height.
+_memberdata XML Metadata for customizable properties
+*readme 
+*hidecontrols internal use
+*showcontrols internal use
+*split This method is called at the end of the split operation.
+^hiddencontrols[1,1] Array of controls
+[END RESERVED3]
+[START RESERVED6]
+Pixels[END RESERVED6]
+[START RESERVED7]
+Up-Down Splitter class. Support ActiveX controls. Author: gerald.santerre@siteintranet.qc.ca[END RESERVED7]
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] RESERVED  
+[OBJNAME] splitter2
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1890LRE8T
+[CLASS] shape
+[BASECLASS] shape
+[OBJNAME] splitter
+[START PROPERTIES]
+Height = 203
+Width = 4
+MousePointer = 9
+SpecialEffect = 0
+rangemin = 0.2
+rangemax = 0.8
+_memberdata =      237<VFPData><memberdata name="declaredll" type="method" display="DeclareDll"/><memberdata name="beforemousedown" type="method" display="BeforeMouseDown"/><memberdata name="aftermousedown" type="method" display="AfterMouseDown"/></VFPData>
+
+Name = "splitter"
+[END PROPERTIES]
+[START PROTECTED]
+readme^
+hidecontrols^
+showcontrols^
+hiddencontrols^
+Init
+MouseDown
+[END PROTECTED]
+[START METHODS]
+PROCEDURE Destroy
+
+* decrement instance counter, if 0 release object (this.release Dlls)
+*-------------------------------------------------------------------------
+IF TYPE("_screen.___SplitterApi")="O" AND !ISNULL(_SCREEN.___SplitterApi)
+
+  _SCREEN.___SplitterApi.nInstances = _SCREEN.___SplitterApi.nInstances - 1
+
+  IF _SCREEN.___SplitterApi.nInstances <= 0
+
+    _SCREEN.___SplitterApi.nInstances = NULL
+
+    _SCREEN.REMOVEOBJECT("___SplitterApi")
+
+  ENDIF
+
+ENDIF
+
+
+
+ENDPROC
+PROCEDURE Init
+
+* API FUNCTIONS - declare only one for all splitter with this class
+*--------------------------------------------------------------------
+IF !VARTYPE(_SCREEN.___SplitterApi) = "O"
+
+  *!*	  IF AT(UPPER((THIS.CLASSLIBRARY)),UPPER(SET("Classlib")))=0
+
+  *!*	    SET CLASSLIB TO (THIS.CLASSLIBRARY) ADDITIVE
+
+  *!*	  ENDIF
+
+  *!*	  _SCREEN.ADDOBJECT("___SplitterApi","SplitterAPI")
+
+  _SCREEN.NEWOBJECT("___SplitterApi", "SplitterAPI", THIS.CLASSLIBRARY)
+
+ELSE
+
+  _SCREEN.___SplitterApi.nInstances = _SCREEN.___SplitterApi.nInstances + 1
+
+ENDIF
+
+RETURN VARTYPE(_SCREEN.___SplitterApi) == "O" AND !ISNULL(_SCREEN.___SplitterApi)
+
+ENDPROC
+PROCEDURE MouseDown
+
+#DEFINE SRCCOPY		13369376
+
+LPARAMETERS nButton, nShift, nXCoord, nYCoord
+
+THIS.BeforeMouseDown()
+
+THIS.DeclareDll()
+
+LOCAL lcWindowName,lnScaleMode,lnMinCol,lnMaxCol,lnMCol1,lnMCol2
+LOCAL lnColumns,lnLeft,lnOldLeft,lnMin,oldMCol2
+LOCAL llLockScreen,lnMousePointer
+LOCAL lhDC,lhMemDC,lhMemBmp,lHWnd,lnBmpWidth,nLeftOffset,nTopOffset,oContainer,xWidth
+LOCAL lcOldFormName,lhMemSplit
+
+IF nButton # 1
+
+	RETURN
+	
+ENDIF
+
+lcOldFormName = THISFORM.NAME
+
+THISFORM.NAME = SYS(2015)
+
+lcWindowName = THISFORM.NAME
+
+lnScaleMode = THISFORM.SCALEMODE
+
+THISFORM.SCALEMODE = 3  && pixels
+
+oContainer = THIS.PARENT
+
+nLeftOffset = OBJTOCLIENT(THIS, 2) - THIS.LEFT
+
+nTopOffset = OBJTOCLIENT(THIS, 1) - THIS.TOP
+
+lnMCol1 = MCOL(lcWindowName, 3)
+
+IF TYPE("lnMCol1") # "N" OR lnMCol1 <= 0
+
+	THISFORM.SCALEMODE = lnScaleMode
+	
+	THISFORM.NAME = lcOldFormName
+	
+	RETURN
+	
+ENDIF
+
+lnMCol1 = lnMCol1 - nLeftOffset
+
+IF lnMCol1 <> THIS.LEFT + 1
+
+	lnMCol1 = THIS.LEFT + 1
+	
+	MOUSE AT MROW(lcWindowName, 3), lnMCol1 + nLeftOffset PIXELS WINDOW (lcWindowName)
+	
+ENDIF
+
+* set some vars
+*-------------------
+llLockScreen			=	THISFORM.LOCKSCREEN
+
+lnMousePointer			=	THISFORM.MOUSEPOINTER
+
+THISFORM.MOUSEPOINTER	=	9
+
+lnLeft					=	THIS.LEFT
+
+* check two parent level for width - suppose that parent form always present
+*----------------------------------------------------------------------------
+IF PEMSTATUS(oContainer, "Width", 5)
+
+	xWidth	=	oContainer.WIDTH
+	
+ELSE
+
+	IF PEMSTATUS(oContainer.PARENT,"PageWidth",5)
+	
+		xWidth	=	oContainer.PARENT.PAGEWIDTH
+		
+	ELSE
+	
+		* if error that oContainer.width and oContainer.parent.width not exist, something wrong
+		*----------------------------------------------------------------------------------------
+		xWidth	=	oContainer.PARENT.WIDTH
+		
+	ENDIF
+	
+ENDIF
+
+* RangeMin (RangeMax) < 1
+* 		RangeMin (RangeMax) are used as coeficient (%/100)
+* RangeMin (RangeMax) > 1
+*		RangeMin (RangeMax) are used as absolute offset in pixels
+* RangeMin (RangeMax) =0
+*		RangeMin (RangeMax) are ignored - let 2 times this.width
+
+DO CASE
+
+	CASE THIS.RangeMin <= 0
+	
+		lnMinCol = THIS.WIDTH*2
+		
+	CASE THIS.RangeMin > 1
+	
+		lnMinCol = MAX(THIS.WIDTH*2, INT(THIS.RangeMin))
+		
+	CASE THIS.RangeMin < 1
+	
+		lnMinCol = MAX(THIS.WIDTH * 2, INT(THIS.RangeMin * xWidth))
+		
+ENDCASE
+
+DO CASE
+
+	CASE THIS.RangeMax <= 0
+	
+		lnMaxCol = xWidth - (THIS.WIDTH * 3)
+		
+	CASE THIS.RangeMax > 1
+	
+		lnMaxCol = MIN(xWidth - (THIS.WIDTH*3), THIS.RangeMax)
+		
+	CASE THIS.RangeMax < 1
+	
+		lnMaxCol = MIN(xWidth - (THIS.WIDTH*3), THIS.RangeMax * xWidth)
+		
+ENDCASE
+
+IF lnMinCol > lnMaxCol
+
+	* nothing to move!!!
+	*------------------------------
+	THISFORM.SCALEMODE = lnScaleMode
+	
+	THISFORM.NAME = lcOldFormName
+	
+	RETURN
+	
+ENDIF
+
+lnMCol2 = lnMCol1
+
+oldMCol2 = lnMCol2
+
+* API CALLS
+*-----------------------------
+IF THISFORM.SHOWWINDOW = 2
+
+	* workaround, when showwindow=2 the handle is not the right one...
+	* worst if you have a toolbar!
+	*--------------------------------------------------------------------
+	*#define GW_HWNDFIRST        0
+	#define GW_HWNDLAST         1
+	*#define GW_HWNDNEXT         2
+	*#define GW_HWNDPREV         3
+	*#define GW_OWNER            4
+	#define GW_CHILD            5
+
+	lHWnd=THISFORM.HWND
+	
+	lHWnd = GS_SplitGetWindow(lHWnd, GW_CHILD)
+	
+	lHWnd = GS_SplitGetWindow(lHWnd, GW_HWNDLAST)
+	
+ELSE
+	lHWnd = THISFORM.HWND
+	
+ENDIF
+
+lhDC = GS_SplitGetDC(lHWnd)
+
+lhMemDC = GS_SplitCreateCompatibleDC(lhDC)
+
+* Take a copy of the portion of the form that can be dragged over
+*-------------------------------------------------------------------
+lnBmpWidth = THIS.WIDTH + 1
+
+lhMemBmp = GS_SplitCreateCompatibleBitmap(lhDC, lnBmpWidth, THIS.HEIGHT)
+
+lhMemSplit = GS_SplitCreateCompatibleBitmap(lhDC, lnBmpWidth, THIS.HEIGHT)
+
+DECLARE LONG SelectObject IN Win32API AS GS_SplitSelectObject  LONG hdc, LONG hObject
+
+= GS_SplitSelectObject(lhMemDC , lhMemBmp)
+
+= GS_SplitBitBlt(lhMemDC, 0, 0, lnBmpWidth, THIS.HEIGHT, ;
+	lhDC, lnMCol1 + nLeftOffset - 2, THIS.TOP + nTopOffset, SRCCOPY)
+	
+= GS_SplitSelectObject(lhMemDC , lhMemSplit)
+
+= GS_SplitBitBlt(lhMemDC, 0, 0, lnBmpWidth, THIS.HEIGHT, ;
+	lhDC, lnMCol1 + nLeftOffset - 1, THIS.TOP + nTopOffset, SRCCOPY)
+	
+
+* Stop fox drawing in the screen
+*--------------------------------
+THISFORM.LOCKSCREEN = .T.
+
+THIS.hidecontrols(oContainer)
+
+* update the display while dragging
+*-----------------------------------
+DO WHILE MDOWN()
+
+	DOEVENTS
+	
+	lnMCol2 = MCOL(lcWindowName, 3) - nLeftOffset
+	
+	IF TYPE("lnMCol2") # "N" OR lnMCol2 = 0
+	
+		LOOP
+		
+	ENDIF
+	
+	IF lnMCol2<=lnMinCol
+	
+		*force the mouse to stay at this position
+		*--------------------------------------------------------------------------------
+		MOUSE AT MROW(lcWindowName, 3), lnMinCol+nLeftOffset PIXELS WINDOW (lcWindowName)
+		
+		lnMCol2 = lnMinCol + 1
+		
+	ENDIF
+	
+	IF lnMCol2 >= (lnMaxCol - THIS.WIDTH)
+	
+		*force the mouse to stay at this position
+		*----------------------------------------------
+		MOUSE AT MROW(lcWindowName,3), lnMaxCol - THIS.WIDTH+nLeftOffset + 1 PIXELS WINDOW (lcWindowName)
+		
+		lnMCol2 = lnMaxCol - THIS.WIDTH
+		
+	ENDIF
+	
+	lnMCol2 = MIN(MAX(lnMCol2, lnMinCol), lnMaxCol)
+	
+	IF oldMCol2 = lnMCol2
+	
+		LOOP
+		
+	ELSE
+	
+		* on mouse move, redraw a part of the screen from the memory copy
+		* and draw "this" image at the mouse position
+		* bitblt (dest...source...)
+		*------------------------------------------------------------------
+		WITH THIS
+		
+			.LEFT=lnLeft+(lnMCol2 - lnMCol1)
+			
+			*restore
+			*-------------------------------------------
+			= GS_SplitSelectObject(lhMemDC , lhMemBmp)
+			
+			= GS_SplitBitBlt(lhDC, oldMCol2+nLeftOffset - 2, .TOP+nTopOffset, lnBmpWidth, .HEIGHT,;
+				lhMemDC, 0, 0,  SRCCOPY)
+				
+			*take a new copy
+			*-------------------------------------------------------------
+			= GS_SplitBitBlt(lhMemDC, 0, 0, lnBmpWidth, THIS.HEIGHT, ;
+				lhDC, lnMCol2 + nLeftOffset - 2, THIS.TOP + nTopOffset, SRCCOPY)
+				
+			*draw the bar
+			*--------------------------------------------
+			= GS_SplitSelectObject(lhMemDC , lhMemSplit)
+			
+			= GS_SplitBitBlt(lhDC, .LEFT + nLeftOffset-1, .TOP + nTopOffset, lnBmpWidth, .HEIGHT,;
+				lhMemDC, 0, 0,  SRCCOPY)
+				
+		ENDWITH
+		
+		oldMCol2 = lnMCol2
+		
+	ENDIF
+	
+ENDDO
+
+THIS.showcontrols()
+
+THISFORM.NAME = lcOldFormName
+
+IF lnMCol2<0
+
+	lnMCol2=lnMCol1
+	
+ENDIF
+
+lnColumns=lnMCol2-lnMCol1
+
+THIS.LEFT=lnLeft + lnColumns
+
+THISFORM.SCALEMODE=lnScaleMode
+
+THISFORM.MOUSEPOINTER=lnMousePointer
+
+This.Split()
+
+THISFORM.LOCKSCREEN=llLockScreen
+
+IF !THIS.DeclareDll()
+
+  RETURN
+
+ENDIF
+
+* free the memory
+*--------------------------------
+= GS_SplitReleaseDC(lHWnd, lhDC)
+= GS_SplitDeleteObject(lhMemBmp)
+= GS_SplitDeleteObject(lhMemSplit)
+= GS_SplitDeleteDC(lhMemDC)
+
+THIS.AfterMouseDown()
+
+ENDPROC
+PROCEDURE declaredll
+
+IF !VARTYPE(_SCREEN.___SplitterApi) = "O"
+
+  _SCREEN.NEWOBJECT("___SplitterApi", "SplitterAPI", THIS.CLASSLIBRARY)
+
+ELSE
+
+  _SCREEN.___SplitterApi.DeclareDll()
+
+ENDIF
+
+RETURN VARTYPE(_SCREEN.___SplitterApi) == "O" AND !ISNULL(_SCREEN.___SplitterApi)
+ENDPROC
+PROCEDURE hidecontrols
+
+* hide all controls include ActiveX with property visible inside container tObject
+* without this splitter and form
+*-----------------------------------------------------------------------------------
+LPARAMETERS tObject,nIndex
+
+*	tObject is root object, if not passed, thisform is used
+*-----------------------------------------------------------
+IF EMPTY(nIndex)
+
+  nIndex = 2
+
+ENDIF
+
+LOCAL lcObjectBaseClass, lObject, lTempObject
+
+* build collection hidden object for reverse setting in showcontrols
+* set valid object
+*----------------------------------------------------------------------------
+IF VARTYPE(tObject) = "O"
+
+  lObject = tObject
+
+ELSE
+
+  lObject = THISFORM
+
+ENDIF
+
+* ignore this splitter
+*------------------------
+IF lObject = THIS
+
+  RETURN nIndex
+
+ENDIF
+
+* unify
+*--------------------
+lcObjectBaseClass = LOWER(lObject.BASECLASS) + " " && " " for unique (page # pageframe)
+
+* do not hide form window
+*--------------------------------
+IF lcObjectBaseClass # "form " AND PEMSTATUS(lObject, "visible", 5)
+
+  IF lObject.VISIBLE
+
+    DIMENSION THIS.HiddenControls[nIndex]
+
+    THIS.hiddencontrols[nIndex] = lObject
+
+    lObject.VISIBLE = .F.
+
+    nIndex = nIndex + 1
+
+  ENDIF
+
+ENDIF
+
+* recurse for all children
+*------------------------------
+DO CASE
+
+  CASE INLIST(lcObjectBaseClass,"pageframe ")
+
+    FOR EACH lTempObject IN lObject.PAGES
+
+      nIndex=THIS.hidecontrols(lTempObject, nIndex)
+
+    ENDFOR
+
+  CASE INLIST(lcObjectBaseClass,"form ","container ","page ")
+
+    FOR EACH lTempObject IN lObject.CONTROLS
+
+      nIndex=THIS.hidecontrols(lTempObject, nIndex)
+
+    ENDFOR
+
+  CASE INLIST(lcObjectBaseClass,"commandgroup ","optiongroup ")
+
+    FOR EACH lTempObject IN lObject.BUTTONS
+
+      nIndex=THIS.hidecontrols(lTempObject, nIndex)
+
+    ENDFOR
+
+ENDCASE
+
+RETURN nIndex+1
+
+ENDPROC
+PROCEDURE readme
+*!*	Splitter class
+*!*	May 2004
+
+*!*	Active-X controls always drive me nuts because they use there own windows handle.
+*!*	You cannot put a fox native control over them to resize the control visually.
+*!*	You have to use some tricks like changing the control to
+*!*	another one for this operation and rechange it back after.
+*!*	( See the class browser code )
+
+*!*	What I want is a splitter that can handle this in a visual way
+*!*	while keeping the form (look) unchanged until the end of the split.
+
+*!*	After many try and fail, I have finally found a way to do it
+*!*	by the use of API calls. IT WORK!!!
+*!* Days of work to end with only a couple of code lines :)
+
+*!*	I am not an API guru, so if you find a way to improve this class
+*!*	feel free to let me know how :)
+
+*!*	Tested with VFP 8-7 on Windows 2000
+*!*	(no animal other than the usual fox was used in the tests)
+*!*	Disclaimer: (...) <- put the usual disclaimer here!
+
+*!*	Gérald Santerre
+*!*	gerald.santerre@siteintranet.qc.ca
+
+
+*!*		USAGE:
+
+*!*		Drop this class on a form or in a container between
+*!*		objects that share the same container (form,page or container).
+
+*!*	New release, complete redesing.
+*!*	If you already use a previous version of the class, read this carefully.
+*!*	I have removed a couple of properties and change the way the classes work.
+*!*	For this reason I have also renamed the classlib to avoid conflicts
+*!*	with previous version of the class. The new design is cleaner and the control
+*!*	don't touch anything in the form (except hiding controls during split).
+
+*!*	A large part of the new design is from suggestions received
+*!*	from "Jaromír Stacha" from Czech Republic.
+*!*		Thank you Jaromir :).
+
+*!*	The new splitter classes don't move or resize controls anymore.
+*!*	The splitter.split() method is always called after a split operation
+*!*	and you have to resize/reposition your controls from this (fake)event.
+*!*	If you don't put code in the split() method, the form.resize() event
+*!*	of the form will be called. See the resize() and splitter1.split()
+*!*	method of the demo form for a working sample.
+
+*!*	You have only 2 properties to set in the class,
+*!*	RangeMin and RangeMax.
+*!*	If you set the value of this properties between 0 and 1,
+*!*	the value is handled as a % of the splitter's parent container width ot height.
+*!*	For example, if you enter 0.2 as value for RangeMin,
+*!*	you will be able to move the splitter down to 20% of the width/height
+*!*	of the splitter's parent container.
+*!*	Values greater than 1 will be handle as absolute values.
+*!*	Don't forget to reset absolute values when the splitter's parent container is resized.
+
+*!*	The splitter API is now self contained and you dont have
+*!*	to worry about releasing the references to API functions.
+*!*	The splitter now also handle correctly multiple instances
+*!*	of the same form (or forms with the same name).
+*!*	The splitter automatically hide every controls that are in
+*!*	the same parent container (recursive) to avoid side effects
+*!*	(like mouse cursor beam over text boxes).
+
+*!*	Contact: gerald.santerre@siteintranet.qc.ca
+
+
+
+
+
+
+
+ENDPROC
+PROCEDURE showcontrols
+
+* show temporary hidden objects and clear list (collection)
+*--------------------------------------------------------------
+LPARAMETERS toRoot
+
+IF ALEN(THIS.hiddencontrols,1) < 2
+
+  RETURN
+
+ENDIF
+
+FOR i = 2 TO ALEN(THIS.hiddencontrols, 1)
+
+  IF TYPE("THIS.hiddencontrols[i]")="O"
+
+    THIS.hiddencontrols[i].VISIBLE = .T.
+
+  ENDIF
+
+ENDFOR
+
+DIMENSION THIS.hiddencontrols[1]
+
+ENDPROC
+PROCEDURE split
+
+*default behaviour
+*----------------------
+THISFORM.RESIZE()
+ENDPROC
+[END METHODS]
+[START RESERVED1]
+Class[END RESERVED1]
+[START RESERVED2]
+1[END RESERVED2]
+[START RESERVED3]
+rangemin The splitter can be dragged to the left side down to this value. Pixels from the left side of the parent. Value < 1 is percent of parent width.
+rangemax The splitter can be dragged to the right side up to this value. Pixels from the left side of the parent. Value < 1 is percent of parent width.
+_memberdata XML Metadata for customizable properties
+*readme 
+*hidecontrols internal use
+*showcontrols internal use
+*split This method is called at the end of a split operation
+^hiddencontrols[1,1] Array of controls
+*declaredll 
+*beforemousedown 
+*aftermousedown 
+[END RESERVED3]
+[START RESERVED6]
+Pixels[END RESERVED6]
+[START RESERVED7]
+Left-Right Splitter class. Support ActiveX controls. Author: gerald.santerre@siteintranet.qc.ca[END RESERVED7]
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] RESERVED  
+[OBJNAME] splitter
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1AD1ADSOF
+[CLASS] custom
+[BASECLASS] custom
+[OBJNAME] splitterapi
+[START PROPERTIES]
+Height = 15
+Width = 27
+ninstances = 1
+_memberdata =       87<VFPData><memberdata name="declaredll" type="method" display="DeclareDll"/></VFPData>
+
+Name = "splitterapi"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Destroy
+Clear Dlls	;
+	"GS_SplitGetDC",;
+	"GS_SplitCreateCompatibleDC",;
+	"GS_SplitCreateCompatibleBitmap",;
+	"GS_SplitSelectObject",;
+	"GS_SplitReleaseDC",;
+	"GS_SplitDeleteDC",;
+	"GS_SplitBitBlt",;
+	"GS_SplitGetWindow",;
+	"GS_SplitDeleteObject"
+ENDPROC
+PROCEDURE Init
+
+THIS.DeclareDll()
+ENDPROC
+PROCEDURE declaredll
+
+DECLARE LONG GetDC					IN Win32API AS GS_SplitGetDC LONG HWND
+
+DECLARE LONG CreateCompatibleDC		IN Win32API AS GS_SplitCreateCompatibleDC LONG hdc
+
+DECLARE LONG CreateCompatibleBitmap IN Win32API AS GS_SplitCreateCompatibleBitmap  LONG hdc, LONG nWidth, LONG nHeight
+
+DECLARE LONG SelectObject 			IN Win32API AS GS_SplitSelectObject  LONG hdc, LONG hObject
+
+DECLARE LONG ReleaseDC 				IN Win32API AS GS_SplitReleaseDC  LONG HWND, LONG hdc
+
+DECLARE LONG DeleteDC 				IN Win32API AS GS_SplitDeleteDC  LONG hdc
+
+DECLARE LONG BitBlt 				IN Win32API AS GS_SplitBitBlt  ;
+  LONG hDestDC, LONG x, LONG Y, LONG nWidth, LONG nHeight, ;
+  LONG hSrcDC, LONG xSrc, LONG ySrc, LONG dwRop
+
+DECLARE INTEGER DeleteObject 		IN Win32API AS GS_SplitDeleteObject  LONG hObject
+
+DECLARE INTEGER GetWindow 			IN user32 AS GS_SplitGetWindow  ;
+  INTEGER HWND,;
+  INTEGER wFlag
+
+ENDPROC
+[END METHODS]
+[START RESERVED1]
+Class[END RESERVED1]
+[START RESERVED2]
+1[END RESERVED2]
+[START RESERVED3]
+ninstances
+_memberdata XML Metadata for customizable properties
+*declaredll 
+[END RESERVED3]
+[START RESERVED6]
+Pixels[END RESERVED6]
+[START RESERVED7]
+Splitter API declaration class[END RESERVED7]
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] RESERVED  
+[OBJNAME] splitterapi
+[EOF]

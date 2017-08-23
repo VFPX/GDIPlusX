@@ -1,0 +1,627 @@
+SCCTEXT Version 4.0.0.2
+PLATFORM C(8,0),UNIQUEID C(10,0),TIMESTAMP N(10,0),CLASS M(4,0),CLASSLOC M(4,0),BASECLASS M(4,0),OBJNAME M(4,0),PARENT M(4,0),PROPERTIES M(4,0),PROTECTED M(4,0),METHODS M(4,0),OBJCODE M(4,0),OLE M(4,0),OLE2 M(4,0),RESERVED1 M(4,0),RESERVED2 M(4,0),RESERVED3 M(4,0),RESERVED4 M(4,0),RESERVED5 M(4,0),RESERVED6 M(4,0),RESERVED7 M(4,0),RESERVED8 M(4,0),USER M(4,0)
+1252
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] Screen    
+[START RESERVED1]
+VERSION =   3.00[END RESERVED1]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0L3VWK
+[CLASS] dataenvironment
+[BASECLASS] dataenvironment
+[OBJNAME] Dataenvironment
+[START PROPERTIES]
+Top = 220
+Left = 1
+Width = 520
+Height = 200
+DataSource = .NULL.
+Name = "Dataenvironment"
+[END PROPERTIES]
+[START RESERVED2]
+1[END RESERVED2]
+[START RESERVED4]
+1[END RESERVED4]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0L3VWL
+[CLASS] form
+[BASECLASS] form
+[OBJNAME] Form1
+[START PROPERTIES]
+Top = 6
+Left = 5
+Height = 476
+Width = 709
+DoCreate = .T.
+ShowTips = .T.
+Caption = "Capture Screens, Forms and Controls !"
+MaxButton = .F.
+WindowState = 0
+_memberdata =       89<VFPData><memberdata name="launchimage" type="method" display="LaunchImage"/></VFPData>
+
+Name = "Form1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Init
+DO (LOCFILE("System.prg"))
+
+
+LOCAL lcFile
+lcFile = LOCFILE("vfpxlogosmall.png")
+Thisform.Image1.Picture = lcFile
+ENDPROC
+PROCEDURE launchimage
+LPARAMETERS tcFileName
+
+DECLARE INTEGER ShellExecute ;
+          IN SHELL32.DLL ;
+          INTEGER nWinHandle,;
+          STRING cOperation,;
+          STRING cFileName,;
+          STRING cParameters,;
+          STRING cDirectory,;
+          INTEGER nShowWindow
+
+
+
+RETURN ShellExecute(0,"open",m.tcFileName,"","",1)
+
+ENDPROC
+PROCEDURE objtoclient
+*!* This replaces OBJTOCLIENT that has bugs with pageframes
+Parameters toControl, tnType && 1 = Top  2 = Left
+
+*!* Pemstatus  Values
+#Define CON_PEMSTAT_CHANGED						0
+#Define CON_PEMSTAT_READONLY					1
+#Define CON_PEMSTAT_PROTECTED					2
+#Define CON_PEMSTAT_TYPE						3
+#Define CON_PEMSTAT_USERDEFINED					4
+#Define CON_PEMSTAT_DEFINED						5
+#Define CON_PEMSTAT_INHERITED					6
+
+*!* TabOrientation parameters
+#Define CON_TABOR_TOP							0
+#Define CON_TABOR_BOTTOM						1
+#Define CON_TABOR_LEFT							2
+#Define CON_TABOR_RIGHT							3
+
+Local lnPosition As Integer
+m.lnPosition = 0
+
+Do Case
+
+Case m.tnType = 1 && Top
+	Do While Not Upper(m.toControl.BaseClass) == [FORM]
+		If Pemstatus(m.toControl, [Top], CON_PEMSTAT_DEFINED) Then
+			m.lnPosition = m.lnPosition + m.toControl.Top
+		Endif
+		If Upper(m.toControl.BaseClass) == [PAGE] Then
+			If m.toControl.Parent.TabOrientation = CON_TABOR_TOP Then	&& Top
+				m.lnPosition = m.lnPosition + ;
+					m.toControl.Parent.Height - ;
+					m.toControl.Parent.PageHeight - ;
+					m.toControl.Parent.BorderWidth * 2
+			Else
+				m.lnPosition = m.lnPosition + 1
+			Endif
+		Endif
+		m.toControl = m.toControl.Parent
+	Enddo
+
+Case m.tnType = 2 && Left
+	Do While Not Upper(m.toControl.BaseClass) == [FORM]
+		If Pemstatus(m.toControl, [Left], CON_PEMSTAT_DEFINED) Then
+			m.lnPosition = m.lnPosition + m.toControl.Left
+		Endif
+		If Upper(m.toControl.BaseClass) == [PAGE]
+			If m.toControl.Parent.TabOrientation = CON_TABOR_LEFT Then	&& Left
+				m.lnPosition = m.lnPosition + ;
+					m.toControl.Parent.Width - ;
+					m.toControl.Parent.PageWidth - ;
+					m.toControl.Parent.BorderWidth * 2
+			Else
+				m.lnPosition = m.lnPosition + 1
+			Endif
+		Endif
+		m.toControl = m.toControl.Parent
+	Enddo
+
+Endcase
+
+Return m.lnPosition
+ENDPROC
+[END METHODS]
+[START RESERVED3]
+_memberdata XML Metadata for customizable properties
+*launchimage 
+*objtoclient 
+[END RESERVED3]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0L3VWK
+[CLASS] image
+[BASECLASS] image
+[OBJNAME] Image1
+[PARENT] Form1
+[START PROPERTIES]
+Anchor = 3
+Stretch = 2
+Height = 276
+Left = 12
+Top = 12
+Width = 420
+Name = "Image1"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0L3VWK
+[CLASS] commandbutton
+[BASECLASS] commandbutton
+[OBJNAME] Command10
+[PARENT] Form1
+[START PROPERTIES]
+Top = 12
+Left = 456
+Height = 48
+Width = 98
+Anchor = 6
+WordWrap = .T.
+Caption = "Capture this button"
+TabIndex = 1
+PicturePosition = 1
+PictureSpacing = 1
+Themes = .T.
+Name = "Command10"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Click
+LOCAL loCaptureBmp as xfcBitmap
+loCaptureBmp = _screen.system.Drawing.Bitmap.FromScreen(This)
+
+lcNewFile = PUTFILE("Save As","CapturedImage.png")
+loCaptureBmp.Save(lcNewFile, _screen.system.Drawing.Imaging.ImageFormat.Png)
+
+ThisForm.LaunchImage(lcNewFile)
+
+
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _28H110G3V
+[CLASS] container
+[BASECLASS] container
+[OBJNAME] Container1
+[PARENT] Form1
+[START PROPERTIES]
+Top = 300
+Left = 12
+Width = 264
+Height = 168
+Name = "Container1"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _28H1145U3
+[CLASS] pageframe
+[BASECLASS] pageframe
+[OBJNAME] Pageframe1
+[PARENT] Form1.Container1
+[START PROPERTIES]
+ErasePage = .T.
+PageCount = 2
+Top = 12
+Left = 12
+Width = 241
+Height = 149
+Name = "Pageframe1"
+Page1.Caption = "Page1"
+Page1.Name = "Page1"
+Page2.Caption = "Page2"
+Page2.Name = "Page2"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _28H11KQLJ
+[CLASS] container
+[BASECLASS] container
+[OBJNAME] Container2
+[PARENT] Form1.Container1.Pageframe1.Page1
+[START PROPERTIES]
+Top = 8
+Left = 11
+Width = 204
+Height = 96
+Name = "Container2"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _28H11KQLK
+[CLASS] commandbutton
+[BASECLASS] commandbutton
+[OBJNAME] Command10
+[PARENT] Form1.Container1.Pageframe1.Page1.Container2
+[START PROPERTIES]
+Top = 24
+Left = 12
+Height = 36
+Width = 179
+FontBold = .T.
+Anchor = 6
+WordWrap = .T.
+Picture = ..\samples\image\exit.bmp
+Caption = "Capture Me !"
+TabIndex = 1
+PicturePosition = 1
+PictureSpacing = 1
+ForeColor = 255,255,255
+BackColor = 0,0,128
+Themes = .T.
+Name = "Command10"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Click
+*** You can also remove the Window borders and titles, if you want :
+LOCAL lnTitleHeight, lnLeftBorder, lnTopBorder
+lnTitleHeight = SYSMETRIC(9)
+lnLeftBorder = SYSMETRIC(3)
+lnTopBorder = SYSMETRIC(4)
+
+*!*	LOCAL loImg as Image
+*!*	loImg = Thisform.Image1
+*!*	loImg = This
+
+
+*!*	LOCAL x, y, w, h
+*!*	x = OBJTOCLIENT(loImg, 1)
+*!*	y = OBJTOCLIENT(loImg, 2)
+*!*	w = OBJTOCLIENT(loImg, 3)
+*!*	h = OBJTOCLIENT(loImg, 4)
+
+
+LOCAL x, y, w, h
+y = Thisform.OBJTOCLIENT(This, 1)
+x = Thisform.OBJTOCLIENT(This, 2)
+w = This.Width
+h = This.Height
+
+
+LOCAL loCaptureBmp as xfcBitmap
+loCaptureBmp = _screen.system.Drawing.Bitmap.FromScreen(Thisform.HWnd, ;
+	lnLeftBorder + x , ;
+	lnTitleHeight + lnTopBorder + y , ;
+	W , ;
+	H)
+
+
+lcNewFile = PUTFILE("Save As","capturedNoBorders.png")
+loCaptureBmp.Save(lcNewFile, _screen.system.Drawing.Imaging.ImageFormat.Png)
+
+ThisForm.LaunchImage(lcNewFile)
+
+
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _28H12MKD0
+[CLASS] commandbutton
+[BASECLASS] commandbutton
+[OBJNAME] Command11
+[PARENT] Form1
+[START PROPERTIES]
+Top = 12
+Left = 588
+Height = 48
+Width = 98
+Anchor = 6
+WordWrap = .T.
+Caption = "Capture this button"
+TabIndex = 1
+PicturePosition = 1
+PictureSpacing = 1
+Themes = .F.
+Name = "Command11"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Click
+LOCAL loCaptureBmp as xfcBitmap
+loCaptureBmp = _screen.system.Drawing.Bitmap.FromScreen(This)
+
+lcNewFile = PUTFILE("Save As","CapturedImage.png")
+loCaptureBmp.Save(lcNewFile, _screen.system.Drawing.Imaging.ImageFormat.Png)
+
+ThisForm.LaunchImage(lcNewFile)
+
+
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _28I0128VH
+[CLASS] container
+[BASECLASS] container
+[OBJNAME] Container2
+[PARENT] Form1
+[START PROPERTIES]
+Top = 180
+Left = 456
+Width = 240
+Height = 200
+BackColor = 0,128,192
+Name = "Container2"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _28I0128VI
+[CLASS] shape
+[BASECLASS] shape
+[OBJNAME] Shape1
+[PARENT] Form1.Container2
+[START PROPERTIES]
+Top = 24
+Left = 12
+Height = 132
+Width = 36
+BackColor = 255,0,0
+Name = "Shape1"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _28I0128VJ
+[CLASS] shape
+[BASECLASS] shape
+[OBJNAME] Shape2
+[PARENT] Form1.Container2
+[START PROPERTIES]
+Top = 48
+Left = 48
+Height = 108
+Width = 36
+BackColor = 128,128,255
+Name = "Shape2"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _28I0128VK
+[CLASS] shape
+[BASECLASS] shape
+[OBJNAME] Shape3
+[PARENT] Form1.Container2
+[START PROPERTIES]
+Top = 72
+Left = 84
+Height = 84
+Width = 36
+BackColor = 64,128,128
+Name = "Shape3"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _28I0128VL
+[CLASS] shape
+[BASECLASS] shape
+[OBJNAME] Shape4
+[PARENT] Form1.Container2
+[START PROPERTIES]
+Top = 36
+Left = 120
+Height = 120
+Width = 36
+BackColor = 0,255,64
+Name = "Shape4"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _28I0128VM
+[CLASS] shape
+[BASECLASS] shape
+[OBJNAME] Shape5
+[PARENT] Form1.Container2
+[START PROPERTIES]
+Top = 84
+Left = 156
+Height = 72
+Width = 36
+BackColor = 255,128,64
+Name = "Shape5"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _28I0128VN
+[CLASS] shape
+[BASECLASS] shape
+[OBJNAME] Shape6
+[PARENT] Form1.Container2
+[START PROPERTIES]
+Top = 60
+Left = 192
+Height = 96
+Width = 36
+BackColor = 255,255,0
+Name = "Shape6"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _28I0128VO
+[CLASS] label
+[BASECLASS] label
+[OBJNAME] Label1
+[PARENT] Form1.Container2
+[START PROPERTIES]
+BackStyle = 0
+Caption = "GRAPHICS SAMPLE"
+Height = 17
+Left = 12
+Top = 168
+Width = 216
+ForeColor = 255,255,255
+Name = "Label1"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0L3VWK
+[CLASS] commandbutton
+[BASECLASS] commandbutton
+[OBJNAME] Command1
+[PARENT] Form1
+[START PROPERTIES]
+Top = 60
+Left = 456
+Height = 48
+Width = 98
+Anchor = 6
+WordWrap = .T.
+Caption = "Capture this entire form"
+TabIndex = 1
+PicturePosition = 1
+PictureSpacing = 1
+Themes = .T.
+Name = "Command1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Click
+LOCAL loCaptureBmp as xfcBitmap
+loCaptureBmp = _screen.system.Drawing.Bitmap.FromScreen(Thisform)
+
+lcNewFile = PUTFILE("Save As","CapturedImage.png")
+loCaptureBmp.Save(lcNewFile, _screen.system.Drawing.Imaging.ImageFormat.Png)
+
+ThisForm.LaunchImage(lcNewFile)
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _28I0128VP
+[CLASS] commandbutton
+[BASECLASS] commandbutton
+[OBJNAME] Command2
+[PARENT] Form1
+[START PROPERTIES]
+Top = 60
+Left = 588
+Height = 48
+Width = 98
+Anchor = 6
+WordWrap = .T.
+Caption = "Capture this entire _Screen"
+TabIndex = 1
+PicturePosition = 1
+PictureSpacing = 1
+Themes = .T.
+Name = "Command2"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Click
+LOCAL loCaptureBmp as xfcBitmap
+loCaptureBmp = _screen.system.Drawing.Bitmap.FromScreen()
+
+lcNewFile = PUTFILE("Save As","CapturedImage.png")
+loCaptureBmp.Save(lcNewFile, _screen.system.Drawing.Imaging.ImageFormat.Png)
+
+ThisForm.LaunchImage(lcNewFile)
+
+
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _28I0128VQ
+[CLASS] commandbutton
+[BASECLASS] commandbutton
+[OBJNAME] Command3
+[PARENT] Form1
+[START PROPERTIES]
+Top = 108
+Left = 456
+Height = 48
+Width = 98
+Anchor = 6
+WordWrap = .T.
+Caption = "Capture the image"
+TabIndex = 1
+PicturePosition = 1
+PictureSpacing = 1
+Themes = .T.
+Name = "Command3"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Click
+LOCAL loCaptureBmp as xfcBitmap
+loCaptureBmp = _screen.system.Drawing.Bitmap.FromScreen(Thisform.Image1)
+
+lcNewFile = PUTFILE("Save As","CapturedImage.png")
+loCaptureBmp.Save(lcNewFile, _screen.system.Drawing.Imaging.ImageFormat.Png)
+
+ThisForm.LaunchImage(lcNewFile)
+
+
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _28I0128VR
+[CLASS] commandbutton
+[BASECLASS] commandbutton
+[OBJNAME] Command4
+[PARENT] Form1
+[START PROPERTIES]
+Top = 108
+Left = 588
+Height = 48
+Width = 98
+Anchor = 6
+WordWrap = .T.
+Caption = "Capture the Graphics container"
+TabIndex = 1
+PicturePosition = 1
+PictureSpacing = 1
+Themes = .T.
+Name = "Command4"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Click
+LOCAL loCaptureBmp as xfcBitmap
+loCaptureBmp = _screen.system.Drawing.Bitmap.FromScreen(Thisform.Container2)
+
+lcNewFile = PUTFILE("Save As","CapturedImage.png")
+loCaptureBmp.Save(lcNewFile, _screen.system.Drawing.Imaging.ImageFormat.Png)
+
+ThisForm.LaunchImage(lcNewFile)
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] RESERVED  
+[START PROPERTIES]
+Arial, 0, 9, 5, 15, 12, 32, 3, 0
+Arial, 1, 9, 6, 15, 12, 32, 3, 0
+[END PROPERTIES]
+[EOF]

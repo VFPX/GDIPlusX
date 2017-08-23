@@ -1,0 +1,225 @@
+SCCTEXT Version 4.0.0.2
+PLATFORM C(8,0),UNIQUEID C(10,0),TIMESTAMP N(10,0),CLASS M(4,0),CLASSLOC M(4,0),BASECLASS M(4,0),OBJNAME M(4,0),PARENT M(4,0),PROPERTIES M(4,0),PROTECTED M(4,0),METHODS M(4,0),OBJCODE M(4,0),OLE M(4,0),OLE2 M(4,0),RESERVED1 M(4,0),RESERVED2 M(4,0),RESERVED3 M(4,0),RESERVED4 M(4,0),RESERVED5 M(4,0),RESERVED6 M(4,0),RESERVED7 M(4,0),RESERVED8 M(4,0),USER M(4,0)
+1252
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] Screen    
+[START RESERVED1]
+VERSION =   3.00[END RESERVED1]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0L3VWK
+[CLASS] dataenvironment
+[BASECLASS] dataenvironment
+[OBJNAME] Dataenvironment
+[START PROPERTIES]
+Top = 220
+Left = 1
+Width = 520
+Height = 200
+DataSource = .NULL.
+Name = "Dataenvironment"
+[END PROPERTIES]
+[START RESERVED2]
+1[END RESERVED2]
+[START RESERVED4]
+1[END RESERVED4]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0L3VWL
+[CLASS] form
+[BASECLASS] form
+[OBJNAME] Form1
+[START PROPERTIES]
+Top = 14
+Left = 18
+Height = 242
+Width = 700
+DoCreate = .T.
+Caption = "Rotate and Flip Images"
+MaxButton = .F.
+MinButton = .F.
+_memberdata =      528<?xml version="1.0"     encoding="Windows-1252" standalone="yes" ?>     
+
+<VFPData>
+
+<memberdata name="foomethod" type="method"     display="fooMethod"     favorites="True"/>
+
+<memberdata name="Form1" type="property" display="Form1" favorites="True"/>
+
+<memberdata name="_memberdata" type="property" display="_MemberData" favorites="True"/>
+
+<memberdata name="baseclass" type="property" display="BaseClasS" favorites="True"/>
+
+<memberdata name="error" type="method" display="eRRor" favorites="True"/>
+
+</VFPData>
+
+Name = "Form1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Init
+DODEFAULT()
+Thisform.ProcessImage("gotdata.gif")
+
+RETURN
+ENDPROC
+PROCEDURE processimage
+LPARAMETERS tcFile
+Thisform.txtFile.Value = LOCFILE(tcFile)
+Thisform.Image1.Picture = tcFile
+Thisform.Imgcanvas1.Draw()
+ENDPROC
+[END METHODS]
+[START RESERVED3]
+_memberdata XML Metadata for customizable properties
+*processimage 
+[END RESERVED3]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1U40L3TVG
+[CLASS] commandbutton
+[BASECLASS] commandbutton
+[OBJNAME] Command3
+[PARENT] Form1
+[START PROPERTIES]
+Top = 12
+Left = 12
+Height = 25
+Width = 96
+Anchor = 12
+Picture = (home() + "/graphics/bitmaps/outline/open.bmp")
+Caption = "Get Picture"
+TabIndex = 1
+PicturePosition = 1
+PictureMargin = 1
+Name = "Command3"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Click
+lcFile = GETPICT()
+IF EMPTY(lcFile)
+	RETURN
+ENDIF
+Thisform.ProcessImage(lcFile)
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1U40L3TVH
+[CLASS] textbox
+[BASECLASS] textbox
+[OBJNAME] txtFile
+[PARENT] Form1
+[START PROPERTIES]
+FontSize = 9
+Anchor = 12
+Height = 24
+Left = 120
+TabIndex = 2
+Top = 12
+Width = 564
+Name = "txtFile"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1U40LO0FY
+[CLASS] image
+[BASECLASS] image
+[OBJNAME] Image1
+[PARENT] Form1
+[START PROPERTIES]
+Stretch = 2
+Height = 180
+Left = 12
+Top = 48
+Width = 240
+Name = "Image1"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1VE04ASWR
+[CLASS] imgcanvas
+[CLASSLOC] ..\gdiplusx.vcx
+[BASECLASS] image
+[OBJNAME] Imgcanvas1
+[PARENT] Form1
+[START PROPERTIES]
+Height = 180
+Left = 444
+Top = 48
+Width = 240
+Name = "Imgcanvas1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE beforedraw
+LOCAL loBitmap as xfcBitmap
+loBitmap = _Screen.System.Drawing.Bitmap.New(Thisform.TxtFile.Value)
+
+lcRotateType = "_Screen.System.Drawing.RotateFlipType." + Thisform.List1.Value
+lnEnumRotateFlip = EVALUATE(lcRotateType)
+
+loBitmap.RotateFlip(lnEnumRotateFlip)
+This.oGfx.DrawImage(loBitmap, This.Rectangle)
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _20A0S0TKZ
+[CLASS] listbox
+[BASECLASS] listbox
+[OBJNAME] List1
+[PARENT] Form1
+[START PROPERTIES]
+Height = 180
+Left = 264
+Top = 48
+Width = 168
+Name = "List1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Init
+This.AddItem("RotateNoneFlipNone")
+This.AddItem("Rotate90FlipNone")
+This.AddItem("Rotate180FlipNone")
+This.AddItem("Rotate270FlipNone")
+This.AddItem("RotateNoneFlipX")
+This.AddItem("Rotate90FlipX")
+This.AddItem("Rotate180FlipX")
+This.AddItem("Rotate270FlipX")
+
+This.AddItem("Rotate180FlipXY")
+This.AddItem("Rotate270FlipXY")
+This.AddItem("RotateNoneFlipXY")
+This.AddItem("Rotate90FlipXY")
+This.AddItem("Rotate180FlipY")
+This.AddItem("Rotate270FlipY")
+This.AddItem("RotateNoneFlipY")
+This.AddItem("Rotate90FlipY")
+
+This.Value = "RotateNoneFlipNone"
+
+ENDPROC
+PROCEDURE InteractiveChange
+IF NOT EMPTY(This.Value)
+	Thisform.Imgcanvas1.Draw()
+ENDIF
+
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] RESERVED  
+[START PROPERTIES]
+Arial, 0, 9, 5, 15, 12, 32, 3, 0
+[END PROPERTIES]
+[EOF]

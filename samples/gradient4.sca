@@ -1,0 +1,370 @@
+SCCTEXT Version 4.0.0.2
+PLATFORM C(8,0),UNIQUEID C(10,0),TIMESTAMP N(10,0),CLASS M(4,0),CLASSLOC M(4,0),BASECLASS M(4,0),OBJNAME M(4,0),PARENT M(4,0),PROPERTIES M(4,0),PROTECTED M(4,0),METHODS M(4,0),OBJCODE M(4,0),OLE M(4,0),OLE2 M(4,0),RESERVED1 M(4,0),RESERVED2 M(4,0),RESERVED3 M(4,0),RESERVED4 M(4,0),RESERVED5 M(4,0),RESERVED6 M(4,0),RESERVED7 M(4,0),RESERVED8 M(4,0),USER M(4,0)
+1252
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] Screen    
+[START RESERVED1]
+VERSION =   3.00[END RESERVED1]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0L3VWK
+[CLASS] dataenvironment
+[BASECLASS] dataenvironment
+[OBJNAME] Dataenvironment
+[START PROPERTIES]
+Top = 0
+Left = 0
+Width = 0
+Height = 0
+DataSource = .NULL.
+Name = "Dataenvironment"
+[END PROPERTIES]
+[START RESERVED2]
+1[END RESERVED2]
+[START RESERVED4]
+1[END RESERVED4]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0L3VWL
+[CLASS] form
+[BASECLASS] form
+[OBJNAME] Form1
+[START PROPERTIES]
+Top = 20
+Left = 14
+Height = 375
+Width = 455
+DoCreate = .T.
+Caption = "Gradient BackGround Color Intensity Sample"
+Name = "Form1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Resize
+IF Thisform.Spinner1.Value = 2  && sldVertical
+	Thisform.oleSlide.Left = 0
+	Thisform.oleSlide.Top = 0
+	Thisform.oleSlide.Height = Thisform.Height
+	Thisform.oleSlide.Width = 46	
+ELSE  && sldHorizontal
+	Thisform.oleSlide.Left = 0
+	Thisform.oleSlide.Top = Thisform.Height - 46
+	Thisform.oleSlide.Width = Thisform.Width
+	Thisform.oleSlide.Height = 46
+ENDIF
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1U01DXNFP
+[CLASS] label
+[BASECLASS] label
+[OBJNAME] Label4
+[PARENT] Form1
+[START PROPERTIES]
+AutoSize = .F.
+Anchor = 12
+WordWrap = .T.
+BackStyle = 0
+Caption = "Gradient Mode"
+Height = 36
+Left = 228
+Top = 249
+Width = 53
+TabIndex = 8
+ForeColor = 255,255,255
+Name = "Label4"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TZ0QGKPH
+[CLASS] imgcanvas
+[CLASSLOC] ..\source\gdiplusx.vcx
+[BASECLASS] image
+[OBJNAME] Imgcanvas1
+[PARENT] Form1
+[START PROPERTIES]
+Anchor = 15
+Height = 84
+Left = 0
+Top = 0
+Width = 108
+Name = "Imgcanvas1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE beforedraw
+LOCAL loBrush AS xfcLinearGradientBrush
+LOCAL loBlend AS xfcBlend
+LOCAL lnFactor
+
+WITH _Screen.System.Drawing
+	loBrush = .Drawing2D.LinearGradientBrush.New(This.Rectangle,;
+		.Color.FromRGB(Thisform.Text1.DisabledBackColor), ;
+		.Color.FromRGB(Thisform.Text2.DisabledBackColor),;
+		Thisform.Spinner1.Value)
+
+	loBlend = .Drawing2D.Blend.New(2)
+	lnFactor = Thisform.oleSlide.Object.Value / 100
+	loBlend.Factors =   _SCREEN.System.Single.NewArray(0.0, 0.5, 1.0)
+	loBlend.Positions = _SCREEN.System.Single.NewArray(0.0, lnFactor, 1.0)
+	loBrush.Blend = m.loBlend
+
+	This.oGfx.FillRectangle(loBrush, This.Rectangle)
+ENDWITH
+
+RETURN
+ENDPROC
+PROCEDURE setup
+This.Top = 0
+This.Left = 0
+This.Width = Thisform.Width
+This.Height = Thisform.Height
+This.ZOrder(1)
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0L3VWK
+[CLASS] label
+[BASECLASS] label
+[OBJNAME] Label1
+[PARENT] Form1
+[START PROPERTIES]
+FontBold = .T.
+FontSize = 22
+Anchor = 240
+Alignment = 2
+BackStyle = 0
+Caption = "GDI+ is cool !"
+Height = 36
+Left = 132
+Top = 105
+Width = 190
+TabIndex = 9
+ForeColor = 255,255,255
+Name = "Label1"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TZ053EID
+[CLASS] commandbutton
+[BASECLASS] commandbutton
+[OBJNAME] cmdColor1
+[PARENT] Form1
+[START PROPERTIES]
+Top = 247
+Left = 327
+Height = 25
+Width = 85
+Anchor = 12
+Caption = "Color 1"
+TabIndex = 1
+Name = "cmdColor1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Click
+WITH Thisform
+	.Text1.DisabledBackColor = GETCOLOR(.Text1.DisabledBackColor)
+	.imgcanvas1.Draw()
+ENDWITH
+
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0L3VWK
+[CLASS] commandbutton
+[BASECLASS] commandbutton
+[OBJNAME] cmdColor2
+[PARENT] Form1
+[START PROPERTIES]
+Top = 275
+Left = 327
+Height = 25
+Width = 85
+Anchor = 12
+Caption = "Color 2"
+TabIndex = 3
+Name = "cmdColor2"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Click
+WITH Thisform
+	.Text2.DisabledBackColor = GETCOLOR(.Text2.DisabledBackColor)
+	.imgcanvas1.Draw()
+ENDWITH
+
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0L3VWK
+[CLASS] textbox
+[BASECLASS] textbox
+[OBJNAME] Text1
+[PARENT] Form1
+[START PROPERTIES]
+Anchor = 12
+Enabled = .F.
+Height = 25
+Left = 420
+TabIndex = 2
+Top = 247
+Width = 25
+DisabledBackColor = 255,0,0
+Name = "Text1"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0L3VWL
+[CLASS] textbox
+[BASECLASS] textbox
+[OBJNAME] Text2
+[PARENT] Form1
+[START PROPERTIES]
+Anchor = 12
+Enabled = .F.
+Height = 25
+Left = 420
+TabIndex = 4
+Top = 275
+Width = 25
+DisabledBackColor = 0,0,0
+Name = "Text2"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1U002S8CB
+[CLASS] spinner
+[BASECLASS] spinner
+[OBJNAME] Spinner1
+[PARENT] Form1
+[START PROPERTIES]
+Anchor = 12
+Height = 25
+KeyboardHighValue = 3
+KeyboardLowValue = 0
+Left = 279
+SpinnerHighValue =   3.00
+SpinnerLowValue =   0.00
+TabIndex = 5
+Top = 247
+Width = 36
+Value = 0
+Name = "Spinner1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE InteractiveChange
+IF This.Value = 1
+	Thisform.oleSlide.Orientation = 1  && sldVertical
+	Thisform.oleSlide.Left = 0
+	Thisform.oleSlide.Top = 0
+	Thisform.oleSlide.Height = Thisform.Height
+	Thisform.oleSlide.Width = 46	
+ELSE
+	Thisform.oleSlide.Orientation = 0  && sldHorizontal
+	Thisform.oleSlide.Left = 0
+	Thisform.oleSlide.Top = Thisform.Height - 46
+	Thisform.oleSlide.Width = Thisform.Width
+	Thisform.oleSlide.Height = 46
+ENDIF
+
+Thisform.imgcanvas1.Draw()
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0L3VWK
+[CLASS] label
+[BASECLASS] label
+[OBJNAME] Label2
+[PARENT] Form1
+[START PROPERTIES]
+AutoSize = .F.
+Anchor = 12
+WordWrap = .T.
+BackStyle = 0
+Caption = "Gradient Mode"
+Height = 36
+Left = 226
+Top = 247
+Width = 53
+TabIndex = 6
+Name = "Label2"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1U01DE1U6
+[CLASS] olecontrol
+[BASECLASS] olecontrol
+[OBJNAME] oleSlide
+[PARENT] Form1
+[START PROPERTIES]
+Top = 336
+Left = 0
+Height = 45
+Width = 455
+TabIndex = 7
+Name = "oleSlide"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Change
+*** ActiveX Control Event ***
+Thisform.imgcanvas1.Draw()
+ENDPROC
+PROCEDURE Scroll
+*** ActiveX Control Event ***
+This.Change
+ENDPROC
+[END METHODS]
+[BINSTART OLE]
+CHECKSUM=18111
+[BINEND OLE]
+[BINSTART OLE2]
+CHECKSUM=46011
+[BINEND OLE2]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1U01DVAOW
+[CLASS] label
+[BASECLASS] label
+[OBJNAME] Label3
+[PARENT] Form1
+[START PROPERTIES]
+AutoSize = .T.
+FontBold = .F.
+FontSize = 12
+Anchor = 12
+Alignment = 0
+BackStyle = 0
+Caption = "Move the slidebar to change the half intensity color point"
+Height = 21
+Left = 60
+Top = 307
+Width = 386
+TabIndex = 10
+ForeColor = 255,255,255
+Name = "Label3"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] RESERVED  
+[START PROPERTIES]
+Arial, 0, 9, 5, 15, 12, 32, 3, 0
+[END PROPERTIES]
+[EOF]

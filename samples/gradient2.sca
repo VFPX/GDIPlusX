@@ -1,0 +1,258 @@
+SCCTEXT Version 4.0.0.2
+PLATFORM C(8,0),UNIQUEID C(10,0),TIMESTAMP N(10,0),CLASS M(4,0),CLASSLOC M(4,0),BASECLASS M(4,0),OBJNAME M(4,0),PARENT M(4,0),PROPERTIES M(4,0),PROTECTED M(4,0),METHODS M(4,0),OBJCODE M(4,0),OLE M(4,0),OLE2 M(4,0),RESERVED1 M(4,0),RESERVED2 M(4,0),RESERVED3 M(4,0),RESERVED4 M(4,0),RESERVED5 M(4,0),RESERVED6 M(4,0),RESERVED7 M(4,0),RESERVED8 M(4,0),USER M(4,0)
+1252
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] Screen    
+[START RESERVED1]
+VERSION =   3.00[END RESERVED1]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0L3VWK
+[CLASS] dataenvironment
+[BASECLASS] dataenvironment
+[OBJNAME] Dataenvironment
+[START PROPERTIES]
+Top = 0
+Left = 0
+Width = 0
+Height = 0
+DataSource = .NULL.
+Name = "Dataenvironment"
+[END PROPERTIES]
+[START RESERVED2]
+1[END RESERVED2]
+[START RESERVED4]
+1[END RESERVED4]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0L3VWL
+[CLASS] form
+[BASECLASS] form
+[OBJNAME] Form1
+[START PROPERTIES]
+Top = 20
+Left = 14
+Height = 280
+Width = 400
+DoCreate = .T.
+Caption = "Gradient BackGround Test"
+Name = "Form1"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TZ0QGKPH
+[CLASS] imgcanvas
+[CLASSLOC] ..\source\gdiplusx.vcx
+[BASECLASS] image
+[OBJNAME] Imgcanvas1
+[PARENT] Form1
+[START PROPERTIES]
+Anchor = 15
+Height = 280
+Left = 0
+Top = 0
+Width = 400
+Name = "Imgcanvas1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE beforedraw
+LOCAL loBrush AS xfcLinearGradientBrush
+WITH _Screen.System.Drawing
+  loBrush = .Drawing2D.LinearGradientBrush.New(This.Rectangle,;
+     .Color.FromRGB(Thisform.Text1.DisabledBackColor), ;
+     .Color.FromRGB(Thisform.Text2.DisabledBackColor),;
+     Thisform.Spinner1.Value)
+  This.oGfx.FillRectangle(loBrush, This.Rectangle)
+ENDWITH
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TZ05Z6DL
+[CLASS] label
+[BASECLASS] label
+[OBJNAME] Label3
+[PARENT] Form1
+[START PROPERTIES]
+AutoSize = .T.
+Anchor = 12
+BackStyle = 0
+Caption = "Gradient Mode"
+Height = 17
+Left = 253
+Top = 229
+Width = 82
+ForeColor = 255,255,255
+Name = "Label3"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0MMFWF
+[CLASS] label
+[BASECLASS] label
+[OBJNAME] Label1
+[PARENT] Form1
+[START PROPERTIES]
+FontBold = .T.
+FontSize = 22
+Anchor = 240
+Alignment = 2
+BackStyle = 0
+Caption = "GDI+ is cool !"
+Height = 36
+Left = 105
+Top = 72
+Width = 190
+ForeColor = 255,255,255
+Name = "Label1"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TZ053EID
+[CLASS] commandbutton
+[BASECLASS] commandbutton
+[OBJNAME] Command2
+[PARENT] Form1
+[START PROPERTIES]
+Top = 156
+Left = 252
+Height = 25
+Width = 85
+Anchor = 12
+Caption = "Color 1"
+Name = "Command2"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Click
+WITH Thisform
+	lnColor = GETCOLOR(.Text1.DisabledBackColor)
+	.Text1.DisabledBackColor = lnColor
+	.imgcanvas1.Draw()
+ENDWITH
+
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TZ053EIE
+[CLASS] commandbutton
+[BASECLASS] commandbutton
+[OBJNAME] Command3
+[PARENT] Form1
+[START PROPERTIES]
+Top = 192
+Left = 252
+Height = 25
+Width = 85
+Anchor = 12
+Caption = "Color 2"
+Name = "Command3"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Click
+WITH Thisform
+	lnColor = GETCOLOR(.Text2.DisabledBackColor)
+	.Text2.DisabledBackColor = lnColor
+	.imgcanvas1.Draw()
+ENDWITH
+
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TZ053EIF
+[CLASS] spinner
+[BASECLASS] spinner
+[OBJNAME] Spinner1
+[PARENT] Form1
+[START PROPERTIES]
+Anchor = 12
+Height = 25
+KeyboardHighValue = 3
+KeyboardLowValue = 0
+Left = 340
+SpinnerHighValue =   3.00
+SpinnerLowValue =   0.00
+Top = 228
+Width = 36
+Value = 0
+Name = "Spinner1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE InteractiveChange
+Thisform.imgcanvas1.Draw()
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0L3VWK
+[CLASS] textbox
+[BASECLASS] textbox
+[OBJNAME] Text1
+[PARENT] Form1
+[START PROPERTIES]
+Anchor = 12
+Enabled = .F.
+Height = 25
+Left = 350
+Top = 156
+Width = 25
+DisabledBackColor = 0,128,255
+Name = "Text1"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TZ053EIG
+[CLASS] textbox
+[BASECLASS] textbox
+[OBJNAME] Text2
+[PARENT] Form1
+[START PROPERTIES]
+Anchor = 12
+Enabled = .F.
+Height = 25
+Left = 350
+Top = 192
+Width = 25
+DisabledBackColor = 255,255,255
+Name = "Text2"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0L3VWK
+[CLASS] label
+[BASECLASS] label
+[OBJNAME] Label2
+[PARENT] Form1
+[START PROPERTIES]
+AutoSize = .T.
+Anchor = 12
+BackStyle = 0
+Caption = "Gradient Mode"
+Height = 17
+Left = 252
+Top = 228
+Width = 82
+Name = "Label2"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] RESERVED  
+[START PROPERTIES]
+Arial, 0, 9, 5, 15, 12, 32, 3, 0
+[END PROPERTIES]
+[EOF]

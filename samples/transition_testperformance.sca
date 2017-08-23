@@ -1,0 +1,474 @@
+SCCTEXT Version 4.0.0.2
+PLATFORM C(8,0),UNIQUEID C(10,0),TIMESTAMP N(10,0),CLASS M(4,0),CLASSLOC M(4,0),BASECLASS M(4,0),OBJNAME M(4,0),PARENT M(4,0),PROPERTIES M(4,0),PROTECTED M(4,0),METHODS M(4,0),OBJCODE M(4,0),OLE M(4,0),OLE2 M(4,0),RESERVED1 M(4,0),RESERVED2 M(4,0),RESERVED3 M(4,0),RESERVED4 M(4,0),RESERVED5 M(4,0),RESERVED6 M(4,0),RESERVED7 M(4,0),RESERVED8 M(4,0),USER M(4,0)
+1252
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] Screen    
+[START RESERVED1]
+VERSION =   3.00[END RESERVED1]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _28B1DAQLU
+[CLASS] dataenvironment
+[BASECLASS] dataenvironment
+[OBJNAME] Dataenvironment
+[START PROPERTIES]
+Top = 0
+Left = 0
+Width = 0
+Height = 0
+DataSource = .NULL.
+Name = "Dataenvironment"
+[END PROPERTIES]
+[START RESERVED2]
+1[END RESERVED2]
+[START RESERVED4]
+1[END RESERVED4]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _28B1DAQLY
+[CLASS] form
+[BASECLASS] form
+[OBJNAME] Form1
+[START PROPERTIES]
+Top = 0
+Left = 0
+Height = 422
+Width = 576
+DoCreate = .T.
+Caption = "Testing Image Canvas Rendering modes / Performances"
+x = .F.
+y = .F.
+obitmap = .F.
+_memberdata =      253<VFPData><memberdata name="createeffect" type="method" display="CreateEffect"/><memberdata name="obitmap" type="property" display="oBitmap"/><memberdata name="x" type="property" display="X"/><memberdata name="y" type="property" display="Y"/></VFPData>
+
+omatrix = 0
+Name = "Form1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Init
+Thisform.TxtFile.Value = LOCFILE("CebolinhaBMPSmall.Bmp")
+Thisform.X = 0
+Thisform.Y = 0
+
+WITH _Screen.System.Drawing
+	Thisform.oBitmap = .Bitmap.New(.Bitmap.FromFile(Thisform.TxtFile.Value), Thisform.Imgcanvas1.Width, Thisform.Imgcanvas1.Height)
+	Thisform.Imgcanvas1.DrawWhenInvisible = .T.
+	Thisform.Imgcanvas1.Draw()
+ENDWITH
+ENDPROC
+PROCEDURE createeffect
+LOCAL loBmp as xfcBitmap
+LOCAL loGfx as xfcGraphics
+
+LOCAL lnSeconds, n, lnWidth, lnHeight, lnOption
+
+lnSeconds = SECONDS()
+
+lnWidth  = Thisform.Imgcanvas1.Width
+lnHeight = Thisform.Imgcanvas1.Height
+
+WITH _Screen.System.Drawing
+
+loSrc = .Bitmap.FromFile(Thisform.TxtFile.Value)
+
+loBmp = .Bitmap.New(loSrc, lnWidth, lnHeight)
+loGfx = Thisform.Imgcanvas1.oGfx
+Thisform.oBitmap = loBmp
+
+lnOption = Thisform.Optiongroup1.Value
+
+DO CASE
+CASE lnOption = 1 && Scroll Down
+
+	Thisform.X = 0
+	FOR n = -lnHeight TO lnHeight
+		Thisform.Y = n
+		Thisform.Imgcanvas1.Draw()
+	ENDFOR
+	
+
+CASE lnOption = 2 && Scroll Horizontal
+
+	Thisform.Y = 0
+	FOR n = -lnWidth TO lnWidth
+		Thisform.X = n
+		Thisform.Imgcanvas1.Draw()
+	ENDFOR
+
+	
+CASE lnOption = 3 && Transparency Effect
+	LOCAL loClrMatrix as xfcColorMatrix
+	LOCAL loCloned as xfcBitmap
+	loCloned = loBmp.Clone()
+	
+	loClrMatrix = .Imaging.ColorMatrix.New()
+	Thisform.X = 0
+	Thisform.Y = 0
+
+	FOR n = 0.1 TO 1 STEP 0.01
+		loClrMatrix.Matrix33 = n
+		loBmp = loCloned.Clone()
+		loBmp.ApplyColorMatrix(loClrMatrix)
+		Thisform.oBitmap = loBmp
+		Thisform.Imgcanvas1.Draw()
+	ENDFOR
+
+
+CASE lnOption = 4 && Rotate Image
+	LOCAL loMatrix as xfcMatrix
+	LOCAL loPointF AS xfcPointF
+	
+	Thisform.X = 0
+	Thisform.Y = 0
+
+	loMatrix = .Drawing2D.Matrix.New()
+	loPointF = .PointF.New(lnWidth / 2, lnHeight / 2)
+
+	FOR n = 0 TO 360 STEP 2
+		loMatrix.RotateAt(2, loPointF)
+		Thisform.Imgcanvas1.oGfx.MultiplyTransform(loMatrix)
+		Thisform.Imgcanvas1.Draw()
+		Thisform.Imgcanvas1.oGfx.ResetTransform()
+	ENDFOR
+
+
+CASE lnOption = 5 && Open Rectangle
+
+	LOCAL loWorkBmp as xfcBitmap
+	LOCAL loCloned as xfcBitmap
+	LOCAL loGfx as xfcGraphics
+	LOCAL x, y, w, h
+	
+	Thisform.X = 0
+	Thisform.Y = 0
+
+	loWorkBmp = loBmp.Clone()
+	loGfx = .Graphics.FromImage(loWorkBmp)
+	loGfx.Clear(.Color.White)
+
+	FOR n = 1 TO 50 STEP 0.5
+
+		x = (lnWidth / 2) - n * (lnWidth / 100)
+		y = (lnHeight / 2) - n * (lnHeight / 100)
+		w = ((lnWidth / 2) - x) * 2
+		h = ((lnHeight / 2) - y) * 2
+
+		IF x < 1
+			x = 0
+			y = 0
+			w = lnWidth
+			h = lnHeight
+		ENDIF
+		loCloned = loBmp.Clone(.Rectangle.New(x, y, w, h))
+		loGfx.DrawImage(loCloned, x, y)
+
+		Thisform.oBitmap = loWorkBmp
+		Thisform.Imgcanvas1.Draw()
+	ENDFOR
+
+
+CASE lnOption = 6 && Gamma effect
+
+	LOCAL loWorkBmp as xfcBitmap
+	LOCAL loGfx as xfcGraphics
+	LOCAL loAttr as xfcImageAttributes
+	LOCAL loRect as xfcRectangleF
+
+	loWorkBmp = loBmp.Clone()
+	loGfx = .Graphics.FromImage(loWorkBmp)
+	loGfx.Clear(.Color.White)
+	loAttr = .Imaging.ImageAttributes.New()
+	loRect = loBmp.GetBounds()
+
+	Thisform.X = 0
+	Thisform.Y = 0
+	Thisform.oBitmap = loWorkBmp
+
+	FOR n = 0 TO 1 STEP 0.005
+		loAttr.SetGamma(n)
+		loGfx.DrawImage(loBmp, loRect, loRect, .GraphicsUnit.Pixel, loAttr)
+		Thisform.Imgcanvas1.Draw()
+	ENDFOR
+
+ENDCASE
+
+ENDWITH
+
+MESSAGEBOX("Elapsed : " + TRANSFORM(SECONDS() - lnSeconds) + " Seconds", 64)
+ENDPROC
+[END METHODS]
+[START RESERVED3]
+x
+y
+obitmap
+_memberdata XML Metadata for customizable properties
+omatrix
+*createeffect 
+[END RESERVED3]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _28B1DAQLZ
+[CLASS] imgcanvas
+[CLASSLOC] ..\source\gdiplusx.vcx
+[BASECLASS] image
+[OBJNAME] Imgcanvas1
+[PARENT] Form1
+[START PROPERTIES]
+BackStyle = 0
+Height = 360
+Left = 228
+Top = 48
+Width = 336
+Name = "Imgcanvas1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE beforedraw
+LOCAL loGfx as xfcGraphics && This is to enable Intellisense for "oGfx"
+loGfx = This.oGfx
+
+loGfx.Clear(_Screen.System.Drawing.Color.White)
+
+IF VARTYPE(Thisform.oBitmap) <> "O"
+	RETURN
+ENDIF
+
+loGfx.DrawImage(Thisform.oBitmap, Thisform.X, Thisform.Y)
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _28B1DAQMA
+[CLASS] commandbutton
+[BASECLASS] commandbutton
+[OBJNAME] Command3
+[PARENT] Form1
+[START PROPERTIES]
+Top = 12
+Left = 12
+Height = 25
+Width = 96
+Anchor = 1
+Picture = (home() + "/graphics/bitmaps/outline/open.bmp")
+Caption = "Get Picture"
+TabIndex = 1
+PicturePosition = 1
+PictureMargin = 1
+Name = "Command3"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Click
+LOCAL lcFile, lnWidth, lnHeight
+lcFile = GETPICT()
+IF EMPTY(lcFile)
+	RETURN
+ENDIF
+
+Thisform.txtFile.Value = lcFile
+
+lnWidth  = Thisform.Imgcanvas1.Width
+lnHeight = Thisform.Imgcanvas1.Height
+
+WITH _Screen.System.Drawing
+	Thisform.oBitmap = .Bitmap.New(.Bitmap.FromFile(lcFile), lnWidth, lnHeight)
+	Thisform.Imgcanvas1.Draw()
+ENDWITH
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _28B1DAQMB
+[CLASS] textbox
+[BASECLASS] textbox
+[OBJNAME] txtFile
+[PARENT] Form1
+[START PROPERTIES]
+FontSize = 8
+Anchor = 131
+Enabled = .F.
+Height = 25
+Left = 120
+TabIndex = 2
+Top = 12
+Width = 444
+DisabledBackColor = 255,255,255
+DisabledForeColor = 0,0,0
+Name = "txtFile"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _28C00BXIF
+[CLASS] container
+[BASECLASS] container
+[OBJNAME] Container1
+[PARENT] Form1
+[START PROPERTIES]
+Top = 228
+Left = 12
+Width = 200
+Height = 180
+BorderWidth = 0
+Visible = .T.
+Name = "Container1"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _28C00BXIG
+[CLASS] commandbutton
+[BASECLASS] commandbutton
+[OBJNAME] Command1
+[PARENT] Form1.Container1
+[START PROPERTIES]
+Top = 47
+Left = 4
+Height = 27
+Width = 192
+Caption = "   0 - PictureVal - BMP"
+Alignment = 0
+Name = "Command1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Click
+Thisform.Imgcanvas1.RenderMode = 0 && PictureVal / BMP
+Thisform.CreateEffect()
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _28C00BXIH
+[CLASS] commandbutton
+[BASECLASS] commandbutton
+[OBJNAME] Command2
+[PARENT] Form1.Container1
+[START PROPERTIES]
+Top = 95
+Left = 4
+Height = 27
+Width = 192
+Caption = "   4 - PictureVal - PNG"
+Alignment = 0
+Name = "Command2"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Click
+Thisform.Imgcanvas1.RenderMode = 4 && PictureVal / BMP
+Thisform.CreateEffect()
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _28C00BXII
+[CLASS] commandbutton
+[BASECLASS] commandbutton
+[OBJNAME] Command4
+[PARENT] Form1.Container1
+[START PROPERTIES]
+Top = 143
+Left = 4
+Height = 27
+Width = 192
+Caption = "   1 - Picture - TMP FILES (DISK)"
+Alignment = 0
+Name = "Command4"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Click
+Thisform.Imgcanvas1.RenderMode = 1 && PictureVal / BMP
+Thisform.CreateEffect()
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _28C00BXIJ
+[CLASS] label
+[BASECLASS] label
+[OBJNAME] Label1
+[PARENT] Form1.Container1
+[START PROPERTIES]
+Caption = "Rendering Modes"
+Height = 17
+Left = 4
+Top = 11
+Width = 120
+Name = "Label1"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _28H062A5A
+[CLASS] optiongroup
+[BASECLASS] optiongroup
+[OBJNAME] Optiongroup1
+[PARENT] Form1
+[START PROPERTIES]
+ButtonCount = 6
+Value = 1
+Height = 132
+Left = 12
+Top = 60
+Width = 192
+Name = "Optiongroup1"
+Option1.Caption = "Scroll Image Down"
+Option1.Value = 1
+Option1.Height = 17
+Option1.Left = 5
+Option1.Top = 5
+Option1.Width = 122
+Option1.AutoSize = .T.
+Option1.Name = "Option1"
+Option2.Caption = "Scroll Image Horizontal"
+Option2.Height = 17
+Option2.Left = 5
+Option2.Top = 24
+Option2.Width = 145
+Option2.AutoSize = .T.
+Option2.Name = "Option2"
+Option3.Caption = "Transparency Effect"
+Option3.Height = 17
+Option3.Left = 5
+Option3.Top = 43
+Option3.Width = 126
+Option3.AutoSize = .T.
+Option3.Name = "Option3"
+Option4.Caption = "Rotate Image"
+Option4.Height = 17
+Option4.Left = 5
+Option4.Top = 62
+Option4.Width = 92
+Option4.AutoSize = .T.
+Option4.Name = "Option4"
+Option5.Caption = "Open Rectangle"
+Option5.Height = 17
+Option5.Left = 5
+Option5.Top = 81
+Option5.Width = 107
+Option5.AutoSize = .T.
+Option5.Name = "Option5"
+Option6.Caption = "Gamma Effect"
+Option6.Height = 17
+Option6.Left = 5
+Option6.Top = 100
+Option6.Width = 96
+Option6.AutoSize = .T.
+Option6.Name = "Option6"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] RESERVED  
+[START PROPERTIES]
+Arial, 0, 9, 5, 15, 12, 32, 3, 0
+Arial, 0, 8, 5, 14, 11, 29, 3, 0
+[END PROPERTIES]
+[EOF]

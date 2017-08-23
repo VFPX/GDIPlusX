@@ -1,0 +1,150 @@
+SCCTEXT Version 4.0.0.2
+PLATFORM C(8,0),UNIQUEID C(10,0),TIMESTAMP N(10,0),CLASS M(4,0),CLASSLOC M(4,0),BASECLASS M(4,0),OBJNAME M(4,0),PARENT M(4,0),PROPERTIES M(4,0),PROTECTED M(4,0),METHODS M(4,0),OBJCODE M(4,0),OLE M(4,0),OLE2 M(4,0),RESERVED1 M(4,0),RESERVED2 M(4,0),RESERVED3 M(4,0),RESERVED4 M(4,0),RESERVED5 M(4,0),RESERVED6 M(4,0),RESERVED7 M(4,0),RESERVED8 M(4,0),USER M(4,0)
+1252
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] Screen    
+[START RESERVED1]
+VERSION =   3.00[END RESERVED1]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TN1AHCZ8
+[CLASS] dataenvironment
+[BASECLASS] dataenvironment
+[OBJNAME] Dataenvironment
+[START PROPERTIES]
+Top = 0
+Left = 0
+Width = 0
+Height = 0
+DataSource = .NULL.
+Name = "Dataenvironment"
+[END PROPERTIES]
+[START RESERVED2]
+1[END RESERVED2]
+[START RESERVED4]
+1[END RESERVED4]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TN1AHCZH
+[CLASS] form
+[BASECLASS] form
+[OBJNAME] Form1
+[START PROPERTIES]
+Top = 6
+Left = 13
+DoCreate = .T.
+Caption = "Shapes: Lines, Polygon, and Rectangles"
+Name = "Form1"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TN1AHCZI
+[CLASS] imgcanvas
+[CLASSLOC] ..\source\gdiplusx.vcx
+[BASECLASS] image
+[OBJNAME] Imgcanvas1
+[PARENT] Form1
+[START PROPERTIES]
+Anchor = 15
+Height = 252
+Left = -1
+Top = -1
+Width = 377
+Name = "Imgcanvas1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE beforedraw
+WITH _SCREEN.SYSTEM.drawing
+	This.Clear()
+
+	* Set the Smoothing Mode
+	IF Thisform.chkAntiAlias.Value
+		This.oGfx.SmoothingMode = .Drawing2D.SmoothingMode.AntiAlias
+	ELSE
+		This.oGfx.SmoothingMode = .Drawing2D.SmoothingMode.Default
+	ENDIF
+
+	
+	* Draw 2 simple lines
+	THIS.oGfx.DrawLine(.Pens.Red, 60, 5, 160, 25)
+	p1 = .POINT.NEW(40, 18)
+	p2 = .POINT.NEW(120, 28)
+	THIS.oGfx.DrawLine(.Pens.Plum, p1, p2)
+
+
+	* Draw a curve
+	DIMENSION pts(20)
+	angle = 0
+	FOR x = 1 TO 20
+		pts(x) = .PointF.NEW((x-1) * 10 + 120, 180 + 15 * SIN(angle))
+		angle = angle +  PI() / 10
+	NEXT
+	THIS.oGfx.DrawLines(.Pens.Blue, @pts)
+	LOCAL p
+	FOR EACH p IN pts
+		THIS.oGfx.FillEllipse(.Brushes.Green, ;
+			.RectangleF.NEW(p.x - 3, p.Y - 3, 6.0, 6.0))
+	NEXT
+
+
+	* Draw polygon with 2 triangles
+	DIMENSION POLY(5)
+	POLY[1] = .POINT.NEW(80,50)
+	POLY[2] = .POINT.NEW(260,120)
+	POLY[3] = .POINT.NEW(260,50)
+	POLY[4] = .POINT.NEW(80,120)
+	POLY[5] = .POINT.NEW(80,50)
+	THIS.oGfx.FillPolygon(.Brushes.Tomato, @POLY)
+	PEN = .PEN.NEW(.COLOR.TAN, 4)
+	THIS.oGfx.DrawPolygon(PEN, @POLY)
+	PEN.Dispose()
+
+
+	* Draw Blue piramid
+	DIMENSION rcs(10)
+	FOR x = 1 TO 10
+		rcs(x) = .Rectangle.New(60 - x * 5, 110 + x * 12, x * 10, 12)
+	NEXT x
+	THIS.oGfx.FillRectangles(.Brushes.RoyalBlue, @rcs)
+	THIS.oGfx.DrawRectangles(.Pens.YellowGreen, @rcs)
+ENDWITH
+
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1YZ01R55W
+[CLASS] checkbox
+[BASECLASS] checkbox
+[OBJNAME] chkAntiAlias
+[PARENT] Form1
+[START PROPERTIES]
+Top = 228
+Left = 180
+Height = 17
+Width = 72
+Alignment = 0
+BackStyle = 0
+Caption = "AntiAlias"
+Value = .F.
+Name = "chkAntiAlias"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE InteractiveChange
+Thisform.IMGCANVAS1.Draw()
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] RESERVED  
+[START PROPERTIES]
+Arial, 0, 9, 5, 15, 12, 16, 3, 0
+[END PROPERTIES]
+[EOF]

@@ -1,0 +1,1021 @@
+SCCTEXT Version 4.0.0.2
+PLATFORM C(8,0),UNIQUEID C(10,0),TIMESTAMP N(10,0),CLASS M(4,0),CLASSLOC M(4,0),BASECLASS M(4,0),OBJNAME M(4,0),PARENT M(4,0),PROPERTIES M(4,0),PROTECTED M(4,0),METHODS M(4,0),OBJCODE M(4,0),OLE M(4,0),OLE2 M(4,0),RESERVED1 M(4,0),RESERVED2 M(4,0),RESERVED3 M(4,0),RESERVED4 M(4,0),RESERVED5 M(4,0),RESERVED6 M(4,0),RESERVED7 M(4,0),RESERVED8 M(4,0),USER M(4,0)
+1252
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] Screen    
+[START RESERVED1]
+VERSION =   3.00[END RESERVED1]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0L3VWK
+[CLASS] dataenvironment
+[BASECLASS] dataenvironment
+[OBJNAME] Dataenvironment
+[START PROPERTIES]
+Top = 0
+Left = 0
+Width = 0
+Height = 0
+DataSource = .NULL.
+Name = "Dataenvironment"
+[END PROPERTIES]
+[START RESERVED2]
+1[END RESERVED2]
+[START RESERVED4]
+1[END RESERVED4]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0L3VWL
+[CLASS] form
+[BASECLASS] form
+[OBJNAME] Form1
+[START PROPERTIES]
+Top = -6
+Left = 43
+Height = 502
+Width = 579
+ShowWindow = 2
+DoCreate = .T.
+Caption = "Pie Charts"
+MinHeight = 300
+MinWidth = 560
+_memberdata =      219<VFPData><memberdata name="drawslice" type="method" display="DrawSlice"/><memberdata name="drawbar" type="method" display="DrawBar"/><memberdata name="preparebrushes" type="method" display="PrepareBrushes"/></VFPData>
+
+Name = "Form1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Load
+SET TALK OFF
+
+CREATE CURSOR sales (nValue n(8,2), cLegend c(6), lDetach l, nColor i)
+INSERT INTO sales VALUES (250, "JAN", .F., RGB(0,0,255)   )
+INSERT INTO sales VALUES (128, "FEB", .T., RGB(0,255,255) )
+INSERT INTO sales VALUES ( 90, "MAR", .F., RGB(255,0,255) )
+INSERT INTO sales VALUES (330, "APR", .F., RGB(255,160,60))
+INSERT INTO sales VALUES (250, "MAY", .T., RGB(255,255,0) )
+INSERT INTO sales VALUES (150, "JUN", .F., RGB(0,255,64)  )
+INSERT INTO sales VALUES (180, "JUL", .F., RGB(255,0,0)   )
+INSERT INTO sales VALUES (100, "AUG", .T., RGB(128,128,128))
+SELECT sales
+GO TOP
+
+ENDPROC
+PROCEDURE changecolor
+LPARAMETERS tnRGB, tnLevel
+
+IF tnLevel = 0
+	RETURN tnRGB
+ENDIF
+
+tnLevel = tnLevel / 100
+
+LOCAL lnRed, lnGreen, lnBlue
+lnRed   = BITAND(tnRGB, 0x000000FF)
+lnGreen = BITRSHIFT(BITAND(tnRGB, 0x0000FF00), 8)
+lnBlue  = BITRSHIFT(BITAND(tnRGB, 0x00FF0000), 16)
+
+IF tnLevel > 0
+	RETURN RGB( ;
+		lnRed   + ((255 - lnRed)   * tnLevel) , ;
+		lnGreen + ((255 - lnGreen) * tnLevel) , ;
+		lnBlue  + ((255 - lnBlue)  * tnLevel) )
+ELSE
+	RETURN RGB( ;
+		lnRed   + (lnRed   * tnLevel) , ;
+		lnGreen + (lnGreen * tnLevel) , ;
+		lnBlue  + (lnBlue  * tnLevel) )
+ENDIF
+ENDPROC
+PROCEDURE drawbar
+LPARAMETERS tnX, tnY, tnWidth, tnHeight
+
+Thisform.PrepareBrushes(tnX, tnY, tnWidth, tnHeight)
+
+LOCAL loPen as xfcPen
+loPen   = Thisform.Imgcanvas1.oBorderPen
+
+LOCAL loGfx as xfcGraphics
+loGfx = Thisform.Imgcanvas1.oGfx
+
+LOCAL loMainBrush as xfcBrush
+loMainBrush = Thisform.Imgcanvas1.oMainBrush
+
+LOCAL lo3dBrush as xfcBrush
+lo3DBrush = Thisform.Imgcanvas1.o3DBrush
+
+
+LOCAL loGfx as xfcGraphics
+loGfx = Thisform.Imgcanvas1.oGfx
+
+
+* Draw the 3D Bar using the 3DBrush
+IF Thisform.Optiongroup2.Value = 1 && 3D
+
+	IF THISFORM.Optiongroup1.VALUE = 3 && Monochrome - HatchBrush
+		LOCAL lo3DBrush as xfcHatchBrush
+		lo3DBrush = .Drawing2D.HatchBrush.New( ;
+			RECNO()*2,   ; && HatchStyle
+			.COLOR.Gray, ; && ForeColor
+			.COLOR.LightGray ) && BackColor
+	ELSE
+		LOCAL lo3DBrush as xfcSolidBrush
+		lo3DBrush = .SolidBrush.New(.Color.FromRGB(Thisform.ChangeColor(sales.nColor, - 20)))
+	ENDIF
+
+	ln3DHeight = Thisform.Spn3D.Value
+*	tnY = tnY - ln3DHeight
+*	tnX = tnX + ln3DHeight
+
+
+	* Prepare Array of points to draw the 3D part of the Bar
+	DIMENSION laPoints(4)
+	laPoints(1) = .PointF.New(tnX + tnWidth, tnY)
+	laPoints(2) = .PointF.New(tnX + tnWidth + ln3DHeight, tnY - ln3DHeight)
+	laPoints(3) = .PointF.New(tnX + ln3DHeight, tnY - ln3DHeight)
+	laPoints(4) = .PointF.New(tnX, tnY)
+	loGfx.FillPolygon(lo3DBrush, @laPoints)
+	loGfx.DrawPolygon(loPen, @laPoints)
+
+	* Change only Points 3 and 4
+	laPoints(3) = .PointF.New(tnX + tnWidth + ln3DHeight, tnY + tnHeight - ln3DHeight)
+	laPoints(4) = .PointF.New(tnX + tnWidth, tnY + tnHeight)
+	loGfx.FillPolygon(lo3DBrush, @laPoints)
+	loGfx.DrawPolygon(loPen, @laPoints)
+
+ENDIF
+
+loGfx.FillRectangle(loMainBrush, tnX, tnY, tnWidth, tnHeight)
+loGfx.DrawRectangle(loPen, tnX, tnY, tnWidth, tnHeight)
+
+RETURN
+ENDPROC
+PROCEDURE drawslice
+LPARAMETERS tnX, tnY, tnWidth, tnHeight, tnStart, tnSweep
+
+Thisform.PrepareBrushes(tnX, tnY, tnWidth, tnHeight)
+
+LOCAL loPen as xfcPen
+loPen   = Thisform.Imgcanvas1.oBorderPen
+
+LOCAL loGfx as xfcGraphics
+loGfx = Thisform.Imgcanvas1.oGfx
+
+LOCAL loMainBrush as xfcBrush
+loMainBrush = Thisform.Imgcanvas1.oMainBrush
+
+LOCAL lo3dBrush as xfcBrush
+lo3DBrush = Thisform.Imgcanvas1.o3DBrush
+
+* Draw the 3D Slice using the Hatch Brush
+IF Thisform.Optiongroup2.Value = 1 && 3D
+
+	ln3DHeight = Thisform.Spn3D.Value
+	tnY = tnY + ln3DHeight
+
+	* Draw the contour of the 3D Slice
+	loGfx.FillPie(loMainBrush, tnX, tnY, tnWidth, tnHeight, tnStart, tnSweep)
+	loGfx.DrawPie(loPen, tnX, tnY, tnWidth, tnHeight, tnStart, tnSweep)
+
+	
+	FOR n = 1 TO ln3dHeight
+		tnY = tnY - 1
+		* Draw the Normal Slice using the Solid Brush
+		loGfx.FillPie(lo3DBrush, tnX, tnY, tnWidth, tnHeight, tnStart, tnSweep) && draw the slice
+		IF tnStart > 90
+			loGfx.DrawArc(loPen, tnX, tnY, tnWidth, tnHeight, tnStart, 0.25)
+		ENDIF
+		loGfx.DrawArc(loPen, tnX, tnY, tnWidth, tnHeight, tnStart + tnSweep - .25, 0.35)
+	ENDFOR
+	loGfx.FillPie(loMainBrush, tnX, tnY, tnWidth, tnHeight, tnStart, tnSweep) && draw the slice
+
+
+	* Draw border line from center of pie
+	LOCAL x, y
+	x = (tnWidth / 2) + tnX
+	y = (tnHeight / 2) + tnY
+	loGfx.DrawLine(loPen, X, Y, X, Y + ln3DHeight)
+	loGfx.DrawPie(loPen, tnX, tnY, tnWidth, tnHeight, tnStart, tnSweep)
+ENDIF
+
+loGfx.FillPie(loMainBrush, tnX, tnY, tnWidth, tnHeight, tnStart, tnSweep)
+loGfx.DrawPie(loPen, tnX, tnY, tnWidth, tnHeight, tnStart, tnSweep)
+
+RETURN
+ENDPROC
+PROCEDURE preparebrushes
+LPARAMETERS tnX, tnY, tnWidth, tnHeight, tlRect
+
+LOCAL loCanvas as Image
+loCanvas = Thisform.Imgcanvas1
+
+DO CASE
+CASE THISFORM.Optiongroup1.VALUE = 1 && Solid Brush
+	loSolidBrush = .SolidBrush.New(.COLOR.FromRGB(sales.nColor))
+	loCanvas.oMainBrush = loSolidBrush
+
+CASE THISFORM.Optiongroup1.VALUE = 2 && Gradient Path Brush
+
+	LOCAL loColor1 as xfcColor
+	loColor1 = .Color.FromRGB(sales.nColor)
+	
+	LOCAL loColor2 as xfcColor
+	loColor2 = .COLOR.FromRGB(THISFORM.ChangeColor(sales.nColor,THISFORM.Spinner1.VALUE * 10))
+
+	IF Thisform.OptType.Value = 1 AND NOT tlRect && Pie Chart
+		LOCAL loPath as xfcGraphicsPath
+		loPath = .Drawing2D.GraphicsPath.New()
+		loPath.AddEllipse(tnX, tnY, tnWidth, tnHeight)
+
+		LOCAL loPathGradBrush as xfcPathGradientBrush
+		loPathGradBrush = .Drawing2D.PathGradientBrush.New(loPath)
+		loPathGradBrush.CenterColor = loColor2
+
+		loPathGradBrush.SurroundColors[1] = loColor1
+		loCanvas.oMainBrush = loPathGradBrush
+	ELSE  && Bar Chart
+		LOCAL loLinGradBrush as xfcLinearGradientBrush
+		loLinGradBrush = .Drawing2D.LinearGradientBrush.New(;
+			.Rectangle.New(tnX, tnY, tnWidth, tnHeight), ;
+			loColor1, loColor2)
+		
+		loLinGradBrush.SetBlendTriangularShape(0.3, 1.0)
+		
+* Tipo 1
+*	loLinGradBrush.SetBlendTriangularShape(0.5, 1.0)
+
+* Tipo 2
+*	loLinGradBrush.SetSigmaBellShape(0.5,1.0)
+
+		loCanvas.oMainBrush = loLinGradBrush
+
+	ENDIF
+	
+
+CASE THISFORM.Optiongroup1.VALUE = 3 && Monochrome - HatchBrush
+	loCanvas.oMainBrush = .Drawing2D.HatchBrush.New( ;
+		RECNO()*2, ; && HatchStyle
+		.COLOR.Black, ; && ForeColor
+		.COLOR.White ) && BackColor
+ENDCASE
+
+
+IF THISFORM.Optiongroup1.VALUE = 3 && Monochrome - HatchBrush
+	loCanvas.o3DBrush = .Drawing2D.HatchBrush.New( ;
+		RECNO()*2,   ; && HatchStyle
+		.COLOR.Gray, ; && ForeColor
+		.COLOR.LightGray ) && BackColor
+ELSE
+	loCanvas.o3DBrush = .SolidBrush.New(.Color.FromRGB(Thisform.ChangeColor(sales.nColor, - 20)))
+ENDIF
+ENDPROC
+[END METHODS]
+[START RESERVED3]
+_memberdata XML Metadata for customizable properties
+*changecolor 
+*drawslice 
+*drawbar 
+*preparebrushes 
+[END RESERVED3]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TZ0QGKPH
+[CLASS] imgcanvas
+[CLASSLOC] ..\gdiplusx.vcx
+[BASECLASS] image
+[OBJNAME] Imgcanvas1
+[PARENT] Form1
+[START PROPERTIES]
+Anchor = 15
+Height = 292
+Left = 0
+Top = 0
+Width = 576
+Name = "Imgcanvas1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE beforedraw
+LOCAL loSolidBrush AS xfcSolidBrush
+LOCAL loGBrush AS xfcLinearGradientBrush
+LOCAL loHatchBrush as xfcHatchBrush
+
+LOCAL loFont AS xfcFont
+
+LOCAL lnX, lnY, x1, y1, lnWidth, lnHeight, lnMargin, lnTotal, lnLegendWidth, lnType
+
+lnLegendWidth = 120
+lnMargin      = 5
+lnType = Thisform.OptType.Value
+
+CALCULATE SUM(sales.nValue) TO lnTotal
+
+Thisform.Cls()
+
+
+WITH _SCREEN.SYSTEM.Drawing
+
+This.Clear(.Color.FromRGB(Thisform.ShpBack.BackColor))
+This.oBorderPen = .Pen.New(.Color.FromRGB(Thisform.ShpBorder.BackColor))
+
+DO CASE
+
+CASE lnType = 1 && Pie Chart
+
+	LOCAL lnDetachPixels, lnStart, lnSweep, lnAngle
+	lnDetachPixels = 30
+
+	lnWidth  = THIS.WIDTH - (lnDetachPixels * 2) - lnMargin - lnMargin - lnLegendWidth
+	lnHeight = THIS.HEIGHT - (lnDetachPixels * 2) - lnMargin - lnMargin
+	lnStart = 270
+
+	lnX = 0 + lnDetachPixels + 5
+	lnY = 0 + lnDetachPixels + 5
+
+	* Draw the pie
+	
+	* Draw the RIGHT side of the pie
+	SCAN FOR lnStart < 450
+		x1 = lnX
+		y1 = lnY
+
+		* Calculate Start point and Sweep
+		lnSweep = sales.nValue / lnTotal * 360
+
+		IF sales.lDetach = .T.
+			lnDetachAngle = 360 - (lnStart + (lnSweep / 2))
+			x1 = lnX + (COS(DTOR(lnDetachAngle)) * lnDetachPixels)
+			y1 = lnY - (SIN(DTOR(lnDetachAngle)) * lnDetachPixels)
+		ELSE
+			x1 = lnX
+			y1 = lnY
+		ENDIF
+
+*		IF PieCursor.lSliceHidden = .F.
+			Thisform.DrawSlice(x1, y1, lnWidth, lnHeight, lnStart, lnSweep)
+*		ENDIF
+		lnStart = lnStart + lnSweep
+	ENDSCAN
+
+	* Draw the LEFT side of the pie
+	GO BOTTOM
+	lnStart = 270
+	DO WHILE lnStart > 90
+		x1 = lnX
+		y1 = lnY
+
+		* Calculate Start point and Sweep
+		lnSweep = sales.nValue / lnTotal * 360
+		lnStart = lnStart - lnSweep
+
+		IF Sales.lDetach = .T.
+			lnDetachAngle = 360 - (lnStart + (lnSweep / 2))
+			x1 = lnX + (COS(DTOR(lnDetachAngle)) * lnDetachPixels)
+			y1 = lnY - (SIN(DTOR(lnDetachAngle)) * lnDetachPixels)
+		ENDIF
+
+*		IF Sales.lSliceHidden = .F.
+			Thisform.DrawSlice(x1, y1, lnWidth, lnHeight, lnStart, lnSweep)
+*		ENDIF
+		SKIP -1
+	ENDDO
+
+
+CASE lnType = 2 && Bar Chart
+
+	lnWidth  = THIS.WIDTH - lnMargin - lnMargin - lnLegendWidth ;
+		+ IIF(Thisform.Optiongroup2.Value = 1, - Thisform.Spn3D.Value, 0)
+	lnHeight = THIS.HEIGHT - lnMargin - lnMargin - Thisform.Spn3D.Value
+
+	LOCAL lnBarWidth, lnRecs, lnBetween
+	lnRecs = RECCOUNT()
+	lnBetween = Thisform.SpnBetweenBars.Value
+	lnBarWidth = (lnWidth - (lnRecs - 1) * lnBetween) / lnRecs
+
+	LOCAL lnMaxValue
+	CALCULATE MAX(sales.nValue) TO lnMaxValue
+
+	SCAN
+		lnBarHeight = sales.nValue / lnMaxValue * lnHeight
+
+		x1 = lnMargin + ((lnBarWidth + lnBetween) * (RECNO() - 1))
+		y1 = lnMargin + Thisform.Spn3D.Value + lnHeight - lnBarHeight
+		Thisform.DrawBar(x1, y1, lnBarWidth, lnBarHeight)
+	ENDSCAN
+
+ENDCASE
+
+
+*** Draw Legends
+
+	x1 = This.Width - lnLegendWidth + 15
+	y1 = 30
+	lnWidth = 20
+	lnHeight = 20
+
+	loFont = .Font.New("Arial",10)
+	loBlackBrush = .Brushes.Black
+
+	SCAN
+		Thisform.PrepareBrushes(X1, Y1, lnWidth, lnHeight, .T.)
+		THIS.oGfx.FillRectangle(This.oMainBrush, x1, y1, lnWidth, lnHeight)
+		THIS.oGfx.DrawRectangle(This.oBorderPen, x1, y1, lnWidth, lnHeight)
+		THIS.oGfx.DrawString(sales.cLegend, loFont, loBlackBrush, x1 + 28, y1 + 3)
+		y1 = y1 + 30
+	ENDSCAN
+	GO TOP
+
+ENDWITH
+RETURN
+ENDPROC
+PROCEDURE setup
+This.Top = 0
+This.Left = 0
+*This.Width = Thisform.Width
+*This.Height = Thisform.Height - Thisform.Grid1.Height - 10
+This.ZOrder(1)
+
+This.AddProperty("oBorderPen")
+This.AddProperty("oMainBrush")
+This.AddProperty("o3DBrush")
+
+IF NOT DODEFAULT()
+	RETURN .F.
+ENDIF
+
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1U200PXOO
+[CLASS] grid
+[BASECLASS] grid
+[OBJNAME] Grid1
+[PARENT] Form1
+[START PROPERTIES]
+ColumnCount = 4
+Anchor = 6
+AllowAddNew = .T.
+Height = 180
+Left = 0
+Panel = 1
+RecordSource = "sales"
+TabIndex = 1
+Top = 300
+Width = 278
+Name = "Grid1"
+Column1.ControlSource = "sales.clegend"
+Column1.Name = "Column1"
+Column2.ControlSource = "sales.nvalue"
+Column2.InputMask = "999,999.99"
+Column2.Name = "Column2"
+Column3.Alignment = 2
+Column3.ColumnOrder = 4
+Column3.ControlSource = "sales.ldetach"
+Column3.CurrentControl = "Check1"
+Column3.Width = 54
+Column3.Sparse = .F.
+Column3.Name = "Column4"
+Column4.ColumnOrder = 3
+Column4.ControlSource = "''"
+Column4.Width = 31
+Column4.Sparse = .F.
+Column4.DynamicBackColor = '"sales.nColor"'
+Column4.Name = "Column5"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Init
+This.Column5.DynamicBackColor = 'sales.nColor'
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1U200PXOP
+[CLASS] header
+[BASECLASS] header
+[OBJNAME] Header1
+[PARENT] Form1.Grid1.Column1
+[START PROPERTIES]
+Alignment = 2
+Caption = "Legend"
+Name = "Header1"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1U200PXOQ
+[CLASS] textbox
+[BASECLASS] textbox
+[OBJNAME] Text1
+[PARENT] Form1.Grid1.Column1
+[START PROPERTIES]
+BorderStyle = 0
+Margin = 0
+ForeColor = 0,0,0
+BackColor = 255,255,255
+Name = "Text1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Valid
+Thisform.Imgcanvas1.Draw()
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1U200PXOR
+[CLASS] header
+[BASECLASS] header
+[OBJNAME] Header1
+[PARENT] Form1.Grid1.Column2
+[START PROPERTIES]
+Alignment = 2
+Caption = "Value"
+Name = "Header1"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1U200PXOS
+[CLASS] textbox
+[BASECLASS] textbox
+[OBJNAME] Text1
+[PARENT] Form1.Grid1.Column2
+[START PROPERTIES]
+BorderStyle = 0
+Margin = 0
+ForeColor = 0,0,0
+BackColor = 255,255,255
+Name = "Text1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Valid
+Thisform.Imgcanvas1.Draw()
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1U200PXOV
+[CLASS] header
+[BASECLASS] header
+[OBJNAME] Header1
+[PARENT] Form1.Grid1.Column4
+[START PROPERTIES]
+Alignment = 2
+Caption = "Detach"
+Name = "Header1"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1U200PXOW
+[CLASS] textbox
+[BASECLASS] textbox
+[OBJNAME] Text1
+[PARENT] Form1.Grid1.Column4
+[START PROPERTIES]
+BorderStyle = 0
+Margin = 0
+ForeColor = 0,0,0
+BackColor = 255,255,255
+Name = "Text1"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1U200VGYU
+[CLASS] checkbox
+[BASECLASS] checkbox
+[OBJNAME] Check1
+[PARENT] Form1.Grid1.Column4
+[START PROPERTIES]
+Top = 23
+Left = 41
+Height = 17
+Width = 60
+Alignment = 0
+Centered = .T.
+Caption = ""
+Name = "Check1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Click
+replace sales.lDetach WITH sales.lDetach
+Thisform.Imgcanvas1.Draw()
+NODEFAULT
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1U2010IWM
+[CLASS] header
+[BASECLASS] header
+[OBJNAME] Header1
+[PARENT] Form1.Grid1.Column5
+[START PROPERTIES]
+Caption = ""
+Name = "Header1"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1U2010IWN
+[CLASS] textbox
+[BASECLASS] textbox
+[OBJNAME] Text1
+[PARENT] Form1.Grid1.Column5
+[START PROPERTIES]
+BorderStyle = 0
+Margin = 0
+ForeColor = 0,0,0
+BackColor = 255,255,255
+Name = "Text1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE DblClick
+lnColor = sales.nColor
+replace sales.nColor WITH GETCOLOR(lnColor)
+This.Refresh
+Thisform.Imgcanvas1.Draw()
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0L3VWK
+[CLASS] optiongroup
+[BASECLASS] optiongroup
+[OBJNAME] Optiongroup1
+[PARENT] Form1
+[START PROPERTIES]
+AutoSize = .T.
+ButtonCount = 3
+Anchor = 12
+Value = 1
+Height = 65
+Left = 384
+Top = 300
+Width = 186
+TabIndex = 2
+Name = "Optiongroup1"
+Option1.Caption = "Colored Solid Brush"
+Option1.Value = 1
+Option1.Height = 17
+Option1.Left = 5
+Option1.Style = 0
+Option1.Top = 5
+Option1.Width = 176
+Option1.AutoSize = .F.
+Option1.Name = "Option1"
+Option2.Caption = "Colored Gradient Path Brush"
+Option2.Height = 17
+Option2.Left = 5
+Option2.Style = 0
+Option2.Top = 24
+Option2.Width = 176
+Option2.AutoSize = .F.
+Option2.Name = "Option2"
+Option3.Caption = "Monochrome (HatchBrush)"
+Option3.Height = 17
+Option3.Left = 5
+Option3.Style = 0
+Option3.Top = 43
+Option3.Width = 176
+Option3.AutoSize = .F.
+Option3.Name = "Option3"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE InteractiveChange
+IF This.Value = 2 && Gradient
+	Thisform.Label1.Visible = .T.
+	Thisform.Spinner1.Visible = .T.
+ELSE
+	Thisform.Label1.Visible = .F.
+	Thisform.Spinner1.Visible = .F.
+ENDIF
+
+This.Parent.imgcanvas1.Draw()
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0L3VWK
+[CLASS] spinner
+[BASECLASS] spinner
+[OBJNAME] Spinner1
+[PARENT] Form1
+[START PROPERTIES]
+Anchor = 12
+Height = 25
+KeyboardHighValue = 10
+KeyboardLowValue = -10
+Left = 519
+SpinnerHighValue =  10.00
+SpinnerLowValue = -10.00
+TabIndex = 3
+Top = 372
+Visible = .F.
+Width = 48
+Value = 5
+Name = "Spinner1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE InteractiveChange
+This.Parent.imgcanvas1.Draw()
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1U3003IYR
+[CLASS] label
+[BASECLASS] label
+[OBJNAME] Label1
+[PARENT] Form1
+[START PROPERTIES]
+AutoSize = .T.
+Anchor = 12
+WordWrap = .T.
+BackStyle = 0
+Caption = "Gradient Level (-10  +10)"
+Height = 17
+Left = 384
+Top = 374
+Visible = .F.
+Width = 135
+TabIndex = 5
+ForeColor = 255,0,0
+Name = "Label1"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0L3VWK
+[CLASS] optiongroup
+[BASECLASS] optiongroup
+[OBJNAME] Optiongroup2
+[PARENT] Form1
+[START PROPERTIES]
+AutoSize = .F.
+ButtonCount = 2
+Anchor = 12
+Value = 1
+Height = 46
+Left = 384
+Top = 404
+Width = 84
+TabIndex = 2
+Name = "Optiongroup2"
+Option1.Caption = "3D"
+Option1.Value = 1
+Option1.Height = 17
+Option1.Left = 5
+Option1.Style = 0
+Option1.Top = 5
+Option1.Width = 176
+Option1.AutoSize = .F.
+Option1.Name = "Option1"
+Option2.Caption = "Plain"
+Option2.Height = 17
+Option2.Left = 5
+Option2.Style = 0
+Option2.Top = 24
+Option2.Width = 176
+Option2.AutoSize = .F.
+Option2.Name = "Option2"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE InteractiveChange
+This.Parent.imgcanvas1.Draw()
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0L3VWK
+[CLASS] spinner
+[BASECLASS] spinner
+[OBJNAME] Spn3D
+[PARENT] Form1
+[START PROPERTIES]
+Anchor = 12
+Height = 25
+KeyboardHighValue = 50
+KeyboardLowValue = 0
+Left = 519
+SpinnerHighValue =  50.00
+SpinnerLowValue =   0.00
+TabIndex = 3
+Top = 420
+Visible = .T.
+Width = 48
+Value = 20
+Name = "Spn3D"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE InteractiveChange
+This.Parent.imgcanvas1.Draw()
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _20K001H6U
+[CLASS] optiongroup
+[BASECLASS] optiongroup
+[OBJNAME] OptType
+[PARENT] Form1
+[START PROPERTIES]
+AutoSize = .F.
+ButtonCount = 2
+Anchor = 12
+Value = 1
+Height = 48
+Left = 288
+Top = 300
+Width = 84
+TabIndex = 2
+Name = "OptType"
+Option1.Caption = "Pie Chart"
+Option1.Value = 1
+Option1.Height = 17
+Option1.Left = 5
+Option1.Style = 0
+Option1.Top = 5
+Option1.Width = 176
+Option1.AutoSize = .F.
+Option1.Name = "Option1"
+Option2.Caption = "Bar Chart"
+Option2.Height = 17
+Option2.Left = 5
+Option2.Style = 0
+Option2.Top = 24
+Option2.Width = 176
+Option2.AutoSize = .F.
+Option2.Name = "Option2"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE InteractiveChange
+This.Parent.imgcanvas1.Draw()
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _20L02SQR6
+[CLASS] spinner
+[BASECLASS] spinner
+[OBJNAME] SpnBetweenBars
+[PARENT] Form1
+[START PROPERTIES]
+Anchor = 12
+Height = 25
+KeyboardHighValue = 50
+KeyboardLowValue = 0
+Left = 288
+SpinnerHighValue =  50.00
+SpinnerLowValue =   0.00
+TabIndex = 3
+Top = 396
+Visible = .T.
+Width = 54
+Value = 5
+Name = "SpnBetweenBars"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE InteractiveChange
+This.Parent.imgcanvas1.Draw()
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0L3VWK
+[CLASS] label
+[BASECLASS] label
+[OBJNAME] Label2
+[PARENT] Form1
+[START PROPERTIES]
+AutoSize = .T.
+Anchor = 12
+Caption = "Between Bars"
+Height = 17
+Left = 288
+Top = 372
+Width = 79
+Name = "Label2"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _20L03UFMQ
+[CLASS] label
+[BASECLASS] label
+[OBJNAME] Label3
+[PARENT] Form1
+[START PROPERTIES]
+AutoSize = .T.
+Anchor = 12
+Caption = "3D"
+Height = 17
+Left = 496
+Top = 420
+Width = 18
+Name = "Label3"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0L3VWK
+[CLASS] commandbutton
+[BASECLASS] commandbutton
+[OBJNAME] Command1
+[PARENT] Form1
+[START PROPERTIES]
+Top = 456
+Left = 288
+Height = 27
+Width = 84
+Anchor = 12
+Caption = "BackColor"
+Name = "Command1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Click
+Thisform.ShpBack.BackColor = GETCOLOR(Thisform.ShpBack.BackColor)
+This.Parent.imgcanvas1.Draw()
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0L3VWL
+[CLASS] shape
+[BASECLASS] shape
+[OBJNAME] ShpBack
+[PARENT] Form1
+[START PROPERTIES]
+Top = 456
+Left = 384
+Height = 25
+Width = 25
+Anchor = 12
+BackColor = 255,255,221
+Name = "ShpBack"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _20N015SAI
+[CLASS] commandbutton
+[BASECLASS] commandbutton
+[OBJNAME] Command2
+[PARENT] Form1
+[START PROPERTIES]
+Top = 456
+Left = 444
+Height = 27
+Width = 84
+Anchor = 12
+Caption = "Border Color"
+Name = "Command2"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Click
+Thisform.ShpBorder.BackColor = GETCOLOR(Thisform.ShpBorder.BackColor)
+This.Parent.imgcanvas1.Draw()
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _20N015SAJ
+[CLASS] shape
+[BASECLASS] shape
+[OBJNAME] ShpBorder
+[PARENT] Form1
+[START PROPERTIES]
+Top = 456
+Left = 540
+Height = 25
+Width = 25
+Anchor = 12
+BackColor = 255,255,255
+Name = "ShpBorder"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] RESERVED  
+[START PROPERTIES]
+Arial, 0, 9, 5, 15, 12, 32, 3, 0
+[END PROPERTIES]
+[EOF]

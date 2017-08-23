@@ -1,0 +1,514 @@
+SCCTEXT Version 4.0.0.2
+PLATFORM C(8,0),UNIQUEID C(10,0),TIMESTAMP N(10,0),CLASS M(4,0),CLASSLOC M(4,0),BASECLASS M(4,0),OBJNAME M(4,0),PARENT M(4,0),PROPERTIES M(4,0),PROTECTED M(4,0),METHODS M(4,0),OBJCODE M(4,0),OLE M(4,0),OLE2 M(4,0),RESERVED1 M(4,0),RESERVED2 M(4,0),RESERVED3 M(4,0),RESERVED4 M(4,0),RESERVED5 M(4,0),RESERVED6 M(4,0),RESERVED7 M(4,0),RESERVED8 M(4,0),USER M(4,0)
+1252
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] Screen    
+[START RESERVED1]
+VERSION =   3.00[END RESERVED1]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _2040JO4UM
+[CLASS] dataenvironment
+[BASECLASS] dataenvironment
+[OBJNAME] Dataenvironment
+[START PROPERTIES]
+Top = 220
+Left = 1
+Width = 520
+Height = 200
+DataSource = .NULL.
+Name = "Dataenvironment"
+[END PROPERTIES]
+[START RESERVED2]
+1[END RESERVED2]
+[START RESERVED4]
+1[END RESERVED4]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _2040JO4UO
+[CLASS] form
+[BASECLASS] form
+[OBJNAME] Form1
+[START PROPERTIES]
+Height = 475
+Width = 554
+DoCreate = .T.
+AutoCenter = .T.
+Caption = "Image View"
+Name = "Form1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Init
+This.LoadImages()
+
+ENDPROC
+PROCEDURE Load
+CREATE CURSOR curImages ;
+( filename v(250), ;
+  filesize i, ;
+  filedate d, ;
+  filetime c(12), ;
+  filepath v(250))
+ENDPROC
+PROCEDURE getimage
+** Used by the report to render the image
+This.grid1.column1.image1.Draw()
+RETURN This.grid1.column1.image1
+ENDPROC
+PROCEDURE loadimages
+** Select a directory of images to load into the image cursor
+
+LOCAL lcPath, lcSafety
+
+lcSafety = SET("Safety")
+lcPath = GETDIR()
+
+IF EMPTY(lcPath)
+	RETURN
+ENDIF
+
+IF ADIR(laImages, ADDBS(lcPath)+"*.*") > 0
+	SELECT curImages
+	SET SAFETY OFF
+	ZAP
+	SET SAFETY &lcSafety
+	SET DELETED ON
+	APPEND FROM ARRAY laImages
+	DELETE FOR NOT INLIST(UPPER(JUSTEXT(filename)), "JPG","GIF","BMP","EMF","TIF","PNG")
+	REPLACE ALL filepath WITH lcPath
+	GO TOP
+ENDIF
+
+This.Refresh()
+ENDPROC
+[END METHODS]
+[START RESERVED3]
+*imageupdate 
+*getimage 
+*loadimages 
+[END RESERVED3]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _2040JO4V5
+[CLASS] grid
+[BASECLASS] grid
+[OBJNAME] Grid1
+[PARENT] Form1
+[START PROPERTIES]
+ColumnCount = 5
+Anchor = 15
+DeleteMark = .F.
+Height = 409
+Left = 12
+Panel = 1
+RecordMark = .F.
+RecordSource = "curImages"
+RowHeight = 74
+SplitBar = .F.
+Top = 12
+Width = 529
+HighlightStyle = 2
+Name = "Grid1"
+Column1.ControlSource = "filename"
+Column1.Width = 109
+Column1.Sparse = .F.
+Column1.Name = "Column1"
+Column2.ControlSource = "filename"
+Column2.Width = 168
+Column2.Name = "Column2"
+Column3.ControlSource = "filesize"
+Column3.Name = "Column3"
+Column4.ControlSource = "filedate"
+Column4.Name = "Column4"
+Column5.ControlSource = "filetime"
+Column5.Name = "Column5"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _2040JO4V6
+[CLASS] header
+[BASECLASS] header
+[OBJNAME] Header1
+[PARENT] Form1.Grid1.Column1
+[START PROPERTIES]
+Caption = "Thumbnail"
+Name = "Header1"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _2040K5AV3
+[CLASS] imgcanvas
+[CLASSLOC] ..\gdiplusx.vcx
+[BASECLASS] image
+[OBJNAME] Image1
+[PARENT] Form1.Grid1.Column1
+[START PROPERTIES]
+Stretch = 2
+Name = "Image1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE beforedraw
+** Update the canvas for each call to Draw()
+
+LOCAL loGFX AS xfcGraphics
+LOCAL loImg AS xfcImage
+LOCAL lnWidth, lnHeight
+
+IF NOT FILE(filepath+filename)
+	RETURN
+ENDIF
+
+lnWidth = This.Width
+lnHeight = This.Height
+
+WITH _SCREEN.System.Drawing
+
+	loGFX = This.oGfx
+	loImg = .Image.FromFile(filepath+filename)
+
+	#DEFINE PropertyTagDateTime 0x0132
+	LOCAL loProp AS xfcPropertyItem
+	lcDate = ""
+
+	** Calculate the image date
+*!*		IF NOT ISNULL(loImg.PropertyIdList[1])
+*!*			FOR EACH lnProp IN loImg.PropertyIdList
+*!*				loProp = loImg.GetPropertyItem(lnProp)
+*!*				IF loProp.Id = PropertyTagDateTime
+*!*					lcDate = ""+loProp.Value
+*!*					EXIT
+*!*				ENDIF
+*!*			ENDFOR
+*!*		ENDIF
+
+	** Specify the watermark text
+	TEXT TO lcString NOSHOW TEXTMERGE
+<<filename>>
+<<loImg.Width>> x <<loImg.Height>>
+<<lcDate>>
+	ENDTEXT
+
+	** Get a thumbnail for the image and draw it to the canvas
+	loImg = loImg.GetThumbnailImage(lnWidth,lnHeight)
+	loGFX.DrawImage(loImg,0,0,lnWidth,lnHeight)
+
+	** Draw the watermark text
+	loGFX.DrawString(lcString, This.Controls("Font"), This.Controls("Brush1"), 1, 1)
+	loGFX.DrawString(lcString, This.Controls("Font"), This.Controls("Brush2"), 0, 0)
+
+ENDWITH
+
+loImg = NULL
+
+ENDPROC
+PROCEDURE setup
+** Intialize the drawing objects we will need for the canvas
+WITH _SCREEN.System.Drawing
+	This.Controls.Add(.Font.New("Arial",10,1), "Font")
+	This.Controls.Add(.SolidBrush.New(.Color.New(0x80000000)), "Brush1")
+	This.Controls.Add(.SolidBrush.New(.Color.New(0x90ffffff)), "Brush2")
+ENDWITH
+
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _2040JO4V8
+[CLASS] header
+[BASECLASS] header
+[OBJNAME] Header1
+[PARENT] Form1.Grid1.Column2
+[START PROPERTIES]
+Caption = "File Name"
+Name = "Header1"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _2040JO4V9
+[CLASS] textbox
+[BASECLASS] textbox
+[OBJNAME] Text1
+[PARENT] Form1.Grid1.Column2
+[START PROPERTIES]
+BorderStyle = 0
+Margin = 0
+ForeColor = 0,0,0
+BackColor = 255,255,255
+Name = "Text1"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _2040JO4VA
+[CLASS] header
+[BASECLASS] header
+[OBJNAME] Header1
+[PARENT] Form1.Grid1.Column3
+[START PROPERTIES]
+Caption = "Size"
+Name = "Header1"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _2040JO4VB
+[CLASS] textbox
+[BASECLASS] textbox
+[OBJNAME] Text1
+[PARENT] Form1.Grid1.Column3
+[START PROPERTIES]
+BorderStyle = 0
+Margin = 0
+ForeColor = 0,0,0
+BackColor = 255,255,255
+Name = "Text1"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _2040JO4VC
+[CLASS] header
+[BASECLASS] header
+[OBJNAME] Header1
+[PARENT] Form1.Grid1.Column4
+[START PROPERTIES]
+Caption = "Date"
+Name = "Header1"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _2040JO4VD
+[CLASS] textbox
+[BASECLASS] textbox
+[OBJNAME] Text1
+[PARENT] Form1.Grid1.Column4
+[START PROPERTIES]
+BorderStyle = 0
+Margin = 0
+ForeColor = 0,0,0
+BackColor = 255,255,255
+Name = "Text1"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _2040JO4VE
+[CLASS] header
+[BASECLASS] header
+[OBJNAME] Header1
+[PARENT] Form1.Grid1.Column5
+[START PROPERTIES]
+Caption = "Time"
+Name = "Header1"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _2040JO4VF
+[CLASS] textbox
+[BASECLASS] textbox
+[OBJNAME] Text1
+[PARENT] Form1.Grid1.Column5
+[START PROPERTIES]
+BorderStyle = 0
+Margin = 0
+ForeColor = 0,0,0
+BackColor = 255,255,255
+Name = "Text1"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _2040JO4UM
+[CLASS] commandbutton
+[BASECLASS] commandbutton
+[OBJNAME] Command1
+[PARENT] Form1
+[START PROPERTIES]
+Top = 428
+Left = 356
+Height = 27
+Width = 84
+Anchor = 12
+Caption = "Print"
+Name = "Command1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Click
+PRIVATE oForm  && needed by report
+oForm = ThisForm
+
+REPORT FORM imgView PREVIEW
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _2040SAFS1
+[CLASS] commandbutton
+[BASECLASS] commandbutton
+[OBJNAME] Command2
+[PARENT] Form1
+[START PROPERTIES]
+Top = 428
+Left = 452
+Height = 27
+Width = 84
+Anchor = 12
+Caption = "Close"
+Name = "Command2"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Click
+ThisForm.Release()
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _20715QPA5
+[CLASS] commandbutton
+[BASECLASS] commandbutton
+[OBJNAME] cmdPath
+[PARENT] Form1
+[START PROPERTIES]
+Top = 428
+Left = 110
+Height = 27
+Width = 101
+Anchor = 12
+Caption = "Choose Path..."
+Name = "cmdPath"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Click
+ThisForm.LoadImages()
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _2080V34HP
+[CLASS] commandbutton
+[BASECLASS] commandbutton
+[OBJNAME] Command3
+[PARENT] Form1
+[START PROPERTIES]
+Top = 428
+Left = 225
+Height = 27
+Width = 115
+Anchor = 12
+Caption = "Web Thumbnails..."
+Name = "Command3"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Click
+#DEFINE CRLF CHR(13)+CHR(10)
+#DEFINE PropertyTagDateTime 0x0132
+
+LOCAL lcPath, lnFile, laFiles[1], lcHTML, lcThumbHTML
+LOCAL lnWidth, lnHeight
+LOCAL loImg AS xfcImage
+LOCAL loThumb AS xfcImage
+LOCAL loBmp AS xfcBitmap
+LOCAL loGfx AS xfcGraphics
+LOCAL loColor AS xfcColor
+LOCAL loBrushLight AS xfcSolidBrush
+LOCAL loBrushDark AS xfcSolidBrush
+LOCAL loProp AS xfcPropertyItem
+
+SELECT curImages
+GO TOP
+lcPath = ADDBS(filepath)
+lcThumbPath = lcPath+"Thumbs\"
+
+IF NOT DIRECTORY(lcThumbPath)
+	MD (lcThumbPath)
+ENDIF
+
+WITH _SCREEN.System.Drawing
+
+loFont = .Font.New("Arial",10,1)
+loColor = .Color.New(0x80000000)
+loBrushDark = .SolidBrush.New(loColor)
+loColor = .Color.New(0xa0ffffff)
+loBrushLight = .SolidBrush.New(loColor)
+
+loImg = NULL
+
+lnWidth = 160
+lnHeight = 120
+
+lcThumbHTML = ""
+
+
+SELECT curImages
+SCAN
+	lcFile = filename
+	loImg = .Image.FromFile(lcPath+lcFile)
+	loBmp = .Bitmap.New(160,120)
+	loGfx = .Graphics.FromImage(loBmp)
+	
+	lcDate = ""
+	** Get picture taken date
+	IF NOT ISNULL(loImg.PropertyIdList[1])
+		FOR EACH lnProp IN loImg.PropertyIdList
+			loProp = loImg.GetPropertyItem(lnProp)
+			IF loProp.Id = PropertyTagDateTime
+				lcDate = ""+loProp.Value
+				EXIT
+			ENDIF
+		ENDFOR
+	ENDIF
+	lcString = lcFile + CRLF + ;
+				TRANSFORM(loImg.Width) + " x " + TRANSFORM(loImg.Height) + CRLF + ;
+				lcDate	
+	
+	loGfx.Clear(.Color.White)
+	loGFX.DrawImage(loImg,0,0,lnWidth,lnHeight)
+	loGFX.DrawString(lcString, loFont, loBrushDark, 1, 1)
+	loGFX.DrawString(lcString, loFont, loBrushLight, 0, 0)
+	
+	loBmp.Save(FORCEEXT(lcThumbPath+"thumb"+lcFile,"jpg"), .Imaging.ImageFormat.Jpeg)
+	lcThumbHTML = lcThumbHTML + ;
+				[   <a href="../]+lcFile+[" target="large">]+;
+				[<img src="thumb]+FORCEEXT(lcFile,"jpg")+[" border="0" alt="]+lcString+["></a>]+CRLF
+
+ENDSCAN
+
+TEXT TO lcHTML NOSHOW TEXTMERGE
+<html>
+<body>
+<<lcThumbHTML>>
+</body>
+</html>
+ENDTEXT
+
+ENDWITH
+
+STRTOFILE(lcHTML, lcThumbPath+"default.htm")
+
+MESSAGEBOX("File Created: "+lcThumbPath+"default.htm")
+
+
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] RESERVED  
+[START PROPERTIES]
+Arial, 0, 9, 5, 15, 12, 32, 3, 0
+[END PROPERTIES]
+[EOF]

@@ -1,0 +1,276 @@
+SCCTEXT Version 4.0.0.2
+PLATFORM C(8,0),UNIQUEID C(10,0),TIMESTAMP N(10,0),CLASS M(4,0),CLASSLOC M(4,0),BASECLASS M(4,0),OBJNAME M(4,0),PARENT M(4,0),PROPERTIES M(4,0),PROTECTED M(4,0),METHODS M(4,0),OBJCODE M(4,0),OLE M(4,0),OLE2 M(4,0),RESERVED1 M(4,0),RESERVED2 M(4,0),RESERVED3 M(4,0),RESERVED4 M(4,0),RESERVED5 M(4,0),RESERVED6 M(4,0),RESERVED7 M(4,0),RESERVED8 M(4,0),USER M(4,0)
+1252
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] Screen    
+[START RESERVED1]
+VERSION =   3.00[END RESERVED1]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0L3VWK
+[CLASS] dataenvironment
+[BASECLASS] dataenvironment
+[OBJNAME] Dataenvironment
+[START PROPERTIES]
+Top = 220
+Left = 1
+Width = 520
+Height = 200
+DataSource = .NULL.
+Name = "Dataenvironment"
+[END PROPERTIES]
+[START RESERVED2]
+1[END RESERVED2]
+[START RESERVED4]
+1[END RESERVED4]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0L3VWL
+[CLASS] form
+[BASECLASS] form
+[OBJNAME] Form1
+[START PROPERTIES]
+Top = 10
+Left = 0
+Height = 432
+Width = 707
+DoCreate = .T.
+Caption = "Extract icons from executables"
+WindowState = 0
+mode = 0
+Name = "Form1"
+[END PROPERTIES]
+[START RESERVED3]
+mode
+[END RESERVED3]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TZ0QGKPH
+[CLASS] imgcanvas
+[CLASSLOC] ..\source\gdiplusx.vcx
+[BASECLASS] image
+[OBJNAME] Imgcanvas1
+[PARENT] Form1
+[START PROPERTIES]
+Anchor = 15
+Height = 336
+Left = 12
+Top = 84
+Width = 684
+smoothingmode = 0
+Name = "Imgcanvas1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE beforedraw
+LOCAL lcFile
+lcFile = Thisform.txtFile.Value
+IF EMPTY(lcFile)
+	RETURN
+ENDIF
+
+This.Clear
+
+* The following code example demonstrates how to extract icons from an EXE file
+
+LOCAL lnIndex, x, y
+LOCAL loIcon as xfcIcon
+
+STORE 0 TO lnIndex, x, y
+
+WITH _SCREEN.System.Drawing
+	DO WHILE .T.
+		loIcon = .Icon.ExtractAssociatedIcon(lcFile, lnIndex)
+		IF ISNULL(loIcon)
+			EXIT
+		ENDIF
+
+* To save all icons as independent images, just uncomment these lines
+*		lcNewFile = "C:\" + JUSTFNAME(lcFile) + TRANSFORM(lnIndex) + ".png"
+*		loBmp = loIcon.ToBitmap()
+*		loBmp.Save(lcNewFile, .Imaging.ImageFormat.Png)
+
+		IF (x + loIcon.Width) > This.Width
+			x = 0
+			y = y + loIcon.Height + 5
+		ENDIF
+				
+		This.oGfx.DrawIcon(loIcon, x, y)
+		x = x + loIcon.Width  + 5
+		lnIndex = lnIndex + 1
+	ENDDO
+
+ENDWITH
+
+RETURN
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0L3VWK
+[CLASS] commandbutton
+[BASECLASS] commandbutton
+[OBJNAME] Command3
+[PARENT] Form1
+[START PROPERTIES]
+Top = 12
+Left = 408
+Height = 25
+Width = 108
+Anchor = 1
+Picture = (home() + "/graphics/bitmaps/outline/open.bmp")
+Caption = "Select File"
+TabIndex = 1
+PicturePosition = 1
+PictureMargin = 1
+Name = "Command3"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Click
+LOCAL lcFile
+lcFile = GETFILE("exe;ico;dll")
+IF EMPTY(lcFile) OR NOT FILE(lcFile)
+	WAIT WINDOW "Invalid file"
+	RETURN
+ENDIF
+Thisform.txtFile.Value = lcFile
+Thisform.Imgcanvas1.Draw()
+
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1U40L3TVH
+[CLASS] textbox
+[BASECLASS] textbox
+[OBJNAME] txtFile
+[PARENT] Form1
+[START PROPERTIES]
+FontSize = 8
+Anchor = 131
+Value = ( GETENV("systemroot") + "\system32\SHELL32.dll")
+Enabled = .F.
+Height = 25
+Left = 12
+TabIndex = 2
+Top = 48
+Width = 684
+DisabledBackColor = 255,255,255
+DisabledForeColor = 0,0,0
+Name = "txtFile"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1Z0012BUH
+[CLASS] commandbutton
+[BASECLASS] commandbutton
+[OBJNAME] Command1
+[PARENT] Form1
+[START PROPERTIES]
+Top = 12
+Left = 144
+Height = 25
+Width = 108
+Anchor = 1
+Picture = (home() + "/graphics/bitmaps/outline/open.bmp")
+Caption = "VFP Icons"
+TabIndex = 1
+PicturePosition = 1
+PictureMargin = 1
+Name = "Command1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Click
+LOCAL lcFile
+lcFile = _vfp.ServerName
+IF EMPTY(lcFile) OR NOT FILE(lcFile)
+	WAIT WINDOW "Invalid file"
+	RETURN
+ENDIF
+Thisform.txtFile.Value = lcFile
+Thisform.Imgcanvas1.Draw()
+
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TP0L3VWK
+[CLASS] commandbutton
+[BASECLASS] commandbutton
+[OBJNAME] Command2
+[PARENT] Form1
+[START PROPERTIES]
+Top = 12
+Left = 276
+Height = 25
+Width = 108
+Anchor = 1
+Picture = (home() + "/graphics/bitmaps/outline/open.bmp")
+Caption = "Explorer Icons"
+TabIndex = 1
+PicturePosition = 1
+PictureMargin = 1
+Name = "Command2"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Click
+LOCAL lcFile
+lcFile = getenv("systemroot") + "\EXPLORER.EXE"
+IF EMPTY(lcFile) OR NOT FILE(lcFile)
+	WAIT WINDOW "Invalid file"
+	RETURN
+ENDIF
+Thisform.txtFile.Value = lcFile
+Thisform.Imgcanvas1.Draw()
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1Z00184XJ
+[CLASS] commandbutton
+[BASECLASS] commandbutton
+[OBJNAME] Command4
+[PARENT] Form1
+[START PROPERTIES]
+Top = 12
+Left = 12
+Height = 25
+Width = 108
+Anchor = 1
+Picture = (home() + "/graphics/bitmaps/outline/open.bmp")
+Caption = "Shell32 Icons"
+TabIndex = 1
+PicturePosition = 1
+PictureMargin = 1
+Name = "Command4"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE Click
+LOCAL lcFile
+lcFile = GETENV("systemroot") + "\system32\SHELL32.dll"
+IF EMPTY(lcFile) OR NOT FILE(lcFile)
+	WAIT WINDOW "Invalid file"
+	RETURN
+ENDIF
+Thisform.txtFile.Value = lcFile
+Thisform.Imgcanvas1.Draw()
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] RESERVED  
+[START PROPERTIES]
+Arial, 0, 9, 5, 15, 12, 32, 3, 0
+Arial, 0, 8, 5, 14, 11, 29, 3, 0
+[END PROPERTIES]
+[EOF]

@@ -1,0 +1,392 @@
+SCCTEXT Version 4.0.0.2
+PLATFORM C(8,0),UNIQUEID C(10,0),TIMESTAMP N(10,0),CLASS M(4,0),CLASSLOC M(4,0),BASECLASS M(4,0),OBJNAME M(4,0),PARENT M(4,0),PROPERTIES M(4,0),PROTECTED M(4,0),METHODS M(4,0),OBJCODE M(4,0),OLE M(4,0),OLE2 M(4,0),RESERVED1 M(4,0),RESERVED2 M(4,0),RESERVED3 M(4,0),RESERVED4 M(4,0),RESERVED5 M(4,0),RESERVED6 M(4,0),RESERVED7 M(4,0),RESERVED8 M(4,0),USER M(4,0)
+1252
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] Screen    
+[START RESERVED1]
+VERSION =   3.00[END RESERVED1]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1XX1727SD
+[CLASS] dataenvironment
+[BASECLASS] dataenvironment
+[OBJNAME] Dataenvironment
+[START PROPERTIES]
+Top = 0
+Left = 0
+Width = 0
+Height = 0
+DataSource = .NULL.
+Name = "Dataenvironment"
+[END PROPERTIES]
+[START RESERVED2]
+1[END RESERVED2]
+[START RESERVED4]
+1[END RESERVED4]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1XX1727SE
+[CLASS] form
+[BASECLASS] form
+[OBJNAME] Form1
+[START PROPERTIES]
+DoCreate = .T.
+AutoCenter = .T.
+Caption = "Theme Controls"
+Name = "Form1"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1XX19QXD4
+[CLASS] pfbackground
+[CLASSLOC] themecontrols.vcx
+[BASECLASS] image
+[OBJNAME] Pfbackground1
+[PARENT] Form1
+[START PROPERTIES]
+Anchor = 15
+Height = 250
+Left = 0
+Top = 0
+Visible = .F.
+Width = 375
+Name = "Pfbackground1"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1XX172HPR
+[CLASS] pushbutton
+[CLASSLOC] themecontrols.vcx
+[BASECLASS] control
+[OBJNAME] Pushbutton1
+[PARENT] Form1
+[START PROPERTIES]
+Top = 180
+Left = 324
+Name = "Pushbutton1"
+oThemeImage.Name = "oThemeImage"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1XX19JWCK
+[CLASS] closebutton
+[CLASSLOC] themecontrols.vcx
+[BASECLASS] control
+[OBJNAME] Closebutton1
+[PARENT] Form1
+[START PROPERTIES]
+Top = 108
+Left = 132
+Name = "Closebutton1"
+oThemeImage.Name = "oThemeImage"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1XX19U1Y8
+[CLASS] helpbutton
+[CLASSLOC] themecontrols.vcx
+[BASECLASS] control
+[OBJNAME] Helpbutton1
+[PARENT] Form1
+[START PROPERTIES]
+Top = 144
+Left = 132
+Name = "Helpbutton1"
+oThemeImage.Name = "oThemeImage"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1XX19YB79
+[CLASS] rebar
+[CLASSLOC] themecontrols.vcx
+[BASECLASS] control
+[OBJNAME] Rebar1
+[PARENT] Form1
+[START PROPERTIES]
+Top = 36
+Left = 324
+Name = "Rebar1"
+oThemeImage.Name = "oThemeImage"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1XX1A7BSB
+[CLASS] tbdropdownbutton
+[CLASSLOC] themecontrols.vcx
+[BASECLASS] control
+[OBJNAME] Tbdropdownbutton1
+[PARENT] Form1
+[START PROPERTIES]
+Top = 144
+Left = 324
+Name = "Tbdropdownbutton1"
+oThemeImage.Name = "oThemeImage"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1XX1ACAO5
+[CLASS] iemenubutton
+[CLASSLOC] themecontrols.vcx
+[BASECLASS] control
+[OBJNAME] Iemenubutton1
+[PARENT] Form1
+[START PROPERTIES]
+Top = 72
+Left = 324
+Name = "Iemenubutton1"
+oThemeImage.Name = "oThemeImage"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1XX1AMB9O
+[CLASS] groupexpandcollapsebutton
+[CLASSLOC] themecontrols.vcx
+[BASECLASS] control
+[OBJNAME] Groupexpandcollapsebutton1
+[PARENT] Form1
+[START PROPERTIES]
+Top = 108
+Left = 324
+Name = "Groupexpandcollapsebutton1"
+oThemeImage.Name = "oThemeImage"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1XX1AVEPC
+[CLASS] combobutton
+[CLASSLOC] themecontrols.vcx
+[BASECLASS] control
+[OBJNAME] Combobutton1
+[PARENT] Form1
+[START PROPERTIES]
+Top = 72
+Left = 132
+Name = "Combobutton1"
+oThemeImage.Name = "oThemeImage"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1XX1727SD
+[CLASS] label
+[BASECLASS] label
+[OBJNAME] Label1
+[PARENT] Form1
+[START PROPERTIES]
+AutoSize = .T.
+Alignment = 1
+BackStyle = 0
+Caption = "PushButton"
+Height = 17
+Left = 252
+Top = 180
+Width = 66
+Name = "Label1"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1XX1B6JGV
+[CLASS] label
+[BASECLASS] label
+[OBJNAME] Label4
+[PARENT] Form1
+[START PROPERTIES]
+AutoSize = .T.
+Alignment = 1
+BackStyle = 0
+Caption = "ComboButton"
+Height = 17
+Left = 48
+Top = 72
+Width = 78
+Name = "Label4"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1XX1B6JGW
+[CLASS] label
+[BASECLASS] label
+[OBJNAME] Label5
+[PARENT] Form1
+[START PROPERTIES]
+AutoSize = .T.
+Alignment = 1
+BackStyle = 0
+Caption = "TbDropDownButton"
+Height = 17
+Left = 208
+Top = 144
+Width = 110
+Name = "Label5"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1XX1B6JGX
+[CLASS] label
+[BASECLASS] label
+[OBJNAME] Label6
+[PARENT] Form1
+[START PROPERTIES]
+AutoSize = .T.
+Alignment = 1
+BackStyle = 0
+Caption = "CloseButton"
+Height = 17
+Left = 56
+Top = 108
+Width = 70
+Name = "Label6"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1XX1B6JGY
+[CLASS] label
+[BASECLASS] label
+[OBJNAME] Label7
+[PARENT] Form1
+[START PROPERTIES]
+AutoSize = .T.
+Alignment = 1
+BackStyle = 0
+Caption = "GroupExpandButton"
+Height = 17
+Left = 206
+Top = 108
+Width = 112
+Name = "Label7"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1XX1B6JGZ
+[CLASS] label
+[BASECLASS] label
+[OBJNAME] Label8
+[PARENT] Form1
+[START PROPERTIES]
+AutoSize = .T.
+Alignment = 1
+BackStyle = 0
+Caption = "HelpButton"
+Height = 17
+Left = 63
+Top = 144
+Width = 63
+Name = "Label8"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1XX1B6JH0
+[CLASS] label
+[BASECLASS] label
+[OBJNAME] Label9
+[PARENT] Form1
+[START PROPERTIES]
+AutoSize = .T.
+Alignment = 1
+BackStyle = 0
+Caption = "Rebar"
+Height = 17
+Left = 282
+Top = 36
+Width = 36
+Name = "Label9"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1XX1B6JH1
+[CLASS] label
+[BASECLASS] label
+[OBJNAME] Label10
+[PARENT] Form1
+[START PROPERTIES]
+AutoSize = .T.
+Alignment = 1
+BackStyle = 0
+Caption = "IeMenuButton"
+Height = 17
+Left = 241
+Top = 72
+Width = 77
+Name = "Label10"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1XX1727SD
+[CLASS] checkbox
+[BASECLASS] checkbox
+[OBJNAME] Check1
+[PARENT] Form1
+[START PROPERTIES]
+Top = 180
+Left = 48
+Height = 17
+Width = 107
+AutoSize = .T.
+Alignment = 0
+BackStyle = 0
+Caption = "Enable Controls"
+Value = 1
+Name = "Check1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE InteractiveChange
+
+THISFORM.combobutton1.ENABLED = NOT THISFORM.combobutton1.ENABLED
+
+THISFORM.closebutton1.ENABLED = NOT THISFORM.closebutton1.ENABLED
+
+THISFORM.helpbutton1.ENABLED = NOT THISFORM.helpbutton1.ENABLED
+
+THISFORM.rebar1.ENABLED = NOT THISFORM.rebar1.ENABLED
+
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1XX1B8ZYA
+[CLASS] checkbox
+[BASECLASS] checkbox
+[OBJNAME] Check2
+[PARENT] Form1
+[START PROPERTIES]
+Top = 36
+Left = 36
+Height = 17
+Width = 186
+AutoSize = .T.
+Alignment = 0
+BackStyle = 0
+Caption = "Show PageFrame Background"
+ControlSource = "THISFORM.pfBackground1.visible"
+Name = "Check2"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] RESERVED  
+[START PROPERTIES]
+Arial, 0, 9, 5, 15, 12, 32, 3, 0
+[END PROPERTIES]
+[EOF]

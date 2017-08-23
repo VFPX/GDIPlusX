@@ -1,0 +1,159 @@
+SCCTEXT Version 4.0.0.2
+PLATFORM C(8,0),UNIQUEID C(10,0),TIMESTAMP N(10,0),CLASS M(4,0),CLASSLOC M(4,0),BASECLASS M(4,0),OBJNAME M(4,0),PARENT M(4,0),PROPERTIES M(4,0),PROTECTED M(4,0),METHODS M(4,0),OBJCODE M(4,0),OLE M(4,0),OLE2 M(4,0),RESERVED1 M(4,0),RESERVED2 M(4,0),RESERVED3 M(4,0),RESERVED4 M(4,0),RESERVED5 M(4,0),RESERVED6 M(4,0),RESERVED7 M(4,0),RESERVED8 M(4,0),USER M(4,0)
+1252
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] Screen    
+[START RESERVED1]
+VERSION =   3.00[END RESERVED1]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TN1AHCZ8
+[CLASS] dataenvironment
+[BASECLASS] dataenvironment
+[OBJNAME] Dataenvironment
+[START PROPERTIES]
+Top = 0
+Left = 0
+Width = 0
+Height = 0
+DataSource = .NULL.
+Name = "Dataenvironment"
+[END PROPERTIES]
+[START RESERVED2]
+1[END RESERVED2]
+[START RESERVED4]
+1[END RESERVED4]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TN1AHCZH
+[CLASS] form
+[BASECLASS] form
+[OBJNAME] Form1
+[START PROPERTIES]
+Top = -1
+Left = 0
+Height = 445
+Width = 597
+DoCreate = .T.
+Caption = "Pens"
+Name = "Form1"
+[END PROPERTIES]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TN1AHCZI
+[CLASS] imgcanvas
+[CLASSLOC] ..\source\gdiplusx.vcx
+[BASECLASS] image
+[OBJNAME] Imgcanvas1
+[PARENT] Form1
+[START PROPERTIES]
+Anchor = 15
+Height = 447
+Left = -1
+Top = -1
+Width = 599
+Name = "Imgcanvas1"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE beforedraw
+LOCAL aNames[1], p, y, nLineCap
+
+WITH _SCREEN.System.Drawing
+	THIS.CLEAR()
+	DO CASE
+	** LineCap *************************************
+	CASE ThisForm.OptionGroup1.Value = 1
+		m.p = .Pen.New(.Color.Black, 20)
+		m.y = 20
+		** Get an array of all the LineCap enumeration names
+		aNames = _SCREEN.System.Enum.GetNames(.Drawing2D.LineCap)
+		FOR i = 1 TO ALEN(aNames)
+			nLineCap = _SCREEN.System.Enum.Parse(.Drawing2D.LineCap, aNames(i))
+			p.StartCap = nLineCap
+			p.EndCap = nLineCap
+			This.oGfx.DrawLine(p, 30, Y, 230, Y)
+			This.oGfx.DrawString(aNames(i), .Font.New("Arial",10), .Brushes.Black, 260, m.y-10, .StringFormat.GenericTypographic)
+			m.y = m.y + 40
+		NEXT
+		
+	** DashStyle ***********************************
+	CASE ThisForm.OptionGroup1.Value = 2
+		m.p = .Pen.New(.Color.Black, 10)
+		m.y = 20
+		** Get an array of all the DashStyle enumeration names
+		aNames = _SCREEN.System.Enum.GetNames(.Drawing2D.DashStyle)
+		FOR i = 1 TO ALEN(aNames)
+			p.DashStyle = _SCREEN.System.Enum.Parse(.Drawing2D.DashStyle, aNames(i))
+			This.oGfx.DrawLine(m.p, 20, m.y, 420, m.y)
+			This.oGfx.DrawString(aNames(i), .Font.New("Arial",10), .Brushes.Black, 440, m.y-10, .StringFormat.GenericTypographic)
+			m.y = m.y + 40
+		ENDFOR
+		
+	** Compound lines ******************************
+	CASE ThisForm.OptionGroup1.Value = 3
+		p = .Pen.New(.Color.Black, 20)
+		p.CompoundArray = _SCREEN.System.Single.NewArray(0, 0.2, 0.3, 0.6, 0.7, 1)
+		This.oGfx.DrawRectangle(p, 20, 20, 200, 150)
+		This.oGfx.DrawEllipse(p, 20, 200, 200, 150)
+	ENDCASE
+ENDWITH
+
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] WINDOWS 
+[UNIQUEID] _1TN1CD85P
+[CLASS] optiongroup
+[BASECLASS] optiongroup
+[OBJNAME] Optiongroup1
+[PARENT] Form1
+[START PROPERTIES]
+ButtonCount = 3
+Anchor = 12
+Value = 1
+Height = 65
+Left = 491
+Top = 361
+Width = 86
+Name = "Optiongroup1"
+Option1.Caption = "Example 1"
+Option1.Value = 1
+Option1.Height = 17
+Option1.Left = 5
+Option1.Top = 5
+Option1.Width = 76
+Option1.Name = "Option1"
+Option2.Caption = "Example 2"
+Option2.Height = 17
+Option2.Left = 5
+Option2.Top = 24
+Option2.Width = 76
+Option2.AutoSize = .F.
+Option2.Name = "Option2"
+Option3.Caption = "Example 3"
+Option3.Height = 17
+Option3.Left = 5
+Option3.Top = 43
+Option3.Width = 76
+Option3.AutoSize = .F.
+Option3.Name = "Option3"
+[END PROPERTIES]
+[START METHODS]
+PROCEDURE InteractiveChange
+Thisform.imgcanvas1.Draw()
+ENDPROC
+[END METHODS]
+
+[ RECORD]
+[PLATFORM] COMMENT 
+[UNIQUEID] RESERVED  
+[START PROPERTIES]
+Arial, 0, 9, 5, 15, 12, 32, 3, 0
+[END PROPERTIES]
+[EOF]
