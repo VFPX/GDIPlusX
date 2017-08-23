@@ -12,13 +12,13 @@ The object model of these classes closely emulates the classes contained in the 
 * System.Drawing.Imaging
 * System.Drawing.Text
 
-**[GDIPlusX Goals](wiki/GDIPlusX-Goals.md)**
+**[GDIPlusX Goals](wiki/GDIPlusXGoals.md)**
 
-**[GDIPlusX Samples](wiki/GDIPlusX-Samples.md)**
+**[GDIPlusX Samples](wiki/GDIPlusXSamples.md)**
 
-**[GDIPlusX References](wiki/GDIPlusX-References.md)**
+**[GDIPlusX References](wiki/GDIPlusXReferences.md)**
 
-**[GDIPlusX Previous Releases](wiki/GDIPlusX-Previous-Releases.md)**
+**[GDIPlusX Previous Releases](wiki/GDIPlusXPreviousReleases.md)**
 
 
 **![](wiki/GDIPlusX_3270) Team Members**
