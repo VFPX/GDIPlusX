@@ -1,8 +1,8 @@
-# ![](wiki/GDIPlusX_home.png) GDIPlusX
+# ![](GDIPlusX_home.png) GDIPlusX
 
 **GDIPlusX is a set of Visual FoxPro 9.0 class libraries that wrap the 603 GDI{"+"} Flat API functions of GDIPlus.dll.**
 
-![](wiki/GDIPlusX_hr-g.png)
+![](GDIPlusX_hr-g.png)
 
 The library currently consist of 64 VFP wrapper classes and 47 enumeration classes with over 1,500 properties and methods.
 
@@ -12,17 +12,19 @@ The object model of these classes closely emulates the classes contained in the 
 * System.Drawing.Imaging
 * System.Drawing.Text
 
-**![](wiki/GDIPlusX_vfpxreleasesmall.png) [release:Latest Release of GDIPlusX](15083)**
+**![](GDIPlusX_vfpxreleasesmall.png) [release:Latest Release of GDIPlusX](15083)**
 
-**[GDIPlusX Goals](wiki/GDIPlusX-Goals)**
-**[GDIPlusX Samples](wiki/GDIPlusX-Samples)**
-**[GDIPlusX References](wiki/GDIPlusX-References)**
-**[GDIPlusX Previous Releases](wiki/GDIPlusX-Previous-Releases)**
+**[GDIPlusX Goals](GDIPlusX-Goals)**
+**[GDIPlusX Samples](GDIPlusX-Samples)**
+**[GDIPlusX References](GDIPlusX-References)**
+**[GDIPlusX Previous Releases](GDIPlusX-Previous-Releases)**
 
-**![](wiki/GDIPlusX_3270) Team Members**
-* [BinaryBo](https://github.com/binarybocp) _Project Manager_
+**![](GDIPlusX_3270) Team Members**
+* [BinaryBo](https://www.codeplex.com/site/users/contact/BinaryBo?OriginalUrl=http://www.codeplex.com/VFPX) _Project Manager_
 * CraigSBoyd
 * VFPImaging
 * AlanStevens
+
+If you would like to report any issues or need any assistance using the library, please use the [Discussions](../Thread/List.aspx) area in CodePlex
 
 If you would like to be involved in the project, please contact the project manager.
