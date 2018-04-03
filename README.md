@@ -1,8 +1,8 @@
-# ![](wiki/GDIPlusX_home.png) GDIPlusX
+# ![](documents/images/GDIPlusX_home.png) GDIPlusX
 
 **GDIPlusX is a set of Visual FoxPro 9.0 class libraries that wrap the 603 GDI{"+"} Flat API functions of GDIPlus.dll.**
 
-![](wiki/GDIPlusX_hr-g.png)
+![](documents/images/GDIPlusX_hr-g.png)
 
 The library currently consist of 64 VFP wrapper classes and 47 enumeration classes with over 1,500 properties and methods.
 
@@ -12,13 +12,13 @@ The object model of these classes closely emulates the classes contained in the 
 * System.Drawing.Imaging
 * System.Drawing.Text
 
-**[GDIPlusX Goals](wiki/GDIPlusXGoals.md)**
+[GDIPlusX Goals](documents/GDIPlusXGoals.md)
 
-**[GDIPlusX Samples](wiki/GDIPlusXSamples.md)**
+[GDIPlusX Samples](documents/GDIPlusXSamples.md)
 
-**[GDIPlusX References](wiki/GDIPlusXReferences.md)**
+[GDIPlusX Library Reference](documents/GDIPlusX_Library_Reference.md)
 
-**[GDIPlusX Previous Releases](wiki/GDIPlusXPreviousReleases.md)**
+[GDIPlusX References](documents/GDIPlusXReferences.md)
 
 
 **![](wiki/GDIPlusX_3270) Team Members**
