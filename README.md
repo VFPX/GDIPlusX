@@ -14,8 +14,6 @@ The object model of these classes closely emulates the classes contained in the 
 
 [GDIPlusX Goals](documents/GDIPlusXGoals.md)
 
-[GDIPlusX Samples](documents/GDIPlusXSamples.md)
-
 [GDIPlusX Library Reference](documents/GDIPlusX_Library_Reference.md)
 
 [GDIPlusX References](documents/GDIPlusXReferences.md)
