@@ -68,8 +68,3 @@
 * [New VFP-X GDI+ classes](http://weblogs.foxite.com/vfpimaging/archive/2006/08/10/2194.aspx) - VFPImaging
 * [Gradient Backgrounds in your forms with GDI+](http://weblogs.foxite.com/vfpimaging/archive/2006/06/13/1825.aspx) - VFPImaging
 
-
-
-
-
-[Wiki Markup Guide](http://www.codeplex.com/Wiki/View.aspx?ProjectName=CodePlex&title=CodePlex%20Wiki%20Markup%20Guide)

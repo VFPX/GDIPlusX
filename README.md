@@ -19,7 +19,7 @@ The object model of these classes closely emulates the classes contained in the 
 [GDIPlusX References](documents/GDIPlusXReferences.md)
 
 
-**![](wiki/GDIPlusX_3270) Team Members**
+## Team Members:
 * [BinaryBo](https://github.com/binarybocp) _Project Manager_
 * CraigSBoyd
 * VFPImaging
