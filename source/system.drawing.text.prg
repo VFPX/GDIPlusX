@@ -453,7 +453,7 @@ DEFINE CLASS xfcPrivateFontCollection AS xfcFontCollection
 		LOCAL loExc AS Exception
 		TRY
 		
-			This.SetStatus(xfcGdipPrivateAddFontFile(This.Handle, STRCONV(m.tcFilename,5)))
+			This.SetStatus(xfcGdipPrivateAddFontFile(This.Handle, STRCONV(m.tcFilename+0h00,5)))
 		
 		CATCH TO loExc
 			THROW_EXCEPTION
