@@ -40,7 +40,7 @@ TRY
 		ERROR "The application is requesting a newer version of the System.APP / GDIPlusX library."+CHR(13) ;
 			+ " - Current version: "+ALLTRIM(STR(m.toObject.System.Version,6,2))+CHR(13) ;
 			+ " - Requested version: "+ALLTRIM(STR(m.tnMinVersion,6,2))+CHR(13) ;
-			+ " Download the latest version from http://www.codeplex.com/VFPX"
+			+ " Download the latest version from https://github.com/VFPX/GDIPlusX"
 	ENDIF			
 
 CATCH TO m.loExc
@@ -63,7 +63,7 @@ DEFINE CLASS xfcSystem AS xfcNamespace
 	
 	*********************************************************************
 	Drawing = .NULL.
-	Version = 1.21
+	Version = 1.22
 	*********************************************************************
 	FUNCTION Drawing_ACCESS
 	*********************************************************************

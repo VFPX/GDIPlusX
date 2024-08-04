@@ -20,12 +20,13 @@ Some additional functionality was added to take advantage of features built into
 
 [GDIPlusX References](documents/GDIPlusXReferences.md)
 
+The current version is 1.22, released 2024-08-04.
+
 ### Distribution files
 
 | File | Description |
 | --- | --- |
 | System.APP | This is a standalone APP which contains all the source files for the GDIPlusX library. This compiled version includes debug info and some \_Membderdata attributes to assist with intellisense. If you distribute this file with your application, you only need to compile the GDIPlusX.vcx library into your application |
-| System\_Lean.APP | This is the same as above, but the debug info and intellisense functionality have been turned off. If you are concerned about your distribution size, this APP is for you. It is about 250KB smaller than the standard System.app and usually ZIPs up to about 140KB. Make sure you rename it to "System.APP" if you distribute this file instead of the standard System.app. |
 | GDIPlusX.vcx | This visual class library contains the imgCanvas class and will need to be compiled into your application for distribution, if you utilize this class. |
 
 ### How to use the library
@@ -99,11 +100,11 @@ Parameters:
 To make sure that you are getting a minimum version of the GDIPlusX library, pass the version number when calling SYSTEM.APP. If the version number of SYSTEM.APP is less than the minimum version specified, an error is generated with instructions on where to get the latest version of SYSTEM.APP / GDIPlusX.
 
 ```foxpro
-DO SYSTEM.APP WITH 1.20
+DO SYSTEM.APP WITH 1.22
 * or *
-DO SYSTEM.APP WITH oMyObject,1.20
+DO SYSTEM.APP WITH oMyObject, 1.22
 * or *
-DO SYSTEM.APP WITH ,1.20
+DO SYSTEM.APP WITH , 1.22
 ```
 **Intellisense Support**
 
@@ -136,16 +137,18 @@ This will add a few shortcuts for the classes
 | Stre,Stream | \_SCREEN.System.IO.MemoryStream.New |
 | ClrM,ColorMatrix | \_SCREEN.System.Drawing.Imaging.ColorMatrix.New |
 
-Note: The lean version of System.APP does not have the "FoxCode" table embedded
-
 **Embedded Help**
 
-Each class in the library now has a quick way of accessing the online help for the .NET class equivilant using the "Help" method. Calling this method will invoke a browser window and automatically access the MSDN help page for the specified class. Note: This method is not available in the Lean version of SYSTEM.APP
+Each class in the library now has a quick way of accessing the online help for the .NET class equivilant using the "Help" method. Calling this method will invoke a browser window and automatically access the MSDN help page for the specified class.
 
 ```foxpro
 * Example:
 _SCREEN.System.Drawing.Bitmap.Help()
 ```
+
+## Development notes
+
+If you make changes to GDIPlusX, be sure to change the Version property of the xfcSystem class in System.prg and rebuild System.app. Also, change the version number and release date in Thor_Update_GDIPlusX.prg (in both the Updaters\Updates folder and ThorUpdater\Updates.zip) of the [Thor project](https://github.com/VFPX/Thor).
 
 ## Team Members:
 * [BinaryBo](https://github.com/binarybocp) _Project Manager_
