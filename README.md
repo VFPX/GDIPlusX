@@ -1,6 +1,6 @@
 # ![](documents/images/GDIPlusX_home.png) GDIPlusX
 
-**GDIPlusX is a set of Visual FoxPro 9.0 class libraries that wrap the 603 GDI{"+"} Flat API functions of GDIPlus.dll.**
+**GDIPlusX is a set of Visual FoxPro 9.0 class libraries that wrap the 603 GDI+ Flat API functions of GDIPlus.dll.**
 
 ![](documents/images/GDIPlusX_hr-g.png)
 
